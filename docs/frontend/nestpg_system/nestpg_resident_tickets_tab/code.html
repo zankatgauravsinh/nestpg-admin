@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Resident CRM - Tickets</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .ticket-card-hover:hover { border-color: #091426; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#c3c6d1",
+                        "tertiary-fixed-dim": "#ddc39d",
+                        "tertiary-fixed": "#fadfb8",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#35260c",
+                        "surface-dim": "#dcd9db",
+                        "primary-fixed-dim": "#bcc7de",
+                        "secondary-container": "#dfe2ed",
+                        "surface": "#fbf8fa",
+                        "on-secondary-container": "#61646d",
+                        "outline-variant": "#c5c6cd",
+                        "on-tertiary-fixed-variant": "#564427",
+                        "surface-container-highest": "#e4e2e3",
+                        "on-tertiary-container": "#a38c6a",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#d8e3fb",
+                        "on-surface": "#1b1b1d",
+                        "inverse-on-surface": "#f3f0f2",
+                        "on-background": "#1b1b1d",
+                        "surface-bright": "#fbf8fa",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#43474f",
+                        "on-secondary-fixed": "#181c23",
+                        "inverse-surface": "#303032",
+                        "on-surface-variant": "#45474c",
+                        "inverse-primary": "#bcc7de",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#545f73",
+                        "surface-container-high": "#eae7e9",
+                        "primary-container": "#1e293b",
+                        "primary": "#091426",
+                        "tertiary": "#1e1200",
+                        "on-primary-container": "#8590a6",
+                        "background": "#fbf8fa",
+                        "on-tertiary-fixed": "#271902",
+                        "secondary": "#5b5e67",
+                        "surface-variant": "#e4e2e3",
+                        "surface-container-low": "#f5f3f4",
+                        "surface-container": "#f0edef",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#111c2d",
+                        "outline": "#75777d",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#dfe2ed"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "gutter": "24px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "sm": "8px",
+                        "margin": "32px",
+                        "xxl": "48px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "code-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex overflow-hidden">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-surface border-r border-outline-variant flex flex-col p-md gap-sm z-50">
+<div class="mb-lg">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">NestPG</span>
+</div>
+<div class="flex items-center gap-md p-sm mb-lg">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-primary-fixed">
+<img alt="Arjun Mehta" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVzTaV2QsuJrJkXhFWuLEP4jNjlfhh6C9XByzR2O98Tcb8vKxirwJpbE7yOLgp4ie0wVqNiYbq3Ze2CucU6eTinUd0NKXDqDq6vmvgevNlu_LWK40Arp7wqbkQ5xrnrthzd4Sy3mVMgnvnRhYGjchuSVngYT0Ag_VPFa7-C3ftl6XXVBNahgWsiCaHHLaQP1oEMKt2BdCUFYQqJ6OXwjT-ilwuXccLZBwoIzJGydP20wQCE8YBZasx0cm8U3uyjty8LtlAdhEz0I-2"/>
+</div>
+<div>
+<p class="font-headline-sm text-headline-sm text-primary">Arjun Mehta</p>
+<p class="font-label-md text-label-md text-secondary">Resident ID: #NPG-8821</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Nav Items (Loop from JSON) -->
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md text-label-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Overview
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md text-label-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span> Payments
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md text-label-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span> Stay History
+            </a>
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg font-bold font-label-md text-label-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="confirmation_number">confirmation_number</span> Tickets
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md text-label-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span> KYC
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md text-label-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="folder">folder</span> Documents
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md text-label-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="chat">chat</span> Communications
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md text-label-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span> Activity
+            </a>
+</nav>
+<div class="mt-auto space-y-1">
+<button class="w-full bg-primary text-on-primary py-md rounded-lg font-headline-sm text-headline-sm flex items-center justify-center gap-sm mb-md active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span> AI Resident Copilot
+            </button>
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span> Support
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span> Logout
+            </a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 ml-[260px] mr-[320px] h-screen flex flex-col overflow-y-auto custom-scrollbar">
+<!-- TopNavBar (Authority: JSON) -->
+<header class="sticky top-0 w-full px-gutter h-16 bg-primary flex justify-between items-center z-40">
+<div class="flex items-center gap-md">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">Tickets</h1>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-primary p-sm hover:bg-primary-container/20 transition-colors rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-primary p-sm hover:bg-primary-container/20 transition-colors rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-on-primary p-sm hover:bg-primary-container/20 transition-colors rounded-full">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="w-8 h-8 rounded-full border border-on-primary/20 overflow-hidden ml-sm">
+<img alt="Administrator Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAH-2M5YAC8A48aIlQXZL9klUwO-9puq8IxOn244w3U8_kcXKVHXbWbME9zl_3b95AUUmFlCj6P_glJTi7HUXu3mt_eoKJIMZ8fQw7_l-U4Tp9fNBOlDm1ud9imLokKwumJHUGBBVBPo37ZFYSIC3APhJbgiUGfh7-6SwmEFHCGVy_kusDBPd1j000NWTi9rqNwDBrhk5EqgoDdJjZbpG23iU4pVWS6ycYJz9Yp8-vJkiM0FWNx3WDx1Ep2cdbr6GsaLmcBuq8d_wE4"/>
+</div>
+</div>
+</header>
+<div class="p-margin flex flex-col gap-xl">
+<!-- Ticket Stats Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary p-sm bg-primary-fixed rounded-lg" data-icon="pending_actions">pending_actions</span>
+<span class="text-error font-bold font-label-md text-label-md">+2 today</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-secondary uppercase tracking-wider">Open Tickets</p>
+<h2 class="font-display-lg text-display-lg text-primary">02</h2>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary p-sm bg-secondary-fixed rounded-lg" data-icon="task_alt">task_alt</span>
+<span class="text-on-secondary-container font-bold font-label-md text-label-md">88% rate</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-secondary uppercase tracking-wider">Resolved Tickets</p>
+<h2 class="font-display-lg text-display-lg text-primary">14</h2>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary p-sm bg-tertiary-fixed rounded-lg" data-icon="schedule">schedule</span>
+<span class="text-tertiary font-bold font-label-md text-label-md">-0.5h avg</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-secondary uppercase tracking-wider">Avg. Resolution Time</p>
+<h2 class="font-display-lg text-display-lg text-primary">4.2h</h2>
+</div>
+</div>
+</section>
+<!-- Active Tickets -->
+<section>
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-lg text-headline-lg text-primary">Active Requests</h3>
+<button class="bg-[#C2410C] text-on-primary px-lg py-sm rounded-lg font-headline-sm text-headline-sm flex items-center gap-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span> Raise New Ticket
+                    </button>
+</div>
+<div class="flex flex-col gap-md">
+<!-- Ticket Card 1 -->
+<div class="bg-white border border-outline-variant rounded-xl p-lg flex flex-col md:flex-row md:items-center justify-between gap-lg ticket-card-hover transition-all">
+<div class="flex gap-lg items-start">
+<div class="p-sm bg-error-container text-on-error-container rounded-lg">
+<span class="material-symbols-outlined" data-icon="wifi_off">wifi_off</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">WiFi intermittent in Room 402</h4>
+<div class="flex gap-md text-secondary font-body-sm text-body-sm">
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[14px]" data-icon="calendar_today">calendar_today</span> Oct 24, 2023</span>
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[14px]" data-icon="person">person</span> IT Support (Rajesh)</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-xl">
+<span class="px-md py-xs bg-error-container text-on-error-container rounded-full font-label-md text-label-md font-bold uppercase">High Priority</span>
+<span class="px-md py-xs bg-primary-fixed text-on-primary-fixed rounded-full font-label-md text-label-md font-bold uppercase">In Progress</span>
+<button class="p-sm hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Ticket Card 2 -->
+<div class="bg-white border border-outline-variant rounded-xl p-lg flex flex-col md:flex-row md:items-center justify-between gap-lg ticket-card-hover transition-all">
+<div class="flex gap-lg items-start">
+<div class="p-sm bg-secondary-fixed text-on-secondary-fixed rounded-lg">
+<span class="material-symbols-outlined" data-icon="water_drop">water_drop</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Plumbing - Slow drain in shared bathroom</h4>
+<div class="flex gap-md text-secondary font-body-sm text-body-sm">
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[14px]" data-icon="calendar_today">calendar_today</span> Oct 25, 2023</span>
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[14px]" data-icon="person">person</span> Maintenance (Suresh)</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-xl">
+<span class="px-md py-xs bg-surface-container-high text-secondary rounded-full font-label-md text-label-md font-bold uppercase">Medium Priority</span>
+<span class="px-md py-xs bg-primary-fixed text-on-primary-fixed rounded-full font-label-md text-label-md font-bold uppercase">In Progress</span>
+<button class="p-sm hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Historical Logs -->
+<section>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-md">Resolution History</h3>
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-lg py-md font-label-md text-label-md text-secondary uppercase">Issue</th>
+<th class="px-lg py-md font-label-md text-label-md text-secondary uppercase">Resolved Date</th>
+<th class="px-lg py-md font-label-md text-label-md text-secondary uppercase">Assigned To</th>
+<th class="px-lg py-md font-label-md text-label-md text-secondary uppercase">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-lg py-md font-body-md text-body-md text-primary font-medium">AC Filter Cleaning</td>
+<td class="px-lg py-md font-body-md text-body-md text-secondary">Oct 12, 2023</td>
+<td class="px-lg py-md font-body-md text-body-md text-secondary">Maintenance Team</td>
+<td class="px-lg py-md"><span class="px-sm py-xs bg-green-100 text-green-700 rounded-lg text-[11px] font-bold uppercase">Resolved</span></td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-lg py-md font-body-md text-body-md text-primary font-medium">Keycard Replacement</td>
+<td class="px-lg py-md font-body-md text-body-md text-secondary">Sep 28, 2023</td>
+<td class="px-lg py-md font-body-md text-body-md text-secondary">Reception Desk</td>
+<td class="px-lg py-md"><span class="px-sm py-xs bg-green-100 text-green-700 rounded-lg text-[11px] font-bold uppercase">Resolved</span></td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-lg py-md font-body-md text-body-md text-primary font-medium">Gym Equipment Fault</td>
+<td class="px-lg py-md font-body-md text-body-md text-secondary">Sep 15, 2023</td>
+<td class="px-lg py-md font-body-md text-body-md text-secondary">Facility Ops</td>
+<td class="px-lg py-md"><span class="px-sm py-xs bg-green-100 text-green-700 rounded-lg text-[11px] font-bold uppercase">Resolved</span></td>
+</tr>
+</tbody>
+</table>
+<div class="px-lg py-md bg-surface-container-low text-center">
+<button class="text-primary font-label-md text-label-md font-bold uppercase hover:underline">View All 14 Resolved Tickets</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Right Sticky Intelligence Rail -->
+<aside class="fixed right-0 top-0 h-full w-[320px] bg-white border-l border-outline-variant flex flex-col p-md gap-lg overflow-y-auto custom-scrollbar">
+<div class="bg-primary text-on-primary p-lg rounded-xl flex flex-col gap-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="auto_awesome">auto_awesome</span>
+<h4 class="font-headline-sm text-headline-sm">Intelligence Insights</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-primary-container leading-relaxed">Arjun, we've noticed your room WiFi has been reported twice this month. I've automatically escalated this to the Network lead for a full router diagnostic.</p>
+<div class="flex flex-col gap-xs">
+<div class="bg-primary-container/40 p-sm rounded-lg flex items-center justify-between">
+<span class="font-label-md text-label-md">Network Escalation</span>
+<span class="text-[10px] bg-on-primary text-primary px-sm py-xs rounded font-bold">LIVE</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-md">
+<h4 class="font-label-md text-label-md text-secondary uppercase tracking-widest">Recent Maintenance Photos</h4>
+<div class="grid grid-cols-2 gap-sm">
+<div class="aspect-square rounded-lg overflow-hidden border border-outline-variant group relative cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="A detailed, close-up photograph of a professional router installation inside a modern utility cabinet. The lighting is crisp and clean, highlighting organized blue and white network cables and glowing status indicator lights. The overall aesthetic is professional, technical, and high-quality property maintenance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_BUTVcfTi4ZmrH9GP3DjOQOuJ01530vgBte2wWMnXqet2JhRW-3P61mBJ6I-FMBDMAOD8Zo4bxq14eeWDGCRDy9CJnh-AEKuKOQjbOQ2vC3Tp9V2bjT_0CBoSqNOECWEfmMmyoTFBjblXMG0r_jo2UO2M7bgC0lbinY9hJI0qdrraYtoS1SveMySLK862FBo_juCQCKqul8LVzY15Wud2ZzY9cFt9xMoNU8NG0HPuw-xpUOV6ivqVnEzIPtWeVtSCGUnw2MCfNJwZ"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="zoom_in">zoom_in</span>
+</div>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden border border-outline-variant group relative cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist shot of a residential plumbing repair, showing a new chrome pipe fitting under a white porcelain sink. The setting is a brightly lit, high-end apartment bathroom with soft neutral tiles. The photograph emphasizes cleanliness, professional repair quality, and attention to detail in a modern living space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUA69xguGYeWbA-y5BE7QK4Q0DIJHbZKxHWayRKpvZU5Za8TsopAVJj90GMgiZEAbW_KbEcvpNBeUDb76IscbdFHJNzFrERVcbP02z91LrlILm3Mod_HWeui9z2zcgKdsoxhboYYFF7D93clHJjFwaYh57kmBD1TEXUKRepxAcGmGVtQ9psbdY8DAdcGeVthzSpi9Dsznizwcp0mm6YIORrarnTKEtzbrHN-_TWlKsU0RwwEC-RmWDw9Y2yz6GrCW4uklEmUkc2zz2"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="zoom_in">zoom_in</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-high p-md rounded-xl">
+<div class="flex items-center justify-between mb-sm">
+<h4 class="font-label-md text-label-md text-primary font-bold">Support Satisfaction</h4>
+<span class="text-primary font-bold">4.9/5</span>
+</div>
+<div class="w-full bg-outline-variant h-1 rounded-full overflow-hidden">
+<div class="bg-[#C2410C] h-full w-[98%]"></div>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-sm">Based on 14 resolved tickets.</p>
+</div>
+<div class="mt-auto border-t border-outline-variant pt-md">
+<p class="font-label-md text-label-md text-secondary mb-sm">Resident Health Score</p>
+<div class="flex items-center gap-md">
+<div class="relative w-16 h-16">
+<svg class="w-full h-full" viewbox="0 0 36 36">
+<path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-width="3"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="92, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center font-bold text-primary">92</div>
+</div>
+<div>
+<p class="font-body-md text-body-md text-primary font-bold">Excellent Standing</p>
+<p class="font-label-md text-label-md text-secondary">No overdue payments.</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- AI Copilot Sticky Bottom Bar -->
+<div class="fixed bottom-0 left-[260px] right-[320px] p-md flex justify-center pointer-events-none">
+<div class="bg-white/80 backdrop-blur-md border border-outline-variant shadow-lg rounded-full px-lg py-sm flex items-center gap-md pointer-events-auto w-full max-w-2xl">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary text-[18px]" data-icon="bolt">bolt</span>
+</div>
+<input class="bg-transparent border-none focus:ring-0 flex-1 font-body-md text-body-md text-primary" placeholder="Type a message to your AI Assistant..." type="text"/>
+<div class="flex items-center gap-sm">
+<button class="p-sm text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="mic">mic</span>
+</button>
+<button class="p-sm text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+        // Simple micro-interaction for ticket cards
+        document.querySelectorAll('.ticket-card-hover').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('shadow-md', '-translate-y-1');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('shadow-md', '-translate-y-1');
+            });
+        });
+
+        // Search highlight mock
+        const searchInput = document.querySelector('input');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20', 'border-primary');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20', 'border-primary');
+        });
+    </script>
+</body></html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reset Password | NestPG</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "primary": "#091426",
+                "on-primary-container": "#8590a6",
+                "background": "#fbf8fa",
+                "tertiary-fixed-dim": "#ddc39d",
+                "on-error-container": "#93000a",
+                "surface-tint": "#545f73",
+                "on-tertiary-fixed": "#271902",
+                "on-tertiary-container": "#a38c6a",
+                "tertiary": "#1e1200",
+                "on-secondary": "#ffffff",
+                "on-secondary-fixed": "#181c23",
+                "surface-bright": "#fbf8fa",
+                "surface-variant": "#e4e2e3",
+                "primary-fixed-dim": "#bcc7de",
+                "surface-container-high": "#eae7e9",
+                "surface": "#fbf8fa",
+                "tertiary-container": "#35260c",
+                "secondary": "#5b5e67",
+                "on-primary": "#ffffff",
+                "surface-container-low": "#f5f3f4",
+                "error-container": "#ffdad6",
+                "secondary-fixed": "#dfe2ed",
+                "secondary-fixed-dim": "#c3c6d1",
+                "on-secondary-container": "#61646d",
+                "inverse-surface": "#303032",
+                "primary-container": "#1e293b",
+                "surface-container": "#f0edef",
+                "primary-fixed": "#d8e3fb",
+                "on-primary-fixed": "#111c2d",
+                "secondary-container": "#dfe2ed",
+                "surface-container-lowest": "#ffffff",
+                "error": "#ba1a1a",
+                "outline-variant": "#c5c6cd",
+                "on-surface-variant": "#45474c",
+                "inverse-primary": "#bcc7de",
+                "surface-dim": "#dcd9db",
+                "inverse-on-surface": "#f3f0f2",
+                "on-background": "#1b1b1d",
+                "on-tertiary": "#ffffff",
+                "on-primary-fixed-variant": "#3c475a",
+                "on-error": "#ffffff",
+                "on-surface": "#1b1b1d",
+                "on-secondary-fixed-variant": "#43474f",
+                "on-tertiary-fixed-variant": "#564427",
+                "outline": "#75777d",
+                "surface-container-highest": "#e4e2e3",
+                "tertiary-fixed": "#fadfb8",
+                "accent-warm": "#C2410C"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+              },
+              "spacing": {
+                "lg": "24px",
+                "sm": "8px",
+                "gutter": "24px",
+                "xl": "32px",
+                "margin": "32px",
+                "md": "16px",
+                "xs": "4px",
+                "xxl": "48px",
+                "base": "4px"
+              },
+              "fontFamily": {
+                "body-md": ["Inter"],
+                "body-lg": ["Inter"],
+                "display-lg": ["Inter"],
+                "code-sm": ["Inter"],
+                "headline-sm": ["Inter"],
+                "label-md": ["Inter"],
+                "body-sm": ["Inter"],
+                "headline-lg": ["Inter"],
+                "headline-md": ["Inter"]
+              },
+              "fontSize": {
+                "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.strength-bar {
+    height: 4px;
+    transition: all 0.3s ease;
+    width: 0%
+    }
+.requirement-item.met {
+    color: #16A34A
+    }
+.requirement-item.met span {
+    font-variation-settings: "FILL" 1
+    }
+.auth-image-bg {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuCh4TBSFh3s3zJcIfJ7a96LAXP9S-PFrX1J8m_H5OzfucQNKHX_oO0OzVpqTRVR6OfeOljW3Biv6R4HW2NSPcnAp2MQtCJ2zAoNVcpJkx62O2L_EGQ58uU2ObLwF5eA3hRs0wP8PDwjca_7tqHS5XPAVJJtoygIGSJh52qZFx5ai23K7ouxbc_OarVUMUzoy-2-sDfH4L8vIWuhMuTHJuk5GkGmpdw12OyZHai1XjFSRW8fVHyRfqTr9xBUMPs9BKPVl3GMLc6amK4F);
+    background-size: cover;
+    background-position: center
+    }
+#success-state {
+    display: none
+    }</style>
+</head>
+<body class="bg-background font-body-md text-on-background min-h-screen overflow-x-hidden">
+<div class="flex min-h-screen w-full">
+<!-- Visual Column -->
+<div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-primary items-center justify-center p-xxl">
+<div class="absolute inset-0 opacity-40 auth-image-bg" data-alt="A sophisticated architectural shot of a modern glass skyscraper reflecting a clear blue sky at dusk. The lighting is crisp and executive, highlighting clean lines and geometric precision. The overall aesthetic is professional and secure, conveying a sense of stability and institutional strength with a cool navy and slate color palette."></div>
+<div class="relative z-10 text-white max-w-md">
+<div class="mb-lg">
+<span class="font-headline-md text-headline-md font-bold text-white">NestPG</span>
+</div>
+<h1 class="font-display-lg text-display-lg mb-md">Professional property operations at scale.</h1>
+<p class="font-body-lg text-body-lg text-primary-fixed-dim">Join thousands of property managers optimizing their workflow with executive-grade precision and data-driven insights.</p>
+</div>
+</div>
+<!-- Form Column -->
+<div class="w-full lg:w-1/2 flex items-center justify-center p-md sm:p-xl bg-surface">
+<!-- Reset Form State -->
+<div class="w-full max-w-[420px] transition-all duration-500" id="reset-form-container">
+<header class="mb-xl">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-xs">Set a new password</h2>
+<p class="font-body-md text-body-md text-secondary">Create a strong password for your account to ensure your property data remains secure.</p>
+</header>
+<form class="space-y-lg" id="reset-password-form" onsubmit="event.preventDefault(); handlePasswordReset();">
+<div class="space-y-sm">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="new-password">New Password</label>
+<div class="relative">
+<input class="w-full px-md py-sm rounded-lg border border-outline-variant focus:border-accent-warm focus:ring-2 focus:ring-accent-warm/10 outline-none bg-surface-container-lowest transition-all font-body-md" id="new-password" oninput="validatePassword(this.value)" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-primary" onclick="togglePassword('new-password')" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+<!-- Strength Indicator -->
+<div class="pt-sm">
+<div class="flex justify-between items-center mb-xs">
+<span class="font-label-md text-label-md text-secondary uppercase" id="strength-label">Strength: <span class="font-bold text-outline">None</span></span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1 overflow-hidden">
+<div class="strength-bar bg-outline" id="strength-bar"></div>
+</div>
+</div>
+</div>
+<div class="space-y-sm">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="confirm-password">Confirm Password</label>
+<div class="relative">
+<input class="w-full px-md py-sm rounded-lg border border-outline-variant focus:border-accent-warm focus:ring-2 focus:ring-accent-warm/10 outline-none bg-surface-container-lowest transition-all font-body-md" id="confirm-password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-primary" onclick="togglePassword('confirm-password')" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Checklist -->
+<div class="p-md rounded-xl border border-outline-variant bg-surface-container-low space-y-sm">
+<p class="font-label-md text-label-md text-secondary uppercase mb-sm">Requirements</p>
+<div class="requirement-item flex items-center gap-sm text-secondary font-body-sm transition-colors" id="req-length">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                            8+ characters
+                        </div>
+<div class="requirement-item flex items-center gap-sm text-secondary font-body-sm transition-colors" id="req-upper">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                            Uppercase letter
+                        </div>
+<div class="requirement-item flex items-center gap-sm text-secondary font-body-sm transition-colors" id="req-number">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                            One or more numbers
+                        </div>
+<div class="requirement-item flex items-center gap-sm text-secondary font-body-sm transition-colors" id="req-special">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                            Special character (@, #, $, etc.)
+                        </div>
+</div>
+<button class="w-full py-md px-lg bg-accent-warm text-white font-headline-sm rounded-lg hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-accent-warm/20" type="submit">
+                        Reset Password
+                    </button>
+<div class="text-center pt-md">
+<a class="font-body-sm text-secondary hover:text-primary transition-colors flex items-center justify-center gap-xs" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                            Back to login
+                        </a>
+</div>
+</form>
+</div>
+<!-- Success Screen Version -->
+<div class="w-full max-w-[420px] text-center flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-700" id="success-state">
+<div class="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-xl">
+<span class="material-symbols-outlined text-[40px] text-green-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-xs">Password Updated Successfully</h2>
+<p class="font-body-md text-body-md text-secondary mb-xl">Your password has been securely reset. You can now use your new credentials to access your account.</p>
+<a class="w-full py-md px-lg bg-primary text-white font-headline-sm rounded-lg hover:opacity-90 active:scale-[0.98] transition-all" href="#">
+                    Go to Login
+                </a>
+</div>
+</div>
+</div>
+<script>
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function validatePassword(val) {
+            const reqs = {
+                length: val.length >= 8,
+                upper: /[A-Z]/.test(val),
+                number: /[0-9]/.test(val),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(val)
+            };
+
+            // Update UI Checklist
+            document.getElementById('req-length').classList.toggle('met', reqs.length);
+            document.getElementById('req-upper').classList.toggle('met', reqs.upper);
+            document.getElementById('req-number').classList.toggle('met', reqs.number);
+            document.getElementById('req-special').classList.toggle('met', reqs.special);
+
+            // Calculate Strength
+            const score = Object.values(reqs).filter(Boolean).length;
+            const bar = document.getElementById('strength-bar');
+            const label = document.getElementById('strength-label').querySelector('span');
+
+            if (val.length === 0) {
+                bar.style.width = '0%';
+                bar.className = 'strength-bar bg-outline';
+                label.innerText = 'None';
+                label.className = 'font-bold text-outline';
+            } else if (score <= 2) {
+                bar.style.width = '33%';
+                bar.className = 'strength-bar bg-error';
+                label.innerText = 'Weak';
+                label.className = 'font-bold text-error';
+            } else if (score === 3) {
+                bar.style.width = '66%';
+                bar.className = 'strength-bar bg-yellow-500';
+                label.innerText = 'Good';
+                label.className = 'font-bold text-yellow-600';
+            } else if (score === 4) {
+                bar.style.width = '100%';
+                bar.className = 'strength-bar bg-green-600';
+                label.innerText = 'Strong';
+                label.className = 'font-bold text-green-600';
+            }
+        }
+
+        function handlePasswordReset() {
+            const formContainer = document.getElementById('reset-form-container');
+            const successState = document.getElementById('success-state');
+            
+            // Basic UI switch simulation
+            formContainer.style.opacity = '0';
+            formContainer.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                formContainer.style.display = 'none';
+                successState.style.display = 'flex';
+            }, 400);
+        }
+    </script>
+</body></html>

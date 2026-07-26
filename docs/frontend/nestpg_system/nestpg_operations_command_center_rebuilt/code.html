@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PropOps Command Center | NestPG</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .kanban-column { min-width: 280px; flex: 1; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#1E293B",
+                      "warm-vermillion": "#C2410C",
+                      "on-primary": "#ffffff",
+                      "surface": "#fbf8fa",
+                      "surface-container": "#f0edef",
+                      "surface-container-low": "#f5f3f4",
+                      "surface-container-lowest": "#ffffff",
+                      "outline-variant": "#c5c6cd",
+                      "secondary": "#5b5e67",
+                      "error": "#ba1a1a",
+                      "error-container": "#ffdad6",
+                      "on-error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "card": "16px",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "sm": "8px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "xl": "32px",
+                      "xxl": "48px",
+                      "gutter": "24px",
+                      "margin": "32px"
+              },
+              "fontFamily": {
+                      "body-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-md": ["Inter"]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary text-on-primary flex flex-col p-md border-r border-outline-variant z-50">
+<div class="flex items-center gap-sm mb-xl">
+<div class="w-8 h-8 rounded bg-warm-vermillion flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<h1 class="font-headline-sm text-headline-sm">PropOps Command</h1>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-md p-md bg-slate-700 text-white rounded-lg transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md p-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="font-body-md">Properties</span>
+</a>
+<a class="flex items-center gap-md p-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-body-md">Operations</span>
+</a>
+<a class="flex items-center gap-md p-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md">Financials</span>
+</a>
+<a class="flex items-center gap-md p-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-md border-t border-slate-700">
+<button class="w-full flex items-center justify-center gap-sm bg-warm-vermillion text-white py-sm rounded-lg font-label-md transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+            Add Property
+        </button>
+<div class="flex items-center gap-sm mt-md px-xs">
+<img alt="User" class="w-8 h-8 rounded-full border border-slate-600" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYU5qPpOo0lZnITxjy4_jcUxE5cHVd1v6uzM7JWuVr8DRejWOnaPY-ZNH3KfKPoESYjm06y3KiUIqwphL2vlJqVLmPkJAfPRLKbbYH8O5v0kU1VihQona4BxTYWlj0YK6lbEEclUthxwAcTnm3G3UoAiKaEmdITsMDILbbb5ERjXHkuFbf4E1O75IRwvjtP1rhWuLNVLIawCfK78byTbZBS9q59MTJHrQ2rr2pk965OQM3x-pPEy30KhVwGR84xxKJ4Y84r8AMN4yn"/>
+<div>
+<p class="text-xs font-bold">Alex Mercer</p>
+<p class="text-[10px] text-slate-400">Executive Suite</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-[260px] relative">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-surface flex justify-between items-center px-gutter border-b border-outline-variant z-40">
+<div class="flex items-center gap-xl">
+<div class="flex items-center bg-surface-container-low px-sm py-1.5 rounded-lg border border-outline-variant w-80">
+<span class="material-symbols-outlined text-secondary text-sm mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full p-0" placeholder="Search operations..." type="text"/>
+</div>
+<nav class="flex gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 text-sm" href="#">Portfolio</a>
+<a class="text-secondary hover:text-primary transition-all text-sm" href="#">Teams</a>
+<a class="text-secondary hover:text-primary transition-all text-sm" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-secondary hover:bg-surface-variant rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-error rounded-full"></span>
+</button>
+<button class="px-md py-sm border border-outline-variant text-primary rounded-lg text-sm font-medium hover:bg-surface-container transition-all">Filters</button>
+<button class="px-md py-sm bg-warm-vermillion text-white rounded-lg text-sm font-medium active:scale-95 transition-all">Create Task</button>
+</div>
+</header>
+<div class="pt-24 px-gutter pb-xl flex gap-gutter">
+<!-- Scrollable Content Area -->
+<div class="flex-1 max-w-[1200px]">
+<!-- Header Section -->
+<div class="mb-xl">
+<h2 class="font-headline-lg text-headline-lg text-primary">Operations Command Center</h2>
+<p class="text-sm text-secondary">Monitor maintenance, compliance, resident requests, and operational workload.</p>
+</div>
+<!-- Section 1: Operations Health Strip -->
+<div class="grid grid-cols-6 gap-md mb-xl">
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg">
+<span class="text-[10px] text-secondary font-bold uppercase tracking-widest">Open Tasks</span>
+<div class="text-xl font-bold text-primary">124</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg">
+<span class="text-[10px] text-secondary font-bold uppercase tracking-widest">In Progress</span>
+<div class="text-xl font-bold text-secondary">42</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg">
+<span class="text-[10px] text-secondary font-bold uppercase tracking-widest">Completed Today</span>
+<div class="text-xl font-bold text-green-600">87</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg">
+<span class="text-[10px] text-secondary font-bold uppercase tracking-widest">Escalated</span>
+<div class="text-xl font-bold text-error">9</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg">
+<span class="text-[10px] text-secondary font-bold uppercase tracking-widest">Avg Resolution</span>
+<div class="text-xl font-bold text-primary">3.2d</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg">
+<span class="text-[10px] text-secondary font-bold uppercase tracking-widest">SLA Compliance</span>
+<div class="text-xl font-bold text-primary">94%</div>
+</div>
+</div>
+<!-- Section 2: Health Score Hero -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-card p-xl mb-xl flex gap-xxl items-center">
+<div class="flex-none text-center">
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-high" cx="64" cy="64" fill="transparent" r="58" stroke="#E2E8F0" stroke-width="8"></circle>
+<circle class="text-green-500" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="43.7" stroke-width="8"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="text-3xl font-bold leading-tight">88</span>
+<span class="text-[10px] font-bold text-secondary uppercase">Score</span>
+</div>
+</div>
+<p class="mt-md text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded inline-block">Healthy Status</p>
+</div>
+<div class="flex-grow space-y-md">
+<h3 class="text-sm font-bold text-primary mb-4">Operational Performance Breakdown</h3>
+<div class="grid grid-cols-2 gap-x-xl gap-y-md">
+<div>
+<div class="flex justify-between text-xs mb-1"><span class="text-secondary">Maintenance</span><span class="font-bold">92%</span></div>
+<div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden"><div class="bg-primary h-full rounded-full" style="width: 92%"></div></div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1"><span class="text-secondary">Resident Support</span><span class="font-bold">87%</span></div>
+<div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden"><div class="bg-primary h-full rounded-full" style="width: 87%"></div></div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1"><span class="text-secondary">Compliance</span><span class="font-bold">94%</span></div>
+<div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden"><div class="bg-primary h-full rounded-full" style="width: 94%"></div></div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1"><span class="text-secondary">Housekeeping</span><span class="font-bold">81%</span></div>
+<div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden"><div class="bg-primary h-full rounded-full" style="width: 81%"></div></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3: Operations Board (Kanban) -->
+<div class="mb-xl">
+<div class="flex justify-between items-end mb-md">
+<h3 class="font-headline-sm text-headline-sm text-primary">Live Operations Board</h3>
+<button class="text-primary text-xs flex items-center gap-1 font-bold hover:underline">View All Tickets <span class="material-symbols-outlined text-xs">arrow_forward</span></button>
+</div>
+<div class="flex gap-md overflow-x-auto pb-4 custom-scrollbar">
+<!-- Column Template -->
+<div class="kanban-column flex flex-col gap-md">
+<span class="px-xs text-[10px] font-bold text-secondary uppercase">New (12)</span>
+<div class="bg-white border border-outline-variant p-md rounded-lg shadow-sm space-y-md">
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-bold px-2 py-0.5 bg-red-50 text-error rounded border border-red-100">MAINTENANCE</span>
+<span class="text-[10px] text-secondary">#T-4092</span>
+</div>
+<p class="text-sm font-bold leading-snug">Elevator Malfunction - Block B</p>
+<p class="text-xs text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-sm">domain</span> Sunrise Residency</p>
+<div class="flex justify-between items-center pt-md border-t border-outline-variant">
+<img alt="staff" class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwQnVqVQ1GoJIcP7O8tUnbQfRaw7wMZ5TZfYj4H4jeUtlRs7oRcxGFuVZmbhYF8ZVeHD9fLa55kC0p4GNWV8pJ8Kg7mXit5OayEpIH7lwhQMIbzR0B9jgiziTrezCdg-txJPFdQaBENdlNoSChmsOSLqRYkcz72oIJXUFuPoCj4tJZITOsxK-h9QcF9z2dqcpf564kCwWbmdw6G6NnKedGqu5u7EFs6517ArbPjrxj9lRARa54cdJO4qyJE24nJryymbPKgQff5mxn"/>
+<span class="text-[10px] font-bold text-error">SLA: 2h left</span>
+</div>
+</div>
+</div>
+<!-- Assigned -->
+<div class="kanban-column flex flex-col gap-md">
+<span class="px-xs text-[10px] font-bold text-secondary uppercase">Assigned (8)</span>
+<div class="bg-white border border-outline-variant p-md rounded-lg shadow-sm space-y-md">
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-bold px-2 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100">HOUSEKEEPING</span>
+<span class="text-[10px] text-secondary">#T-4105</span>
+</div>
+<p class="text-sm font-bold leading-snug">Deep Clean - Apt 402</p>
+<p class="text-xs text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-sm">domain</span> Royal Heights</p>
+<div class="flex justify-between items-center pt-md border-t border-outline-variant">
+<div class="flex items-center gap-1">
+<img alt="staff" class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDWlRpOYGCPbViUGkS_TSsVuN9PCFhe3ijoRJ1XV2E7unJUzgLTdxccKi2I69XYct7b5dt-UMdcZjnb-ROC7I15hmDHwgu7SZ4bCWtDlu0EWK3UCerH7BuCTFbVAXhfUUqIj3z6smLGyQiawqo3XUjVZewJCE-X_n8Mp6DnKObSeErSOPE15Z7cjs7BcYxJ8Edr5cWxdd34ensD1ueJi_xYplpaUViyP8WcgXsxF6O4k90Ia26tbNiQyqLLvvrnKs64V2zEhNGhloQ"/>
+<span class="text-[10px] font-medium">Sarah J.</span>
+</div>
+<span class="text-[10px] font-bold text-primary">SLA: On Time</span>
+</div>
+</div>
+</div>
+<!-- Empty Column Placeholders -->
+<div class="kanban-column flex flex-col gap-md opacity-60">
+<span class="px-xs text-[10px] font-bold text-secondary uppercase">In Progress (15)</span>
+<div class="border-2 border-dashed border-outline-variant rounded-lg h-32 flex items-center justify-center text-xs text-secondary italic">No active cards</div>
+</div>
+<div class="kanban-column flex flex-col gap-md opacity-60">
+<span class="px-xs text-[10px] font-bold text-secondary uppercase">Review (4)</span>
+</div>
+<div class="kanban-column flex flex-col gap-md opacity-60">
+<span class="px-xs text-[10px] font-bold text-secondary uppercase">Completed (24)</span>
+</div>
+</div>
+</div>
+<!-- Section 4: Today's Ops Split -->
+<div class="grid grid-cols-2 gap-gutter mb-xl">
+<!-- Resident Flow -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-card overflow-hidden">
+<div class="p-md border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<h3 class="text-sm font-bold text-primary">Today's Resident Flow</h3>
+<span class="text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded">LIVE</span>
+</div>
+<table class="w-full text-left text-xs">
+<thead class="bg-surface-container border-b border-outline-variant">
+<tr>
+<th class="px-md py-sm font-bold text-secondary">Resident / Property</th>
+<th class="px-md py-sm font-bold text-secondary">Type</th>
+<th class="px-md py-sm font-bold text-secondary">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr>
+<td class="px-md py-md">
+<div class="font-bold">Jordan Smith</div>
+<div class="text-[10px] text-secondary">Sunrise Res, R-102</div>
+</td>
+<td class="px-md py-md">Check-in</td>
+<td class="px-md py-md"><span class="text-green-600 font-bold">Arrived 10:30</span></td>
+</tr>
+<tr>
+<td class="px-md py-md">
+<div class="font-bold">Emily Chen</div>
+<div class="text-[10px] text-secondary">Royal Heights, R-505</div>
+</td>
+<td class="px-md py-md">Check-out</td>
+<td class="px-md py-md"><span class="text-orange-600 font-bold">Pending 11:00</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Operational Timeline -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-card p-md">
+<h3 class="text-sm font-bold text-primary mb-md">Operational Timeline</h3>
+<div class="space-y-md">
+<div class="flex gap-md">
+<div class="flex flex-col items-center">
+<span class="text-[10px] font-bold text-secondary">09:00</span>
+<div class="w-px flex-grow bg-outline-variant my-1"></div>
+</div>
+<div class="flex-grow p-sm border border-outline-variant rounded-lg bg-white">
+<p class="text-xs font-bold">HVAC Inspection</p>
+<p class="text-[10px] text-secondary">Plant Room 1 • Maintenance</p>
+</div>
+</div>
+<div class="flex gap-md">
+<div class="flex flex-col items-center">
+<span class="text-[10px] font-bold text-secondary">11:30</span>
+<div class="w-px flex-grow bg-outline-variant my-1"></div>
+</div>
+<div class="flex-grow p-sm border border-outline-variant rounded-lg bg-white">
+<p class="text-xs font-bold">Common Area Sanitization</p>
+<p class="text-[10px] text-secondary">Lobby • Cleaning</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 5: Team Workload Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-card overflow-hidden mb-xl">
+<div class="p-md border-b border-outline-variant">
+<h3 class="text-sm font-bold text-primary">Resource Allocation &amp; Utilization</h3>
+</div>
+<table class="w-full text-left text-xs">
+<thead class="bg-surface-container text-secondary font-bold">
+<tr>
+<th class="px-md py-sm">Team Member</th>
+<th class="px-md py-sm">Tasks (Assigned/Done)</th>
+<th class="px-md py-sm">SLA Rate</th>
+<th class="px-md py-sm">Utilization</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr>
+<td class="px-md py-md flex items-center gap-3">
+<img alt="staff" class="w-8 h-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhgsl7OId7AGWlRPNau-onJzQYYf1GdDNknJaNSis25tUZG5nBoIhLtfVqgK4zfc1yrZXjmaZ6-Wq416GLckCiUXIRttvtz0o_8YjaQRbRYtN_usanl_41O_NyOSsVHr5DLUL-yxPiedHG1ko_4tmtuEIPLrRRoknw0qeinfQuFJvMWud3I-dMh73IzbUigpwD8EkcIIBtuJdyIV07yxgxC_B_MZ82qDqnetxDcSDppyMxVPBcuf_lzttvc7k5oBLZi_GG6WKEm-5K"/>
+<div>
+<div class="font-bold">Marcus V.</div>
+<div class="text-[10px] text-secondary">Maintenance Lead</div>
+</div>
+</td>
+<td class="px-md py-md font-medium">12 / 45</td>
+<td class="px-md py-md text-green-600 font-bold">98%</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-2">
+<div class="w-24 h-1.5 bg-surface-container-high rounded-full"><div class="bg-red-500 h-full w-[94%] rounded-full"></div></div>
+<span class="text-[10px] font-bold text-red-600">94%</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Sections 6-8: Modules Grid -->
+<div class="grid grid-cols-3 gap-gutter mb-xl">
+<!-- Maintenance Center -->
+<div class="space-y-md">
+<h3 class="text-sm font-bold text-primary flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">build</span> Maintenance Center</h3>
+<div class="bg-white border border-outline-variant p-md rounded-xl shadow-sm">
+<div class="flex justify-between items-end">
+<div><p class="text-[10px] font-bold text-secondary uppercase">Plumbing</p><p class="text-2xl font-bold">18</p></div>
+<span class="text-[10px] text-error font-bold mb-1">↑ 4 new</span>
+</div>
+</div>
+</div>
+<!-- Compliance Center -->
+<div class="space-y-md">
+<h3 class="text-sm font-bold text-primary flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">verified_user</span> Compliance Center</h3>
+<div class="bg-error-container p-md rounded-xl border border-error border-opacity-20 flex flex-col gap-1">
+<p class="text-xs font-bold text-on-error-container">Fire Safety Certificate Expired</p>
+<p class="text-[10px] text-on-error-container opacity-80">Royal Heights • Due 2 days ago</p>
+</div>
+</div>
+<!-- Incident Center (Danger styling) -->
+<div class="space-y-md">
+<h3 class="text-sm font-bold text-error flex items-center gap-2"><span class="material-symbols-outlined text-error text-lg" style="font-variation-settings: 'FILL' 1;">report</span> Incident Center</h3>
+<div class="bg-primary text-white p-md rounded-xl border-l-4 border-error space-y-1">
+<p class="text-[10px] font-bold text-error uppercase">Security Breach</p>
+<p class="text-xs leading-snug">Unauthorized access attempt detected in Server Room B at 02:14 AM.</p>
+</div>
+</div>
+</div>
+<!-- Section 9: Live Activity Feed -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-card p-xl mb-xl">
+<h3 class="text-sm font-bold text-primary mb-md">Live Activity Feed</h3>
+<div class="space-y-md">
+<div class="flex items-center gap-md text-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center"><span class="material-symbols-outlined text-secondary text-sm">person_add</span></div>
+<div><span class="font-bold text-primary">Priya S.</span> assigned ticket #4105 to <span class="font-bold text-primary">Elena R.</span></div>
+<span class="ml-auto text-[10px] text-secondary font-mono">2M AGO</span>
+</div>
+<div class="flex items-center gap-md text-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center"><span class="material-symbols-outlined text-secondary text-sm">check_circle</span></div>
+<div><span class="font-bold text-primary">System</span> auto-resolved routine inspection at <span class="font-bold text-primary">Park View</span></div>
+<span class="ml-auto text-[10px] text-secondary font-mono">15M AGO</span>
+</div>
+</div>
+</div>
+<!-- Section 10: AI Copilot -->
+<div class="bg-[#FAF8F5] border border-[#EBE3D5] rounded-card p-xl">
+<div class="flex items-center gap-md mb-md">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span></div>
+<div>
+<h3 class="text-sm font-bold text-primary">NestPG Operations Copilot</h3>
+<p class="text-[10px] text-secondary">AI-powered operational insights &amp; task automation</p>
+</div>
+</div>
+<div class="relative mb-md">
+<input class="w-full bg-white border border-outline-variant rounded-full py-2.5 px-md text-xs focus:ring-primary focus:border-primary" placeholder="Ask anything about operational performance..." type="text"/>
+<button class="absolute right-1 top-1 p-1.5 bg-primary text-white rounded-full"><span class="material-symbols-outlined text-sm">send</span></button>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-1 bg-white border border-outline-variant rounded-full text-[10px] font-bold hover:bg-surface-variant">Show SLA breaches</button>
+<button class="px-md py-1 bg-white border border-outline-variant rounded-full text-[10px] font-bold hover:bg-surface-variant">Analyze maintenance trend</button>
+</div>
+</div>
+</div>
+<!-- Right Insights Rail -->
+<aside class="w-[320px] shrink-0">
+<div class="sticky top-24 space-y-gutter">
+<!-- Snapshot Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-card p-md shadow-sm">
+<h4 class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-md">Snapshot</h4>
+<div class="space-y-md">
+<div class="flex justify-between items-center"><span class="text-xs font-medium text-secondary">Critical Tasks</span><span class="text-xl font-bold text-error">07</span></div>
+<div class="flex justify-between items-center"><span class="text-xs font-medium text-secondary">Overdue</span><span class="text-xl font-bold text-warm-vermillion">19</span></div>
+<div class="flex justify-between items-center"><span class="text-xs font-medium text-secondary">Avg Resolution</span><span class="text-xl font-bold text-primary">3.2d</span></div>
+</div>
+</div>
+<!-- Operational Insights -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-card p-md shadow-sm">
+<h4 class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-md">Operational Insights</h4>
+<div class="space-y-sm">
+<div class="p-sm bg-green-50 rounded-lg">
+<p class="text-[10px] text-green-700 font-bold uppercase">Best Property</p>
+<p class="text-xs font-bold">Sunrise Residency</p>
+<p class="text-[10px] text-green-600">99.2% SLA Adherence</p>
+</div>
+<div class="p-sm bg-surface-container-low rounded-lg">
+<p class="text-[10px] text-secondary font-bold uppercase">Top Manager</p>
+<div class="flex items-center gap-2 mt-1">
+<img alt="manager" class="w-5 h-5 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDezdeCFaL-4YIYWXJMv4i4XZLVMMyf-lO3XJLQiDUIwB5iwlb_S_jgpELfFxT0Fr84JUhq9r-4OkPUbZgZLDhGsw68mCrmIn93jNb33uRxBgafSGwYifX0GMhiqgQcnzgX_j_fD03vt413wyG0lUGMhWGeDi5iRii_l-R4nPo1J1mr4_vafSBaCMJ7Pdg4K15Glr8ynEXGSK-XPDTMHi61YSz1bkDa-m-MGT8P2e6cwBZ5gL8JafZkz7NAOBi1kApSvZEb22s2EDS0"/>
+<span class="text-xs font-bold">Priya Shah</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-md rounded-card border border-outline-variant bg-surface text-center">
+<p class="text-[10px] text-secondary font-bold uppercase mb-2">Internal Tools</p>
+<button class="w-full py-sm bg-primary text-white rounded-lg text-xs font-bold hover:opacity-90 transition-opacity">Launch Audit Pro</button>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<script>
+    // Live Pulse Simulation
+    setInterval(() => {
+        const liveTag = document.querySelector('.bg-primary.text-white.px-2.py-0.5.rounded');
+        if(liveTag) liveTag.classList.toggle('opacity-70');
+    }, 1500);
+</script>
+</body></html>

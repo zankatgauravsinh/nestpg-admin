@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG | Arjun Mehta Resident Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#dfe2ed",
+                    "outline-variant": "#c5c6cd",
+                    "on-surface-variant": "#45474c",
+                    "surface-container-lowest": "#ffffff",
+                    "error": "#ba1a1a",
+                    "inverse-primary": "#bcc7de",
+                    "primary-container": "#1e293b",
+                    "surface-container": "#f0edef",
+                    "primary-fixed": "#d8e3fb",
+                    "on-primary-fixed": "#111c2d",
+                    "on-secondary-fixed-variant": "#43474f",
+                    "on-surface": "#1b1b1d",
+                    "on-tertiary-fixed-variant": "#564427",
+                    "outline": "#75777d",
+                    "tertiary-fixed": "#fadfb8",
+                    "surface-container-highest": "#e4e2e3",
+                    "surface-dim": "#dcd9db",
+                    "inverse-on-surface": "#f3f0f2",
+                    "on-background": "#1b1b1d",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#3c475a",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed": "#181c23",
+                    "on-secondary": "#ffffff",
+                    "surface-bright": "#fbf8fa",
+                    "primary-fixed-dim": "#bcc7de",
+                    "surface-variant": "#e4e2e3",
+                    "surface": "#fbf8fa",
+                    "surface-container-high": "#eae7e9",
+                    "primary": "#091426",
+                    "on-primary-container": "#8590a6",
+                    "tertiary-fixed-dim": "#ddc39d",
+                    "background": "#fbf8fa",
+                    "surface-tint": "#545f73",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#1e1200",
+                    "on-tertiary-fixed": "#271902",
+                    "on-tertiary-container": "#a38c6a",
+                    "inverse-surface": "#303032",
+                    "secondary-fixed-dim": "#c3c6d1",
+                    "on-secondary-container": "#61646d",
+                    "secondary": "#5b5e67",
+                    "tertiary-container": "#35260c",
+                    "surface-container-low": "#f5f3f4",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed": "#dfe2ed",
+                    "error-container": "#ffdad6",
+                    "accent": "#C2410C"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "xxl": "16px",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "md": "16px",
+                    "margin": "32px",
+                    "xxl": "48px",
+                    "base": "4px",
+                    "xl": "32px",
+                    "gutter": "24px",
+                    "lg": "24px",
+                    "sm": "8px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "code-sm": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf8fa; color: #1b1b1d; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 20px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; }
+        .sidebar-active { background-color: #dfe2ed; color: #61646d; border-radius: 8px; }
+    </style>
+</head>
+<body class="antialiased">
+<!-- Side Navigation Shell -->
+<aside class="w-[260px] h-full fixed left-0 top-0 bg-primary dark:bg-primary-container border-r border-outline-variant dark:border-outline flex flex-col p-md gap-sm z-50">
+<div class="flex items-center gap-md mb-xl px-sm">
+<div class="w-10 h-10 rounded-lg bg-accent flex items-center justify-center text-white font-bold text-xl">N</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-primary dark:text-primary-fixed leading-none">NestPG</h1>
+<p class="text-[10px] text-on-primary-fixed-variant opacity-70 tracking-widest uppercase mt-1">Operations OS</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md text-on-primary-fixed-variant hover:text-on-primary rounded-lg px-md py-sm transition-colors hover:bg-primary-fixed-dim/10" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-lg px-md py-sm" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="font-body-md text-body-md">Portfolio</span>
+</a>
+<a class="flex items-center gap-md text-on-primary-fixed-variant hover:text-on-primary rounded-lg px-md py-sm transition-colors hover:bg-primary-fixed-dim/10" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-body-md text-body-md">Operations</span>
+</a>
+<a class="flex items-center gap-md text-on-primary-fixed-variant hover:text-on-primary rounded-lg px-md py-sm transition-colors hover:bg-primary-fixed-dim/10" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">Financials</span>
+</a>
+<a class="flex items-center gap-md text-on-primary-fixed-variant hover:text-on-primary rounded-lg px-md py-sm transition-colors hover:bg-primary-fixed-dim/10" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Intelligence</span>
+</a>
+<a class="flex items-center gap-md text-on-primary-fixed-variant hover:text-on-primary rounded-lg px-md py-sm transition-colors hover:bg-primary-fixed-dim/10" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<button class="mt-auto bg-accent hover:bg-orange-700 text-white font-bold py-md px-lg rounded-xl flex items-center justify-center gap-sm transition-all active:scale-95 shadow-lg shadow-accent/20">
+<span class="material-symbols-outlined">add</span>
+<span>Add Property</span>
+</button>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="h-16 w-full sticky top-0 z-40 bg-surface dark:bg-surface-container-lowest border-b border-outline-variant dark:border-outline flex justify-between items-center px-xl">
+<div class="flex items-center gap-xl">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-accent w-64 text-sm transition-all" placeholder="Search tenants, tickets..." type="text"/>
+</div>
+<nav class="flex gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md" href="#">Properties</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#">Team</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex gap-md text-outline">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary">help_outline</span>
+</div>
+<button class="bg-primary text-white text-xs font-bold px-lg py-sm rounded-lg hover:bg-primary-container transition-all">Create Task</button>
+<img alt="User Profile" class="w-8 h-8 rounded-full border-2 border-outline-variant object-cover" data-alt="Professional headshot of a senior property manager in a corporate setting, soft studio lighting, high-end photography, professional attire, modern business atmosphere, minimalist background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBshCnK7UrGFO6h1IAfvYDv-F0DU5yCJ9MxU5nTdzU9FwtVBzLa1fa0IbieWYLvn9EVPSDgmwA3MctSfvK4vVXijlW184BMees0ZKhixzWrdCaQvDx_mT4mjfgxDIJvzCJd8wneS65KJeLSZrfHfQI7aHXneITqK_gm1sRNoXnxsxdMSUS2h-c3bv3B4-7ko2lAqXnlH40I4XhJrnvcXN9dZsdTqhrRIUsNmJQnIJwvhiaviXIVlFcnRCNF3i01xpv_tPw48fsmLsWx"/>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-xl space-y-lg max-w-[1440px]">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-xs text-on-surface-variant font-label-md text-label-md">
+<span>Sunrise Residency</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span>Tower A</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span>Floor 2</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span>Room 203</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary font-bold">Bed B</span>
+</div>
+<!-- Identity Section -->
+<section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-xl border-b border-outline-variant pb-xl">
+<div class="flex items-center gap-xl">
+<div class="relative">
+<img alt="Arjun Mehta" class="w-24 h-24 rounded-xxl object-cover border-4 border-white shadow-xl" data-alt="A detailed portrait of Arjun Mehta, a young professional South Asian man, with a friendly and confident expression. He is wearing a minimalist dark polo shirt. The lighting is bright and natural, reflecting a modern light-mode interface aesthetic with soft shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjal-6iXgfVEB4fYXHpXUhkiAhI5ane2fdnr0sPB9OjvSd_9OvAKPXHXByOshfLfqOJMQ4p6DwOL6mDCROQdKmw0ntv1YGy2dIUYxYgXU-2ir7HJj-qSPeBP3HXQi8qfp3ps1_8hPiZQn13ES-TR5tswp1B1dQB-w9EORcMTUl21GmwzQCiAUcFNFsCXZo11KcMFeAMQxFACnD1ieIAdOdQIzT9NOn0fGfYV4evR1i-fty-GaPPdO1jxrdt7eypGu9vkLwxdXILFOs"/>
+<div class="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-4 border-white"></div>
+</div>
+<div>
+<div class="flex items-center gap-md">
+<h2 class="font-display-lg text-display-lg font-bold">Arjun Mehta</h2>
+<span class="bg-green-100 text-green-700 px-sm py-xs rounded text-[10px] font-bold uppercase tracking-wider">Active</span>
+</div>
+<div class="flex items-center gap-xl mt-sm text-on-surface-variant font-body-md">
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-sm">fingerprint</span> RES-9402</span>
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-sm">call</span> +91 98765 43210</span>
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-sm">mail</span> arjun.m@google.com</span>
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-sm">emergency</span> S. Mehta (Father)</span>
+</div>
+</div>
+</div>
+<div class="flex gap-sm">
+<button class="bg-white border border-outline-variant p-md rounded-xl hover:bg-surface-container transition-all" title="Message"><span class="material-symbols-outlined">chat_bubble</span></button>
+<button class="bg-white border border-outline-variant px-lg py-md rounded-xl hover:bg-surface-container font-body-md font-semibold transition-all">Record Payment</button>
+<button class="bg-white border border-outline-variant px-lg py-md rounded-xl hover:bg-surface-container font-body-md font-semibold transition-all">Raise Ticket</button>
+<div class="h-10 w-px bg-outline-variant mx-sm"></div>
+<button class="bg-primary text-white px-lg py-md rounded-xl font-body-md font-semibold hover:bg-primary-container transition-all">Actions</button>
+</div>
+</section>
+<!-- Tabs -->
+<nav class="flex gap-xl border-b border-outline-variant overflow-x-auto no-scrollbar">
+<a class="pb-md border-b-2 border-accent text-accent font-bold font-body-md" href="#">Overview</a>
+<a class="pb-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Payments</a>
+<a class="pb-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Stay History</a>
+<a class="pb-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Tickets</a>
+<a class="pb-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">KYC</a>
+<a class="pb-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Documents</a>
+<a class="pb-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Communications</a>
+<a class="pb-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Activity</a>
+</nav>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Main Workspace Column -->
+<div class="col-span-12 lg:col-span-9 space-y-lg">
+<!-- Resident Health Panel -->
+<div class="bg-white border border-outline-variant rounded-xxl p-lg shadow-sm overflow-hidden relative">
+<div class="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-green-50 to-transparent opacity-50"></div>
+<div class="flex items-center justify-between mb-xl relative z-10">
+<div>
+<h3 class="font-headline-sm text-headline-sm flex items-center gap-sm">
+                                    Resident Health Score
+                                    <span class="material-symbols-outlined text-green-600">verified</span>
+</h3>
+<p class="text-on-surface-variant font-body-sm">Operational health based on 5 parameters</p>
+</div>
+<div class="text-right">
+<span class="text-4xl font-bold text-green-600">92</span>
+<span class="text-on-surface-variant font-bold">/100</span>
+<p class="text-green-600 font-bold text-xs uppercase tracking-tighter">Healthy</p>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-5 gap-md relative z-10">
+<div class="bg-surface-container-low p-md rounded-xl border border-outline-variant/30">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold text-on-surface-variant">Payments</span>
+<span class="material-symbols-outlined text-green-600 text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="h-1 bg-green-500 rounded-full w-full"></div>
+</div>
+<div class="bg-surface-container-low p-md rounded-xl border border-outline-variant/30">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold text-on-surface-variant">Tickets</span>
+<span class="material-symbols-outlined text-green-600 text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="h-1 bg-green-500 rounded-full w-full"></div>
+</div>
+<div class="bg-surface-container-low p-md rounded-xl border border-outline-variant/30">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold text-on-surface-variant">KYC</span>
+<span class="material-symbols-outlined text-green-600 text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="h-1 bg-green-500 rounded-full w-full"></div>
+</div>
+<div class="bg-surface-container-low p-md rounded-xl border border-outline-variant/30">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold text-on-surface-variant">Lease Status</span>
+<span class="material-symbols-outlined text-amber-500 text-sm" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div class="h-1 bg-amber-500 rounded-full w-2/3"></div>
+</div>
+<div class="bg-surface-container-low p-md rounded-xl border border-outline-variant/30">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold text-on-surface-variant">Engagement</span>
+<span class="material-symbols-outlined text-green-600 text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="h-1 bg-green-500 rounded-full w-full"></div>
+</div>
+</div>
+</div>
+<!-- Overview Content Grid -->
+<div class="grid grid-cols-2 gap-gutter">
+<!-- Resident Summary -->
+<div class="bg-white border border-outline-variant rounded-xxl p-lg">
+<h4 class="font-headline-sm text-headline-sm mb-lg text-primary">Resident Summary</h4>
+<div class="space-y-md">
+<div class="flex justify-between py-sm border-b border-outline-variant/30">
+<span class="text-on-surface-variant font-body-md">Resident Since</span>
+<span class="font-bold text-primary font-body-md">12 Jan 2023</span>
+</div>
+<div class="flex justify-between py-sm border-b border-outline-variant/30">
+<span class="text-on-surface-variant font-body-md">Occupation</span>
+<span class="font-bold text-primary font-body-md">Software Engineer @ Google</span>
+</div>
+<div class="flex justify-between py-sm border-b border-outline-variant/30">
+<span class="text-on-surface-variant font-body-md">Home City</span>
+<span class="font-bold text-primary font-body-md">Bangalore</span>
+</div>
+<div class="flex justify-between py-sm">
+<span class="text-on-surface-variant font-body-md">Gender</span>
+<span class="font-bold text-primary font-body-md">Male</span>
+</div>
+</div>
+</div>
+<!-- Property Summary -->
+<div class="bg-white border border-outline-variant rounded-xxl p-lg">
+<h4 class="font-headline-sm text-headline-sm mb-lg text-primary">Lease Financials</h4>
+<div class="space-y-md">
+<div class="flex justify-between py-sm border-b border-outline-variant/30">
+<span class="text-on-surface-variant font-body-md">Monthly Rent</span>
+<span class="font-bold text-primary font-body-md">₹17,500</span>
+</div>
+<div class="flex justify-between py-sm border-b border-outline-variant/30">
+<span class="text-on-surface-variant font-body-md">Security Deposit</span>
+<span class="font-bold text-primary font-body-md">₹35,000</span>
+</div>
+<div class="flex justify-between py-sm border-b border-outline-variant/30">
+<span class="text-on-surface-variant font-body-md">Lease End</span>
+<span class="font-bold text-amber-600 font-body-md">45 days away</span>
+</div>
+<div class="flex justify-between py-sm">
+<span class="text-on-surface-variant font-body-md">Payment Cycle</span>
+<span class="font-bold text-primary font-body-md">1st of Month</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Current Financial Status (Full Width below two-column) -->
+<div class="bg-primary text-white rounded-xxl p-xl flex items-center justify-between shadow-lg">
+<div class="flex items-center gap-xl">
+<div class="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-accent text-3xl">account_balance_wallet</span>
+</div>
+<div>
+<p class="text-on-primary-container font-label-md tracking-widest uppercase">Current Outstanding Balance</p>
+<h3 class="text-4xl font-bold mt-1">₹3,200</h3>
+</div>
+</div>
+<div class="flex gap-md">
+<div class="text-right">
+<p class="text-on-primary-container text-xs">Due Date</p>
+<p class="font-bold">05 Oct 2023</p>
+</div>
+<button class="bg-accent hover:bg-orange-600 text-white px-xl py-md rounded-xl font-bold transition-all shadow-md active:scale-95">Collect Payment</button>
+</div>
+</div>
+<!-- AI Copilot Panel -->
+<div class="bg-surface-container-high/50 border border-outline rounded-xxl p-lg mt-xl">
+<div class="flex items-center gap-md mb-lg">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm">AI Resident Copilot</h4>
+<p class="text-on-surface-variant font-body-sm">Ask anything about Arjun's history or current status</p>
+</div>
+</div>
+<div class="relative mb-lg">
+<input class="w-full bg-white border border-outline-variant rounded-xl py-4 pl-6 pr-12 text-body-md focus:ring-2 focus:ring-accent outline-none transition-all" placeholder="Ask anything about this resident..." type="text"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-accent">send</span>
+</div>
+<div class="flex flex-wrap gap-sm">
+<button class="px-md py-sm bg-white border border-outline-variant rounded-lg text-xs font-semibold hover:border-accent hover:text-accent transition-all">"Show overdue payments"</button>
+<button class="px-md py-sm bg-white border border-outline-variant rounded-lg text-xs font-semibold hover:border-accent hover:text-accent transition-all">"Summarize tickets from last 3 months"</button>
+<button class="px-md py-sm bg-white border border-outline-variant rounded-lg text-xs font-semibold hover:border-accent hover:text-accent transition-all">"Is the KYC complete for all occupants?"</button>
+</div>
+</div>
+</div>
+<!-- Right Insights Rail (Sticky) -->
+<aside class="col-span-12 lg:col-span-3 space-y-lg">
+<div class="sticky top-24 space-y-lg">
+<!-- Quick Stats -->
+<div class="bg-white border border-outline-variant rounded-xxl p-md space-y-md shadow-sm">
+<h5 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest px-sm">Key Insights</h5>
+<div class="flex items-center gap-md p-sm hover:bg-surface-container rounded-xl transition-all group">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-white transition-all">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Rent</p>
+<p class="font-bold text-primary">₹17,500/mo</p>
+</div>
+</div>
+<div class="flex items-center gap-md p-sm hover:bg-surface-container rounded-xl transition-all group">
+<div class="w-10 h-10 rounded-lg bg-error-container flex items-center justify-center text-error group-hover:bg-white transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<div>
+<p class="text-[10px] text-error uppercase font-bold tracking-tighter">Outstanding</p>
+<p class="font-bold text-error">₹3,200</p>
+</div>
+</div>
+<div class="flex items-center gap-md p-sm hover:bg-surface-container rounded-xl transition-all group">
+<div class="w-10 h-10 rounded-lg bg-tertiary-fixed flex items-center justify-center text-tertiary group-hover:bg-white transition-all">
+<span class="material-symbols-outlined">event</span>
+</div>
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Lease Expiry</p>
+<p class="font-bold text-primary">45 Days Left</p>
+</div>
+</div>
+<div class="flex items-center gap-md p-sm hover:bg-surface-container rounded-xl transition-all group">
+<div class="w-10 h-10 rounded-lg bg-secondary-container flex items-center justify-center text-secondary group-hover:bg-white transition-all">
+<span class="material-symbols-outlined">confirmation_number</span>
+</div>
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Open Tickets</p>
+<p class="font-bold text-primary">2 Active</p>
+</div>
+</div>
+<div class="flex items-center gap-md p-sm hover:bg-surface-container rounded-xl transition-all group">
+<div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-700 group-hover:bg-white transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">KYC Status</p>
+<p class="font-bold text-green-700">Verified</p>
+</div>
+</div>
+<div class="flex items-center gap-md p-sm hover:bg-surface-container rounded-xl transition-all group">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-white transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Satisfaction</p>
+<p class="font-bold text-primary">4.7/5.0</p>
+</div>
+</div>
+</div>
+<!-- Notes Area -->
+<div class="bg-surface-container-low border border-outline-variant border-dashed rounded-xxl p-lg">
+<h5 class="font-body-md font-bold mb-md">Operational Notes</h5>
+<div class="space-y-sm">
+<div class="text-[11px] bg-white p-md rounded-lg shadow-sm">
+<p class="text-on-surface-variant leading-relaxed">Requested extra pillow on 12 Sep. Denied due to policy limits.</p>
+<p class="text-[9px] mt-2 font-bold text-outline uppercase tracking-widest">Admin • 12 Sep</p>
+</div>
+<button class="w-full py-2 border-2 border-dashed border-outline-variant text-on-surface-variant font-label-md rounded-lg hover:border-accent hover:text-accent transition-all">+ Add Note</button>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for tabs
+        document.querySelectorAll('nav a').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                if(tab.closest('nav').classList.contains('overflow-x-auto')) {
+                    e.preventDefault();
+                    document.querySelectorAll('nav a').forEach(t => {
+                        t.classList.remove('border-accent', 'text-accent', 'font-bold');
+                        t.classList.add('border-transparent', 'text-on-surface-variant');
+                    });
+                    tab.classList.remove('border-transparent', 'text-on-surface-variant');
+                    tab.classList.add('border-accent', 'text-accent', 'font-bold');
+                }
+            });
+        });
+    </script>
+</body></html>

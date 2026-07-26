@@ -1,0 +1,213 @@
+/* ============================================================================
+   NestPG · Operations OS — Tailwind v4 theme + design tokens
+   Single source of truth for the design system. Light + Dark.
+   ============================================================================ */
+@import 'tailwindcss';
+
+/* Dark mode driven by [data-theme="dark"] on <html> ------------------------- */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------------------------------------------------------------------------
+   Token primitives (runtime-swappable CSS variables)
+   --------------------------------------------------------------------------- */
+:root,
+[data-theme='light'] {
+  /* Canvas / surfaces */
+  --canvas: #f8fafc;
+  --panel: #ffffff;
+  --panel-subtle: #f8fafc;
+  --warm: #faf8f5;
+  --elevated: #ffffff;
+
+  /* Brand */
+  --primary: #1e293b;
+  --primary-deep: #091426;
+  --primary-container: #1e293b;
+  --on-primary: #ffffff;
+  --on-primary-muted: #8590a6;
+  --accent: #c2410c;
+  --accent-hover: #9a3412;
+  --accent-subtle: #fff1ea;
+
+  /* Status */
+  --success: #16a34a;
+  --success-subtle: #dcfce7;
+  --warning: #ea580c;
+  --warning-subtle: #ffedd5;
+  --danger: #dc2626;
+  --danger-subtle: #fee2e2;
+  --info: #0284c7;
+  --info-subtle: #e0f2fe;
+
+  /* Text */
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+  --text-inverse: #f8fafc;
+
+  /* Borders */
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-subtle: #eef2f6;
+
+  /* Sidebar (deep navy rail) */
+  --sidebar-bg: #091426;
+  --sidebar-active: #1e293b;
+  --sidebar-text: #8590a6;
+  --sidebar-text-active: #ffffff;
+  --sidebar-border: #1e293b;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(30, 41, 59, 0.04);
+  --shadow-md: 0 4px 12px rgba(30, 41, 59, 0.05);
+  --shadow-lg: 0 12px 32px rgba(30, 41, 59, 0.10);
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --canvas: #0a0f1a;
+  --panel: #111a2b;
+  --panel-subtle: #0d1524;
+  --warm: #14110d;
+  --elevated: #16213a;
+
+  --primary: #e2e8f0;
+  --primary-deep: #060b15;
+  --primary-container: #1e293b;
+  --on-primary: #ffffff;
+  --on-primary-muted: #8590a6;
+  --accent: #fb7a4a;
+  --accent-hover: #f97316;
+  --accent-subtle: #2a160c;
+
+  --success: #4ade80;
+  --success-subtle: #0f2a1a;
+  --warning: #fb923c;
+  --warning-subtle: #2a1a0d;
+  --danger: #f87171;
+  --danger-subtle: #2a1212;
+  --info: #38bdf8;
+  --info-subtle: #0c2233;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --text-inverse: #0a0f1a;
+
+  --border: #1e293b;
+  --border-strong: #334155;
+  --border-subtle: #16213a;
+
+  --sidebar-bg: #060b15;
+  --sidebar-active: #1e293b;
+  --sidebar-text: #8590a6;
+  --sidebar-text-active: #ffffff;
+  --sidebar-border: #1e293b;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.40);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------------------
+   Map tokens into Tailwind's theme so utilities resolve to live CSS vars.
+   `inline` keeps the var() reference so runtime theme switching works.
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --color-canvas: var(--canvas);
+  --color-panel: var(--panel);
+  --color-panel-subtle: var(--panel-subtle);
+  --color-warm: var(--warm);
+  --color-elevated: var(--elevated);
+
+  --color-primary: var(--primary);
+  --color-primary-deep: var(--primary-deep);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary: var(--on-primary);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-subtle: var(--accent-subtle);
+
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-danger: var(--danger);
+  --color-danger-subtle: var(--danger-subtle);
+  --color-info: var(--info);
+  --color-info-subtle: var(--info-subtle);
+
+  --color-content: var(--text-primary);
+  --color-muted: var(--text-secondary);
+  --color-faint: var(--text-tertiary);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-border-subtle: var(--border-subtle);
+
+  --color-sidebar: var(--sidebar-bg);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-text-active: var(--sidebar-text-active);
+
+  --radius-card: 16px;
+  --radius-control: 8px;
+
+  --shadow-card: var(--shadow-sm);
+  --shadow-pop: var(--shadow-md);
+  --shadow-float: var(--shadow-lg);
+}
+
+/* ---------------------------------------------------------------------------
+   Base layer
+   --------------------------------------------------------------------------- */
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background-color: var(--canvas);
+    color: var(--text-primary);
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 20;
+    font-size: 20px;
+    line-height: 1;
+    user-select: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reusable primitives
+   --------------------------------------------------------------------------- */
+@layer components {
+  .os-panel {
+    @apply bg-panel border border-border rounded-[16px];
+  }
+  .os-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .os-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .os-scroll::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 9999px;
+  }
+}

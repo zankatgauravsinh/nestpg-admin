@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Bed Inventory Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#fbf8fa",
+                        "primary-container": "#1e293b",
+                        "inverse-on-surface": "#f3f0f2",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#d8e3fb",
+                        "surface-dim": "#dcd9db",
+                        "outline": "#75777d",
+                        "secondary": "#5b5e67",
+                        "inverse-primary": "#bcc7de",
+                        "on-secondary-container": "#61646d",
+                        "surface-container-highest": "#e4e2e3",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#091426",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#fadfb8",
+                        "outline-variant": "#c5c6cd",
+                        "on-primary-container": "#8590a6",
+                        "secondary-container": "#dfe2ed",
+                        "on-surface-variant": "#45474c",
+                        "on-background": "#1b1b1d",
+                        "on-secondary-fixed-variant": "#43474f",
+                        "on-tertiary-fixed": "#271902",
+                        "on-secondary": "#ffffff",
+                        "background": "#fbf8fa",
+                        "secondary-fixed": "#dfe2ed",
+                        "surface": "#fbf8fa",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#f0edef",
+                        "on-secondary-fixed": "#181c23",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#545f73",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e4e2e3",
+                        "on-primary-fixed": "#111c2d",
+                        "on-tertiary-fixed-variant": "#564427",
+                        "secondary-fixed-dim": "#c3c6d1",
+                        "primary-fixed-dim": "#bcc7de",
+                        "surface-container-low": "#f5f3f4",
+                        "surface-container-high": "#eae7e9",
+                        "on-tertiary-container": "#a38c6a",
+                        "inverse-surface": "#303032",
+                        "on-surface": "#1b1b1d",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "tertiary": "#1e1200",
+                        "tertiary-fixed-dim": "#ddc39d",
+                        "tertiary-container": "#35260c",
+                        "accent-vermillion": "#C2410C"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "32px",
+                        "xs": "4px",
+                        "xxl": "48px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "base": "4px",
+                        "md": "16px",
+                        "gutter": "24px"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .room-card:hover {
+            border-color: #C2410C;
+            transform: translateY(-2px);
+        }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar (The Anchor) -->
+<aside class="fixed h-full w-[260px] left-0 top-0 bg-primary dark:bg-primary-container border-r border-outline-variant dark:border-outline flex flex-col p-md z-50">
+<div class="mb-xxl">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">PropOps OS</h1>
+<p class="text-label-md font-label-md text-on-primary-container uppercase tracking-wider">Enterprise Control</p>
+</div>
+<nav class="flex-1 space-y-sm">
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">event_seat</span> Operations
+            </a>
+<!-- Inventory Active -->
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg font-bold font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">bed</span> Inventory
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">chat</span> Messages
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">confirmation_number</span> Tickets
+            </a>
+</nav>
+<div class="mt-auto space-y-sm pt-md border-t border-on-primary-container/20">
+<button class="w-full bg-accent-vermillion text-white py-sm rounded-lg font-bold text-label-md flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">add</span> Quick Action
+            </button>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">help</span> Support
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] min-h-screen flex flex-col">
+<!-- TopAppBar (The Blueprint) -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flex items-center justify-between px-xl z-40">
+<div class="flex items-center gap-xl">
+<span class="font-headline-md text-headline-md font-black text-primary">Bed Inventory</span>
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-body-sm focus:ring-2 focus:ring-accent-vermillion/20 focus:border-accent-vermillion transition-all" placeholder="Search rooms or residents..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<button class="px-md py-sm border border-outline-variant rounded-lg text-body-sm font-medium hover:bg-surface-container-high transition-colors flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">file_download</span> Export
+                </button>
+<button class="px-md py-sm bg-accent-vermillion text-white rounded-lg text-body-sm font-bold hover:bg-opacity-90 transition-all flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">add</span> Add Entry
+                </button>
+<div class="flex items-center gap-sm border-l border-outline-variant pl-lg">
+<button class="p-2 text-secondary hover:bg-surface-container-high rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="flex items-center gap-sm">
+<img alt="Manager" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional close-up portrait of a high-end corporate manager with a clean-cut appearance. The individual is wearing a charcoal grey tailored suit and a crisp white shirt, set against a softly blurred, modern architectural background with cool blue and grey tones. The lighting is bright and even, reflecting a high-quality, professional corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzxHY9Fg0ZT-We-peRYUEgjDpGFzEyI9Qok6XpZkt2JHfzStOMCru8NIfS6I4-L9sDr1S4Rd106iLPlCcZDxJg8PXEl_QNWE-0Wy1yOcAJQ_WvmXRWKY8bMwf-L5PJI18Y_3h-bule1vZBbGsIOOdSSFWULyNGAmSAJ4_HITPO0hOlRtN7oCoDyxfnZgxzKbdc2zc_8Ci_4T-doUdkHkOQf7Wf53C0iriAMyZWpRakUaMbcKoCOudSzo-loJPLTCTdY68u8m0ZGkRi"/>
+<span class="material-symbols-outlined text-secondary">account_circle</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="mt-16 p-xl flex gap-gutter overflow-hidden h-[calc(100vh-64px)]">
+<!-- Left Workspace: Room Map & Controls -->
+<div class="flex-1 flex flex-col gap-lg overflow-y-auto pr-2">
+<!-- Quick Stats Row -->
+<div class="grid grid-cols-4 gap-lg">
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant">
+<p class="text-label-md text-secondary uppercase font-bold tracking-tight">Total Beds</p>
+<p class="font-display-lg text-display-lg text-primary mt-xs">1,248</p>
+<div class="mt-xs text-body-sm text-green-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> 12% vs last month
+                        </div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant">
+<p class="text-label-md text-secondary uppercase font-bold tracking-tight">Available</p>
+<p class="font-display-lg text-display-lg text-primary mt-xs">84</p>
+<div class="w-full bg-surface-container rounded-full h-1 mt-md">
+<div class="bg-green-500 h-1 rounded-full w-[15%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant">
+<p class="text-label-md text-secondary uppercase font-bold tracking-tight">Occupied</p>
+<p class="font-display-lg text-display-lg text-primary mt-xs">1,120</p>
+<div class="w-full bg-surface-container rounded-full h-1 mt-md">
+<div class="bg-blue-500 h-1 rounded-full w-[90%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant">
+<p class="text-label-md text-secondary uppercase font-bold tracking-tight">Maintenance</p>
+<p class="font-display-lg text-display-lg text-error mt-xs">44</p>
+<div class="w-full bg-surface-container rounded-full h-1 mt-md">
+<div class="bg-error h-1 rounded-full w-[5%]"></div>
+</div>
+</div>
+</div>
+<!-- Property & Floor Selector -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-xl">
+<div>
+<label class="block text-label-md text-secondary font-bold mb-xs">PROPERTY</label>
+<select class="bg-transparent border-none font-headline-sm text-headline-sm text-primary p-0 focus:ring-0 cursor-pointer">
+<option>Skyline Residency - Block A</option>
+<option>Skyline Residency - Block B</option>
+<option>Emerald Heights</option>
+</select>
+</div>
+<div class="h-10 w-px bg-outline-variant"></div>
+<div>
+<label class="block text-label-md text-secondary font-bold mb-xs">FLOOR</label>
+<div class="flex gap-xs">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:border-accent-vermillion transition-colors">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white border border-primary">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:border-accent-vermillion transition-colors">3</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:border-accent-vermillion transition-colors">4</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:border-accent-vermillion transition-colors">5</button>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm px-md py-sm bg-surface-container rounded-lg">
+<span class="status-dot bg-green-500"></span>
+<span class="text-body-sm font-medium">Vacant</span>
+</div>
+<div class="flex items-center gap-sm px-md py-sm bg-surface-container rounded-lg">
+<span class="status-dot bg-blue-500"></span>
+<span class="text-body-sm font-medium">Occupied</span>
+</div>
+<div class="flex items-center gap-sm px-md py-sm bg-surface-container rounded-lg">
+<span class="status-dot bg-yellow-500"></span>
+<span class="text-body-sm font-medium">Reserved</span>
+</div>
+<div class="flex items-center gap-sm px-md py-sm bg-surface-container rounded-lg">
+<span class="status-dot bg-error"></span>
+<span class="text-body-sm font-medium">Maintenance</span>
+</div>
+</div>
+</div>
+<!-- Room Grid (Visual Map) -->
+<div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xxl:grid-cols-5 gap-lg">
+<!-- Room Component -->
+<script>
+                        const generateRoom = (num, status, colorClass, beds) => `
+                            <div class="room-card group bg-surface-container-lowest p-md rounded-xl border border-outline-variant transition-all cursor-pointer">
+                                <div class="flex justify-between items-start mb-md">
+                                    <div>
+                                        <span class="text-label-md font-bold text-secondary">ROOM</span>
+                                        <h3 class="font-headline-sm text-headline-sm text-primary">${num}</h3>
+                                    </div>
+                                    <span class="px-xs py-0.5 rounded text-[10px] font-bold uppercase ${colorClass} bg-opacity-10">${status}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-sm">
+                                    ${beds.map(b => `
+                                        <div class="h-1.5 rounded-full ${b === 'occ' ? 'bg-blue-500' : b === 'vac' ? 'bg-green-500' : 'bg-error'}"></div>
+                                    `).join('')}
+                                </div>
+                                <div class="mt-md flex justify-between items-center opacity-60 group-hover:opacity-100 transition-opacity">
+                                    <span class="text-body-sm">4 Beds Total</span>
+                                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                                </div>
+                            </div>
+                        `;
+                    </script>
+<!-- Rendering mock rooms -->
+<div class="contents" id="room-grid-container">
+<!-- Rooms will be injected by JS for diversity -->
+</div>
+</div>
+</div>
+<!-- Right Panel: Bed Detail & Quick Allocation -->
+<aside class="w-[380px] flex flex-col gap-lg">
+<!-- Bed Map Detail -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-lg">
+<h4 class="font-headline-sm text-headline-sm text-primary">Room 204 Detail</h4>
+<button class="text-accent-vermillion font-bold text-label-md hover:underline">Edit Config</button>
+</div>
+<div class="relative w-full aspect-square bg-surface-container rounded-lg p-lg border border-outline-variant/30 flex flex-col justify-between">
+<!-- Schematic Representation of Beds in Room -->
+<div class="flex justify-between">
+<div class="w-20 h-28 border-2 border-blue-500 bg-white rounded-lg p-xs flex flex-col justify-between shadow-sm">
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-bold text-blue-600">B1</span>
+<span class="material-symbols-outlined text-[14px] text-blue-500">person</span>
+</div>
+<div class="text-[10px] font-medium leading-tight">Liam Anderson</div>
+</div>
+<div class="w-20 h-28 border-2 border-green-500 bg-white rounded-lg p-xs flex flex-col justify-center items-center shadow-sm hover:bg-green-50 cursor-pointer transition-colors group">
+<span class="text-[10px] font-bold text-green-600 absolute top-2 left-2">B2</span>
+<span class="material-symbols-outlined text-[20px] text-green-500 group-hover:scale-110 transition-transform">add_circle</span>
+<span class="text-[9px] font-bold text-green-700 mt-1 uppercase">Vacant</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-xl">
+<div class="w-20 h-28 border-2 border-blue-500 bg-white rounded-lg p-xs flex flex-col justify-between shadow-sm">
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-bold text-blue-600">B3</span>
+<span class="material-symbols-outlined text-[14px] text-blue-500">person</span>
+</div>
+<div class="text-[10px] font-medium leading-tight">Sarah Jenkins</div>
+</div>
+<div class="w-20 h-28 border-2 border-error bg-white rounded-lg p-xs flex flex-col justify-center items-center shadow-sm">
+<span class="text-[10px] font-bold text-error absolute bottom-2 right-2">B4</span>
+<span class="material-symbols-outlined text-[20px] text-error">build</span>
+<span class="text-[9px] font-bold text-error mt-1 uppercase text-center">Under Maintenance</span>
+</div>
+</div>
+<div class="absolute inset-x-0 bottom-1/2 translate-y-1/2 flex justify-center">
+<div class="px-lg py-sm bg-white border border-outline-variant rounded-full text-label-md font-bold shadow-sm">ENTRANCE</div>
+</div>
+</div>
+</div>
+<!-- Quick Allocation Panel -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant flex-1 flex flex-col">
+<h4 class="font-headline-sm text-headline-sm text-primary mb-lg">Quick Allocation</h4>
+<div class="space-y-lg flex-1">
+<div>
+<label class="block text-label-md text-secondary font-bold mb-sm">SEARCH RESIDENT</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">person_search</span>
+<input class="w-full pl-10 pr-4 py-2 border border-outline-variant rounded-lg text-body-sm focus:ring-2 focus:ring-accent-vermillion/20 focus:border-accent-vermillion transition-all" placeholder="Name, ID or Phone" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div>
+<label class="block text-label-md text-secondary font-bold mb-sm">ROOM</label>
+<input class="w-full px-4 py-2 bg-surface-container border border-outline-variant rounded-lg text-body-sm font-medium" disabled="" type="text" value="204"/>
+</div>
+<div>
+<label class="block text-label-md text-secondary font-bold mb-sm">BED</label>
+<select class="w-full px-4 py-2 border border-outline-variant rounded-lg text-body-sm focus:ring-2 focus:ring-accent-vermillion focus:border-accent-vermillion transition-all">
+<option>Bed 2 (Vacant)</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block text-label-md text-secondary font-bold mb-sm">MOVE-IN DATE</label>
+<input class="w-full px-4 py-2 border border-outline-variant rounded-lg text-body-sm focus:ring-2 focus:ring-accent-vermillion focus:border-accent-vermillion transition-all" type="date"/>
+</div>
+<div>
+<label class="block text-label-md text-secondary font-bold mb-sm">DURATION (MONTHS)</label>
+<div class="flex items-center gap-sm">
+<input class="flex-1 accent-accent-vermillion" max="12" min="1" step="1" type="range"/>
+<span class="w-10 text-center font-bold text-primary">6</span>
+</div>
+</div>
+</div>
+<div class="pt-lg border-t border-outline-variant mt-auto">
+<div class="flex justify-between items-center mb-md">
+<span class="text-body-sm text-secondary">Estimated Rent</span>
+<span class="text-headline-sm font-bold text-primary">$450.00/mo</span>
+</div>
+<button class="w-full py-md bg-primary text-white rounded-lg font-bold hover:bg-opacity-90 transition-all flex items-center justify-center gap-sm shadow-lg">
+<span class="material-symbols-outlined">key</span> Confirm &amp; Assign
+                        </button>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<script>
+        const container = document.getElementById('room-grid-container');
+        const statuses = [
+            { text: 'Occupied', color: 'text-blue-600 bg-blue-500', beds: ['occ', 'occ', 'occ', 'occ'] },
+            { text: 'Vacant', color: 'text-green-600 bg-green-500', beds: ['vac', 'vac', 'vac', 'vac'] },
+            { text: 'Partial', color: 'text-yellow-600 bg-yellow-500', beds: ['occ', 'vac', 'occ', 'vac'] },
+            { text: 'Maintenance', color: 'text-error bg-error', beds: ['occ', 'occ', 'maint', 'maint'] },
+            { text: 'Reserved', color: 'text-yellow-600 bg-yellow-500', beds: ['occ', 'res', 'occ', 'occ'] }
+        ];
+
+        let html = '';
+        for(let i = 201; i <= 215; i++) {
+            const rand = Math.floor(Math.random() * statuses.length);
+            const s = statuses[rand];
+            html += generateRoom(i, s.text, s.color, s.beds);
+        }
+        container.innerHTML = html;
+
+        // Micro-interactions
+        document.querySelectorAll('.room-card').forEach(card => {
+            card.addEventListener('click', () => {
+                // Simplified UI state change
+                document.querySelectorAll('.room-card').forEach(c => c.classList.remove('border-accent-vermillion', 'ring-2', 'ring-accent-vermillion/20'));
+                card.classList.add('border-accent-vermillion', 'ring-2', 'ring-accent-vermillion/20');
+            });
+        });
+    </script>
+</body></html>

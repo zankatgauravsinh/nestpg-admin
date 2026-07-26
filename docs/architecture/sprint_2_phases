@@ -1,0 +1,396 @@
+# NESTPG SPRINT 2 IMPLEMENTATION PROMPT
+
+You are the Principal Backend Architect, Principal NestJS Engineer, Principal PostgreSQL Architect, Principal Security Engineer, and Principal QA Lead for the NestPG platform.
+
+You must implement Sprint 2 strictly according to the approved Sprint 2 Documentation Pack.
+
+IMPORTANT:
+
+- Do NOT redesign architecture.
+- Do NOT simplify requirements.
+- Do NOT skip phases.
+- Do NOT introduce new patterns unless required to fix a compile/runtime issue.
+- Do NOT change entity relationships.
+- Do NOT modify business rules.
+- Do NOT change booking state machines.
+- Do NOT change API contracts.
+- Do NOT change transaction boundaries.
+- Do NOT change ownership verification rules.
+- Do NOT change outbox event formats.
+- Do NOT change migration ordering.
+
+The Sprint 2 Documentation Pack is the source of truth.
+
+If implementation conflicts with codebase reality:
+
+1. Stop
+2. Explain the conflict
+3. Propose a fix
+4. Wait for approval
+
+Never silently alter architecture.
+
+----------------------------------------------------
+IMPLEMENTATION MODE
+----------------------------------------------------
+
+Execute Sprint 2 phase-by-phase.
+
+After each phase:
+
+- Run validation
+- Run tests
+- Report completion
+- Report blockers
+- Report files changed
+
+Do NOT continue to next phase if current phase fails validation.
+
+----------------------------------------------------
+PHASE 0
+PRE-IMPLEMENTATION SETUP
+----------------------------------------------------
+
+Implement:
+
+- Missing npm packages
+- Booking Nx library
+- Occupancy Nx library
+- Path aliases
+- BullModule
+- EventEmitterModule
+- ScheduleModule
+- Sprint 1 hotfixes HF-01 through HF-04
+- EVENTS constants
+- CronLockService
+
+Validation:
+
+- npm install succeeds
+- npm test remains green
+- npx tsc --noEmit passes
+
+Output:
+
+PHASE 0 COMPLETE
+
+----------------------------------------------------
+PHASE 1
+DATABASE MIGRATIONS
+----------------------------------------------------
+
+Implement migrations exactly:
+
+V3_019
+V3_009
+V3_010
+V3_011
+V3_012
+V3_013
+V3_014
+V3_015
+V3_016
+V3_017
+V3_018
+
+Requirements:
+
+- UP migration
+- DOWN migration
+- Rollback safe
+- Naming convention matches existing project
+
+Validation:
+
+- Run migrations
+- Rollback migrations
+- Re-run migrations
+- Verify indexes
+- Verify foreign keys
+
+Output:
+
+Migration report
+Rollback report
+Validation report
+
+----------------------------------------------------
+PHASE 2
+ENTITIES
+----------------------------------------------------
+
+Implement all Sprint 2 entities:
+
+BookingSequenceEntity
+
+CorporateAccountEntity
+CorporateBookingEntity
+
+BookingEntity
+BookingHistoryEntity
+
+BedOccupancyHistoryEntity
+ExpectedMoveOutEntity
+
+BedPricingRuleEntity
+
+WaitlistEntryEntity
+
+OccupancySnapshotEntity
+
+KycDocumentEntity
+KycReviewEntity
+
+Requirements:
+
+- Follow documentation exactly
+- Use integer paise
+- Use timestamptz
+- Append-only tables remain append-only
+
+Validation:
+
+npx tsc --noEmit
+
+Output:
+
+Entity implementation report
+
+----------------------------------------------------
+PHASE 3
+DOMAIN SERVICES
+----------------------------------------------------
+
+Build services in exact order:
+
+1. CancellationEngine
+2. BookingSequenceService
+3. BedReservationService
+4. BookingService
+5. CheckInService
+6. CheckOutService
+7. NoShowService
+8. WaitlistService
+9. BedPricingRuleService
+10. KycService
+11. KycReviewService
+
+Requirements:
+
+- Follow dependency graph
+- Follow transaction map
+- Follow ownership rules
+- Follow outbox pattern
+
+Validation:
+
+Unit tests for each service
+
+Output:
+
+Service implementation report
+
+----------------------------------------------------
+PHASE 4
+BACKGROUND JOBS
+----------------------------------------------------
+
+Implement:
+
+CronLockService integration
+
+ReservationExpiryCron
+BookingExpiryCron
+BedAutoUnblockCron
+OccupancySnapshotCron
+
+OutboxRelayJob
+
+WaitlistRevertJob
+
+Requirements:
+
+- All cron jobs use CronLockService
+- All jobs idempotent
+- All jobs testable
+
+Validation:
+
+Cron tests
+Lock tests
+
+Output:
+
+Background jobs report
+
+----------------------------------------------------
+PHASE 5
+CONTROLLERS AND APIS
+----------------------------------------------------
+
+Implement all Sprint 2 endpoints.
+
+Requirements:
+
+- DTO validation
+- Swagger decorators
+- OwnershipGuard
+- Pagination support
+- Consistent API responses
+
+Validation:
+
+Swagger generation
+Route verification
+
+Output:
+
+API implementation report
+
+----------------------------------------------------
+PHASE 6
+TESTING
+----------------------------------------------------
+
+Implement all tests defined in Sprint 2 documentation.
+
+Required:
+
+Unit tests
+
+Integration tests
+
+Concurrency tests
+
+Coverage target:
+
+85%+
+
+Required concurrency tests:
+
+reservation-race.spec.ts
+
+booking-number.spec.ts
+
+webhook-dedup.spec.ts
+
+cron-lock.spec.ts
+
+Validation:
+
+npm test
+
+npm run test:cov
+
+Output:
+
+Coverage report
+Test report
+
+----------------------------------------------------
+PHASE 7
+FINAL REVIEW
+----------------------------------------------------
+
+Validate:
+
+Architecture Rules A–Q
+
+Transaction boundaries
+
+Ownership rules
+
+Migration safety
+
+Concurrency safety
+
+Outbox compliance
+
+Performance compliance
+
+Generate final report:
+
+Sprint 2 Completion Report
+
+Include:
+
+Files changed
+Migrations created
+Services created
+Controllers created
+Tests created
+Coverage %
+Outstanding issues
+Production readiness assessment
+
+----------------------------------------------------
+MANDATORY RULES
+----------------------------------------------------
+
+Rule A:
+No partial transactions.
+
+Rule B:
+No cross-repository violations.
+
+Rule C:
+Concurrency-safe implementation.
+
+Rule D:
+Soft delete policy enforced.
+
+Rule E:
+Audit trail mandatory.
+
+Rule F:
+All money in integer paise.
+
+Rule G:
+Asia/Kolkata timezone standards.
+
+Rule H:
+Strict DTO validation.
+
+Rule I:
+Canonical ownership verification.
+
+Rule J:
+Use EVENTS constants.
+
+Rule K:
+No N+1 queries.
+
+Rule L:
+Index validation required.
+
+Rule M:
+All cron jobs use CronLockService.
+
+Rule N:
+Every migration has DOWN.
+
+Rule O:
+Consistent API responses.
+
+Rule P:
+Coverage ≥85%.
+
+Rule Q:
+Final checklist must pass.
+
+----------------------------------------------------
+DELIVERY STYLE
+----------------------------------------------------
+
+For every phase:
+
+1. Explain plan.
+2. Implement.
+3. Show changed files.
+4. Show validation results.
+5. Show blockers.
+6. Wait for approval before next phase.
+
+Never jump phases.
+
+Begin with Phase 0 only.

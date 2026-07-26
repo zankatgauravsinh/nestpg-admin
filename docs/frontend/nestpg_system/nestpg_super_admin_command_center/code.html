@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Platform Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf8fa; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid #e2e8f0; }
+        .trend-up { color: #16a34a; }
+        .trend-down { color: #dc2626; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#fadfb8",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#1e293b",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#8590a6",
+                        "background": "#fbf8fa",
+                        "primary": "#091426",
+                        "outline": "#75777d",
+                        "outline-variant": "#c5c6cd",
+                        "surface": "#fbf8fa",
+                        "accent": "#C2410C"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-background antialiased flex overflow-hidden h-screen">
+<!-- SideNavBar (Left) -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 bg-primary flex flex-col p-md border-r border-outline-variant z-50">
+<div class="mb-xl px-sm">
+<h1 class="text-headline-md font-bold text-on-primary">PropOps Pro</h1>
+<p class="text-label-md text-on-primary-container">Enterprise Admin</p>
+</div>
+<nav class="flex-1 space-y-sm overflow-y-auto custom-scrollbar">
+<!-- Active: Portfolio Overview -->
+<a class="flex items-center gap-sm px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-bold transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Portfolio Overview</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-primary-container/70 hover:text-on-primary hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="font-label-md text-label-md">Property Assets</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-primary-container/70 hover:text-on-primary hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Tenant Hub</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-primary-container/70 hover:text-on-primary hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Financial Engine</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-primary-container/70 hover:text-on-primary hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-label-md text-label-md">Maintenance Ops</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-primary-container/70 hover:text-on-primary hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-label-md text-label-md">Compliance</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-primary-container pt-md">
+<button class="w-full bg-[#C2410C] text-white py-sm rounded-lg font-bold mb-md hover:opacity-90 transition-opacity">
+                Create Property
+            </button>
+<div class="space-y-sm">
+<a class="flex items-center gap-sm px-md py-xs text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] mr-20 flex-1 h-screen overflow-y-auto custom-scrollbar">
+<!-- TopNavBar -->
+<header class="sticky top-0 bg-surface border-b border-outline-variant px-xl py-md flex justify-between items-center z-40">
+<div class="flex items-center gap-xl">
+<h2 class="text-headline-sm font-black text-primary">NestPG Dashboard</h2>
+<div class="hidden md:flex gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md" href="#">Portfolio</a>
+<a class="text-secondary hover:text-primary transition-all font-body-md text-body-md" href="#">Assets</a>
+<a class="text-secondary hover:text-primary transition-all font-body-md text-body-md" href="#">Analytics</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="pl-10 pr-4 py-1.5 rounded-lg border border-outline-variant bg-surface-container-low focus:ring-2 focus:ring-accent/20 focus:border-accent text-body-md w-64 outline-none" placeholder="Search entries..." type="text"/>
+</div>
+<div class="flex gap-sm">
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-all active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-all active:opacity-80">
+<span class="material-symbols-outlined">apps</span>
+</button>
+</div>
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXr6IolneUIzzvB2rsWa8LKP7A7m_ZcsZZD75u3Z8asCN7vty22FnL1ywcL2y4qV70SONYkeew9OPuetLiIR0nMQvh9VQza5hI9P6MDLdi2yRgydducTyVOwQimLlMZd2Xn9g6ifuNjLkvrz8xm2L3JXMab_vZyjjsuaouu4smOG11wzxX06syODmK3PfTGKEMGcmWEiOrIJBdhNKIHc2iZ3OA2HhlkSmi9v-nodcX9mQzjuT9pTEfQJvrqqvbruCMKFMGHemE5IDe"/>
+</div>
+</header>
+<div class="p-xl space-y-xl max-w-[1440px] mx-auto">
+<!-- Page Title -->
+<div class="flex justify-between items-end">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-primary">NestPG Platform Command Center</h1>
+<p class="font-body-md text-body-md text-secondary">Monitor portfolio growth, revenue, occupancy, and platform operations.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm border border-outline-variant rounded-lg font-bold text-primary bg-white hover:bg-surface-container-low transition-all">Export Data</button>
+<button class="px-md py-sm bg-accent text-white rounded-lg font-bold hover:opacity-90 transition-all">Add Entry</button>
+</div>
+</div>
+<!-- Section 1: Platform Snapshot (Bento Grid) -->
+<section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-lg">
+<div class="bg-white p-lg border border-outline-variant rounded-xl flex flex-col justify-between">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Total Properties</span>
+<div class="flex items-baseline gap-xs">
+<span class="text-headline-md font-bold text-primary">1,248</span>
+<span class="text-[10px] text-green-600 font-bold">+12</span>
+</div>
+</div>
+<div class="bg-white p-lg border border-outline-variant rounded-xl flex flex-col justify-between">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Total Beds</span>
+<span class="text-headline-md font-bold text-primary">42,860</span>
+</div>
+<div class="bg-white p-lg border border-outline-variant rounded-xl flex flex-col justify-between">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Active Residents</span>
+<span class="text-headline-md font-bold text-primary">37,420</span>
+</div>
+<div class="bg-white p-lg border border-outline-variant rounded-xl flex flex-col justify-between">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Property Owners</span>
+<span class="text-headline-md font-bold text-primary">865</span>
+</div>
+<div class="bg-white p-lg border border-outline-variant rounded-xl flex flex-col justify-between">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Cities</span>
+<span class="text-headline-md font-bold text-primary">42</span>
+</div>
+<div class="bg-white p-lg border border-outline-variant rounded-xl flex flex-col justify-between">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Active Prop</span>
+<span class="text-headline-md font-bold text-primary">1,186</span>
+</div>
+</section>
+<!-- Main Layout Grid -->
+<div class="grid grid-cols-12 gap-xl">
+<!-- Section 2: Revenue Command Center -->
+<div class="col-span-12 lg:col-span-8 bg-white border border-outline-variant rounded-xl p-xl">
+<div class="flex justify-between items-start mb-xl">
+<div>
+<h3 class="text-headline-sm font-bold text-primary">Revenue Command Center</h3>
+<p class="text-body-sm text-secondary">Aggregated monthly fiscal performance and commission tracking.</p>
+</div>
+<select class="bg-surface-container-low border-none rounded-lg text-body-sm px-sm py-1 focus:ring-0">
+<option>Last 12 Months</option>
+<option>YTD</option>
+</select>
+</div>
+<div class="grid grid-cols-4 gap-lg mb-xl">
+<div class="space-y-1">
+<p class="text-label-md text-secondary">Monthly Revenue</p>
+<p class="text-headline-md font-bold text-primary">₹1.82 Cr</p>
+<span class="text-[11px] text-green-600 font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 12.4%
+                            </span>
+</div>
+<div class="space-y-1">
+<p class="text-label-md text-secondary">NestPG Commission</p>
+<p class="text-headline-md font-bold text-primary">₹21.4 L</p>
+<span class="text-[11px] text-green-600 font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 8.1%
+                            </span>
+</div>
+<div class="space-y-1">
+<p class="text-label-md text-secondary">Pending Commission</p>
+<p class="text-headline-md font-bold text-primary">₹2.7 L</p>
+<span class="text-[11px] text-accent font-bold">Action Required</span>
+</div>
+<div class="space-y-1">
+<p class="text-label-md text-secondary">Active Cashflow</p>
+<p class="text-headline-md font-bold text-primary">₹1.59 Cr</p>
+<span class="text-[11px] text-secondary">Settled</span>
+</div>
+</div>
+<div class="h-64 w-full bg-surface-container-low rounded-lg relative overflow-hidden flex items-end px-lg gap-lg">
+<!-- Simulated Chart Bars -->
+<div class="flex-1 bg-primary/10 rounded-t h-[40%]"></div>
+<div class="flex-1 bg-primary/10 rounded-t h-[55%]"></div>
+<div class="flex-1 bg-primary/10 rounded-t h-[50%]"></div>
+<div class="flex-1 bg-primary/10 rounded-t h-[65%]"></div>
+<div class="flex-1 bg-primary/10 rounded-t h-[70%]"></div>
+<div class="flex-1 bg-primary/10 rounded-t h-[80%]"></div>
+<div class="flex-1 bg-accent/40 rounded-t h-[85%]"></div>
+<div class="flex-1 bg-accent/60 rounded-t h-[75%]"></div>
+<div class="flex-1 bg-accent/80 rounded-t h-[90%]"></div>
+<div class="flex-1 bg-accent rounded-t h-[95%]"></div>
+<div class="flex-1 bg-accent rounded-t h-[92%]"></div>
+<div class="flex-1 bg-primary rounded-t h-[100%]"></div>
+</div>
+</div>
+<!-- Section 3: Portfolio Health -->
+<div class="col-span-12 lg:col-span-4 bg-white border border-outline-variant rounded-xl p-xl flex flex-col">
+<h3 class="text-headline-sm font-bold text-primary mb-xl">Portfolio Health</h3>
+<div class="flex flex-col items-center justify-center flex-1 py-lg">
+<div class="relative w-40 h-40">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-highest" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-accent" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-dasharray="440" stroke-dashoffset="44" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-headline-lg font-black text-primary">92%</span>
+<span class="text-label-md text-secondary">Occupancy</span>
+</div>
+</div>
+<p class="mt-md font-body-md text-primary font-bold">39,431 / 42,860 Beds</p>
+</div>
+<div class="space-y-md mt-auto">
+<div class="flex h-3 rounded-full overflow-hidden">
+<div class="w-[92%] bg-accent" title="Occupied"></div>
+<div class="w-[3%] bg-tertiary-fixed" title="Reserved"></div>
+<div class="w-[3%] bg-slate-300" title="Vacant"></div>
+<div class="w-[2%] bg-slate-800" title="Maintenance"></div>
+</div>
+<div class="flex justify-between items-center bg-surface-container-low p-md rounded-lg">
+<span class="text-body-md font-bold text-primary">Health Score</span>
+<span class="text-headline-sm text-green-600 font-black">91/100</span>
+</div>
+</div>
+</div>
+<!-- Section 4: Geographic Growth -->
+<div class="col-span-12 lg:col-span-7 bg-white border border-outline-variant rounded-xl p-xl">
+<h3 class="text-headline-sm font-bold text-primary mb-lg">Properties by City</h3>
+<div class="space-y-md">
+<div class="space-y-sm">
+<div class="flex justify-between text-label-md text-secondary"><span>Ahmedabad</span><span>412</span></div>
+<div class="h-2 bg-surface-container-low rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 85%"></div></div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between text-label-md text-secondary"><span>Pune</span><span>324</span></div>
+<div class="h-2 bg-surface-container-low rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 72%"></div></div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between text-label-md text-secondary"><span>Mumbai</span><span>285</span></div>
+<div class="h-2 bg-surface-container-low rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 65%"></div></div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between text-label-md text-secondary"><span>Bengaluru</span><span>120</span></div>
+<div class="h-2 bg-surface-container-low rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 30%"></div></div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between text-label-md text-secondary"><span>Delhi NCR</span><span>107</span></div>
+<div class="h-2 bg-surface-container-low rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 25%"></div></div>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-5 bg-white border border-outline-variant rounded-xl p-xl relative overflow-hidden group">
+<div class="relative z-10">
+<h3 class="text-headline-sm font-bold text-primary">City Expansion</h3>
+<p class="text-body-sm text-secondary">Fastest growing regions in India</p>
+</div>
+<div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity">
+<!-- Simulated India Map Placeholder -->
+<div class="w-full h-full bg-gradient-to-br from-accent via-primary to-surface-container-highest"></div>
+</div>
+<div class="mt-lg space-y-md relative z-10">
+<div class="bg-white/90 border border-outline-variant p-md rounded-lg flex justify-between items-center">
+<div>
+<p class="text-body-sm font-bold text-primary">Pune</p>
+<p class="text-label-md text-green-600">+18% MoM Growth</p>
+</div>
+<span class="material-symbols-outlined text-accent" data-weight="fill">trending_up</span>
+</div>
+<div class="bg-white/90 border border-outline-variant p-md rounded-lg flex justify-between items-center">
+<div>
+<p class="text-body-sm font-bold text-primary">Ahmedabad</p>
+<p class="text-label-md text-secondary">Saturation (85%)</p>
+</div>
+<span class="material-symbols-outlined text-primary">verified</span>
+</div>
+</div>
+</div>
+<!-- Section 5: Owner Performance -->
+<div class="col-span-12 bg-white border border-outline-variant rounded-xl overflow-hidden">
+<div class="px-xl py-lg border-b border-outline-variant flex justify-between items-center">
+<h3 class="text-headline-sm font-bold text-primary">Owner Performance Leaderboard</h3>
+<button class="text-accent text-body-sm font-bold hover:underline">View All Owners</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-xl py-sm font-label-md text-label-md text-secondary uppercase">Owner</th>
+<th class="px-xl py-sm font-label-md text-label-md text-secondary uppercase">Properties</th>
+<th class="px-xl py-sm font-label-md text-label-md text-secondary uppercase">Residents</th>
+<th class="px-xl py-sm font-label-md text-label-md text-secondary uppercase">Occupancy</th>
+<th class="px-xl py-sm font-label-md text-label-md text-secondary uppercase">Revenue</th>
+<th class="px-xl py-sm font-label-md text-label-md text-secondary uppercase">Rating</th>
+<th class="px-xl py-sm font-label-md text-label-md text-secondary uppercase">Growth</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-xl py-md text-body-md font-bold text-primary">Reliance Realty</td>
+<td class="px-xl py-md text-body-md">142</td>
+<td class="px-xl py-md text-body-md">5,840</td>
+<td class="px-xl py-md text-body-md font-bold text-green-600">96.4%</td>
+<td class="px-xl py-md text-body-md">₹24.8 L</td>
+<td class="px-xl py-md text-body-md">4.8/5</td>
+<td class="px-xl py-md text-body-md text-green-600">+12%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-xl py-md text-body-md font-bold text-primary">Godrej Properties</td>
+<td class="px-xl py-md text-body-md">86</td>
+<td class="px-xl py-md text-body-md">3,120</td>
+<td class="px-xl py-md text-body-md font-bold text-green-600">94.1%</td>
+<td class="px-xl py-md text-body-md">₹18.2 L</td>
+<td class="px-xl py-md text-body-md">4.7/5</td>
+<td class="px-xl py-md text-body-md text-green-600">+8.4%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-xl py-md text-body-md font-bold text-primary">DLF Assets</td>
+<td class="px-xl py-md text-body-md">74</td>
+<td class="px-xl py-md text-body-md">2,840</td>
+<td class="px-xl py-md text-body-md font-bold text-accent">88.5%</td>
+<td class="px-xl py-md text-body-md">₹14.4 L</td>
+<td class="px-xl py-md text-body-md">4.5/5</td>
+<td class="px-xl py-md text-body-md text-red-500">-2.1%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Section 6: Platform Operations -->
+<div class="col-span-12 grid grid-cols-1 md:grid-cols-4 gap-lg">
+<div class="bg-white p-lg border border-outline-variant rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-md text-secondary">Pending KYC</span>
+<span class="px-sm py-xs bg-red-100 text-red-700 text-[10px] font-bold rounded">HIGH PRIO</span>
+</div>
+<p class="text-headline-md font-black text-primary">128</p>
+<button class="w-full mt-sm py-xs text-body-sm font-bold border border-outline-variant rounded hover:bg-surface-container-low">View Queue</button>
+</div>
+<div class="bg-white p-lg border border-outline-variant rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-md text-secondary">Open Tickets</span>
+<span class="px-sm py-xs bg-accent/10 text-accent text-[10px] font-bold rounded">42 ESCALATED</span>
+</div>
+<p class="text-headline-md font-black text-primary">64</p>
+<button class="w-full mt-sm py-xs text-body-sm font-bold border border-outline-variant rounded hover:bg-surface-container-low">View Queue</button>
+</div>
+<div class="bg-white p-lg border border-outline-variant rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-md text-secondary">Owner Onboarding</span>
+</div>
+<p class="text-headline-md font-black text-primary">22</p>
+<button class="w-full mt-sm py-xs text-body-sm font-bold border border-outline-variant rounded hover:bg-surface-container-low">View Queue</button>
+</div>
+<div class="bg-white p-lg border border-outline-variant rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-md text-secondary">Property Verification</span>
+</div>
+<p class="text-headline-md font-black text-primary">37</p>
+<button class="w-full mt-sm py-xs text-body-sm font-bold border border-outline-variant rounded hover:bg-surface-container-low">View Queue</button>
+</div>
+</div>
+<!-- Section 7 & 8: BI and Alerts -->
+<div class="col-span-12 lg:col-span-6 space-y-xl">
+<h3 class="text-headline-sm font-bold text-primary">Business Intelligence</h3>
+<div class="grid grid-cols-2 gap-lg">
+<div class="bg-white p-lg border border-outline-variant rounded-xl">
+<p class="text-label-md text-secondary">New Residents</p>
+<div class="flex items-center gap-sm">
+<span class="text-headline-md font-bold text-primary">+2,481</span>
+<span class="material-symbols-outlined text-green-600">trending_up</span>
+</div>
+</div>
+<div class="bg-white p-lg border border-outline-variant rounded-xl">
+<p class="text-label-md text-secondary">Owner Churn</p>
+<div class="flex items-center gap-sm">
+<span class="text-headline-md font-bold text-primary">1.8%</span>
+<span class="material-symbols-outlined text-green-600">arrow_downward</span>
+</div>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-6 space-y-xl">
+<h3 class="text-headline-sm font-bold text-primary">Active Alerts &amp; Risks</h3>
+<div class="space-y-sm">
+<div class="bg-red-50 border border-red-200 p-md rounded-lg flex items-center gap-md">
+<span class="material-symbols-outlined text-red-600">warning</span>
+<p class="text-body-sm text-red-900 font-bold">14 Properties dropped below 70% occupancy threshold in Ahmedabad.</p>
+</div>
+<div class="bg-orange-50 border border-orange-200 p-md rounded-lg flex items-center gap-md">
+<span class="material-symbols-outlined text-orange-600">schedule</span>
+<p class="text-body-sm text-orange-900 font-bold">Commission overdue for 12 owners exceeding 15-day SLA.</p>
+</div>
+</div>
+</div>
+<!-- Section 9: Activity Feed (Asymmetric) -->
+<div class="col-span-12 lg:col-span-4 bg-white border border-outline-variant rounded-xl p-xl">
+<h3 class="text-headline-sm font-bold text-primary mb-xl">Platform Pulse</h3>
+<div class="space-y-lg relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-surface-container-highest">
+<div class="relative pl-lg">
+<div class="absolute left-0 top-1 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+<span class="material-symbols-outlined text-[14px]">person_add</span>
+</div>
+<p class="text-body-sm font-bold text-primary">New Owner: Emerald Estates onboarded</p>
+<p class="text-label-md text-secondary">2 mins ago • Pune Regional Office</p>
+</div>
+<div class="relative pl-lg">
+<div class="absolute left-0 top-1 w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center text-accent">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+</div>
+<p class="text-body-sm font-bold text-primary">Property Verified: NestPG Heights B</p>
+<p class="text-label-md text-secondary">15 mins ago • Mumbai</p>
+</div>
+<div class="relative pl-lg">
+<div class="absolute left-0 top-1 w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[14px]">account_balance_wallet</span>
+</div>
+<p class="text-body-sm font-bold text-primary">Bulk KYC Approved: 124 residents</p>
+<p class="text-label-md text-secondary">1 hour ago • Platform System</p>
+</div>
+</div>
+</div>
+<!-- Section 10: AI Business Copilot -->
+<div class="col-span-12 lg:col-span-8 bg-tertiary-fixed/30 border border-tertiary-fixed rounded-xl p-xl flex flex-col justify-center">
+<div class="flex items-center gap-md mb-lg">
+<div class="p-sm bg-accent rounded-lg text-white">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-bold text-primary">AI Business Copilot</h3>
+<p class="text-body-sm text-secondary">Instant intelligence across platform operations.</p>
+</div>
+</div>
+<div class="relative">
+<input class="w-full p-xl pr-32 bg-white rounded-xl border border-outline-variant focus:ring-accent focus:border-accent shadow-sm" placeholder="Ask anything about your platform..." type="text"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 px-lg py-sm bg-primary text-white rounded-lg font-bold">Ask Copilot</button>
+</div>
+<div class="flex flex-wrap gap-sm mt-md">
+<button class="px-md py-xs border border-outline-variant rounded-full text-label-md hover:bg-white transition-all">"Where is the highest commission leakage?"</button>
+<button class="px-md py-xs border border-outline-variant rounded-full text-label-md hover:bg-white transition-all">"Predict occupancy for Q4 in Pune"</button>
+<button class="px-md py-xs border border-outline-variant rounded-full text-label-md hover:bg-white transition-all">"Identify top 5 risky properties"</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- SideNavBar (Right Health Rail) -->
+<aside class="w-20 h-screen fixed right-0 top-0 bg-surface-container-low border-l border-outline-variant flex flex-col items-center py-xl space-y-lg z-50">
+<div class="flex flex-col items-center gap-xs mb-xl">
+<span class="text-[10px] font-bold text-secondary uppercase tracking-tighter">Health</span>
+<div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+</div>
+<div class="flex flex-col gap-xl">
+<div class="flex flex-col items-center group cursor-help" title="Today's Revenue: ₹6.4 L">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">payments</span>
+<span class="text-[10px] font-bold text-primary">6.4L</span>
+</div>
+<div class="flex flex-col items-center group cursor-help" title="148 New Residents">
+<span class="material-symbols-outlined bg-tertiary-fixed text-on-tertiary-fixed rounded-full p-2">group_add</span>
+<span class="text-[10px] font-bold text-primary">148</span>
+</div>
+<div class="flex flex-col items-center group cursor-help" title="6 New Properties">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">domain_add</span>
+<span class="text-[10px] font-bold text-primary">6</span>
+</div>
+<div class="flex flex-col items-center group cursor-help" title="Recovery Rate: 96.2%">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">assignment_return</span>
+<span class="text-[10px] font-bold text-primary">96%</span>
+</div>
+</div>
+<div class="mt-auto flex flex-col items-center gap-lg">
+<button class="p-2 text-secondary hover:text-primary transition-colors scale-110">
+<span class="material-symbols-outlined">monitoring</span>
+</button>
+<button class="p-2 text-secondary hover:text-primary transition-colors scale-110">
+<span class="material-symbols-outlined">error</span>
+</button>
+</div>
+</aside>
+<script>
+        // Micro-interactions and real-time feel
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => el.classList.add('scale-95'));
+            el.addEventListener('mouseup', () => el.classList.remove('scale-95'));
+            el.addEventListener('mouseleave', () => el.classList.remove('scale-95'));
+        });
+
+        // Hover animation for cards
+        const cards = document.querySelectorAll('.bg-white.border');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.borderColor = '#C2410C';
+                card.style.transition = 'border-color 0.3s ease';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.borderColor = '#c5c6cd';
+            });
+        });
+    </script>
+</body></html>

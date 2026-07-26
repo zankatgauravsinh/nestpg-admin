@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Owner Dashboard | Owner Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fbf8fa;
+            color: #1b1b1d;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-bright": "#fbf8fa",
+                      "primary-container": "#1e293b",
+                      "inverse-on-surface": "#f3f0f2",
+                      "error": "#ba1a1a",
+                      "on-error": "#ffffff",
+                      "primary-fixed": "#d8e3fb",
+                      "surface-dim": "#dcd9db",
+                      "outline": "#75777d",
+                      "secondary": "#5b5e67",
+                      "inverse-primary": "#bcc7de",
+                      "on-secondary-container": "#61646d",
+                      "surface-container-highest": "#e4e2e3",
+                      "on-tertiary": "#ffffff",
+                      "primary": "#091426",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#fadfb8",
+                      "outline-variant": "#c5c6cd",
+                      "on-primary-container": "#8590a6",
+                      "secondary-container": "#dfe2ed",
+                      "on-surface-variant": "#45474c",
+                      "on-background": "#1b1b1d",
+                      "on-secondary-fixed-variant": "#43474f",
+                      "on-tertiary-fixed": "#271902",
+                      "on-secondary": "#ffffff",
+                      "background": "#fbf8fa",
+                      "secondary-fixed": "#dfe2ed",
+                      "surface": "#fbf8fa",
+                      "error-container": "#ffdad6",
+                      "surface-container": "#f0edef",
+                      "on-secondary-fixed": "#181c23",
+                      "on-error-container": "#93000a",
+                      "surface-tint": "#545f73",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-variant": "#e4e2e3",
+                      "on-primary-fixed": "#111c2d",
+                      "on-tertiary-fixed-variant": "#564427",
+                      "secondary-fixed-dim": "#c3c6d1",
+                      "primary-fixed-dim": "#bcc7de",
+                      "surface-container-low": "#f5f3f4",
+                      "surface-container-high": "#eae7e9",
+                      "on-tertiary-container": "#a38c6a",
+                      "inverse-surface": "#303032",
+                      "on-surface": "#1b1b1d",
+                      "on-primary-fixed-variant": "#3c475a",
+                      "tertiary": "#1e1200",
+                      "tertiary-fixed-dim": "#ddc39d",
+                      "tertiary-container": "#35260c"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin": "32px",
+                      "xs": "4px",
+                      "xxl": "48px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "xl": "32px",
+                      "base": "4px",
+                      "md": "16px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "body-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "code-sm": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-md": ["Inter"]
+              },
+              "fontSize": {
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background">
+<!-- SideNavBar Shell -->
+<aside class="fixed h-full w-[260px] left-0 top-0 bg-primary dark:bg-primary-container border-r border-outline-variant dark:border-outline flex flex-col p-md z-50">
+<div class="mb-xxl px-sm">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">PropOps OS</h1>
+<p class="text-label-md font-label-md text-on-primary-fixed-variant opacity-70">Enterprise Control</p>
+</div>
+<nav class="flex-1 flex flex-col gap-xs">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg font-bold transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-body-md font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary hover:bg-primary-fixed-variant/10 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">event_seat</span>
+<span class="text-body-md font-body-md">Operations</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary hover:bg-primary-fixed-variant/10 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">bed</span>
+<span class="text-body-md font-body-md">Inventory</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary hover:bg-primary-fixed-variant/10 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">chat</span>
+<span class="text-body-md font-body-md">Messages</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary hover:bg-primary-fixed-variant/10 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">confirmation_number</span>
+<span class="text-body-md font-body-md">Tickets</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-xs border-t border-on-primary/10 pt-md">
+<button class="w-full mb-md bg-[#C2410C] text-white py-sm rounded-lg font-headline-sm text-headline-sm hover:brightness-110 transition-all">
+                Quick Action
+            </button>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-label-md font-label-md">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="ml-[260px] min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flex items-center justify-between px-xl w-full z-40">
+<div class="flex items-center gap-xl">
+<span class="font-headline-md text-headline-md font-black text-primary">Owner Portal</span>
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container border-none rounded-lg text-body-md w-64 focus:ring-2 focus:ring-[#C2410C]" placeholder="Search portfolio..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<button class="text-secondary hover:text-primary transition-colors flex items-center gap-xs">
+<span class="material-symbols-outlined">file_download</span>
+<span class="text-label-md font-label-md">Export</span>
+</button>
+<button class="bg-[#C2410C] text-white px-md py-sm rounded-lg font-label-md text-label-md font-bold hover:brightness-110 active:scale-95 transition-all">
+                    Add Entry
+                </button>
+<div class="h-6 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:bg-surface-container-high p-xs rounded-full transition-colors">notifications</span>
+<div class="flex items-center gap-sm cursor-pointer hover:bg-surface-container-high pr-sm rounded-full transition-colors">
+<img alt="Manager Avatar" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional portrait of a senior real estate executive with a clean-cut appearance. He is wearing a tailored navy blue suit against a soft-focus office background with warm architectural lighting. The overall mood is confident and corporate, reflecting a premium operations-focused design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjLqgZSrVq2dGvwmCx01uSpcxL6C-m5P4P2r1w-sw6yb_4iDsWH7lIXRcxwN0_COR4rff2sLxOlE9Wm4fp_IaB-y5O3XFrqQZ6dbQk1BVMphyjQb9Ox6oMJ6A8WXzEQqyYIMHAgBqALbW0uKxMiqZYeVp7JpK23pkodl8fH1Oa6ZHGQXZg26sSbru3OJByBGz-wivIGkFLQzRef67-9pGJOwYlc6GOG9sld4fDTC1pfQtM1z76176Avpa_c4E6N4wmlqxzPnP3drqJ"/>
+<span class="material-symbols-outlined text-secondary">account_circle</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="pt-24 pb-12 px-xl">
+<!-- Metrics Strip -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-lg mb-xl">
+<div class="bg-white border border-outline-variant p-lg rounded-xl flex flex-col gap-xs">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Total Revenue</span>
+<span class="text-headline-lg font-headline-lg text-primary font-bold">$142,500.00</span>
+<span class="text-body-sm font-body-sm text-green-600 flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">trending_up</span> +12.4% vs prev. month
+                    </span>
+</div>
+<div class="bg-white border border-outline-variant p-lg rounded-xl flex flex-col gap-xs">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Portfolio Occupancy</span>
+<span class="text-headline-lg font-headline-lg text-primary font-bold">94.2%</span>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden mt-sm">
+<div class="bg-[#C2410C] h-full" style="width: 94.2%"></div>
+</div>
+</div>
+<div class="bg-white border border-outline-variant p-lg rounded-xl flex flex-col gap-xs">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Total Payouts</span>
+<span class="text-headline-lg font-headline-lg text-primary font-bold">$108,240.50</span>
+<span class="text-body-sm font-body-sm text-secondary">Settled YTD</span>
+</div>
+<div class="bg-white border border-outline-variant p-lg rounded-xl flex flex-col gap-xs">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">ROI %</span>
+<span class="text-headline-lg font-headline-lg text-primary font-bold">8.6%</span>
+<span class="text-body-sm font-body-sm text-green-600 flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">check_circle</span> Target: 7.5%
+                    </span>
+</div>
+<div class="bg-white border border-outline-variant p-lg rounded-xl flex flex-col gap-xs">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">Net Cash Flow</span>
+<span class="text-headline-lg font-headline-lg text-primary font-bold">$34,259.50</span>
+<span class="text-body-sm font-body-sm text-secondary">After all expenses</span>
+</div>
+</div>
+<!-- Bento Layout for Analytics -->
+<div class="bento-grid mb-xl">
+<!-- Revenue Chart Area -->
+<div class="col-span-12 lg:col-span-8 bg-white border border-outline-variant rounded-xl p-xl flex flex-col">
+<div class="flex items-center justify-between mb-lg">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Revenue vs Expenses</h3>
+<p class="text-body-sm font-body-sm text-secondary">Performance breakdown over the last 6 months</p>
+</div>
+<div class="flex gap-sm">
+<select class="text-label-md border-outline-variant rounded-lg bg-surface px-md py-sm">
+<option>Last 6 Months</option>
+<option>Last Year</option>
+</select>
+</div>
+</div>
+<!-- Chart Placeholder -->
+<div class="flex-1 relative min-h-[300px] w-full mt-md">
+<div class="absolute inset-0 flex items-end justify-between gap-xl px-md">
+<!-- Bars Simulation -->
+<div class="flex-1 flex flex-col gap-xs items-center group">
+<div class="w-full bg-surface-container rounded-t-lg h-32 group-hover:bg-[#C2410C]/20 transition-all"></div>
+<div class="w-full bg-[#C2410C] rounded-t-lg h-48"></div>
+<span class="text-label-md text-secondary mt-sm">Jan</span>
+</div>
+<div class="flex-1 flex flex-col gap-xs items-center group">
+<div class="w-full bg-surface-container rounded-t-lg h-28 group-hover:bg-[#C2410C]/20 transition-all"></div>
+<div class="w-full bg-[#C2410C] rounded-t-lg h-52"></div>
+<span class="text-label-md text-secondary mt-sm">Feb</span>
+</div>
+<div class="flex-1 flex flex-col gap-xs items-center group">
+<div class="w-full bg-surface-container rounded-t-lg h-36 group-hover:bg-[#C2410C]/20 transition-all"></div>
+<div class="w-full bg-[#C2410C] rounded-t-lg h-64"></div>
+<span class="text-label-md text-secondary mt-sm">Mar</span>
+</div>
+<div class="flex-1 flex flex-col gap-xs items-center group">
+<div class="w-full bg-surface-container rounded-t-lg h-40 group-hover:bg-[#C2410C]/20 transition-all"></div>
+<div class="w-full bg-[#C2410C] rounded-t-lg h-72"></div>
+<span class="text-label-md text-secondary mt-sm">Apr</span>
+</div>
+<div class="flex-1 flex flex-col gap-xs items-center group">
+<div class="w-full bg-surface-container rounded-t-lg h-34 group-hover:bg-[#C2410C]/20 transition-all"></div>
+<div class="w-full bg-[#C2410C] rounded-t-lg h-56"></div>
+<span class="text-label-md text-secondary mt-sm">May</span>
+</div>
+<div class="flex-1 flex flex-col gap-xs items-center group">
+<div class="w-full bg-surface-container rounded-t-lg h-38 group-hover:bg-[#C2410C]/20 transition-all"></div>
+<div class="w-full bg-[#C2410C] rounded-t-lg h-68"></div>
+<span class="text-label-md text-secondary mt-sm">Jun</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Payout Status Card -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-lg">
+<div class="bg-primary text-white p-xl rounded-xl relative overflow-hidden flex flex-col h-full justify-between">
+<!-- Abstract Background Texture -->
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+
+</div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-xxl">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-primary-container">Payout Status</h4>
+<p class="text-body-sm text-on-primary-fixed-variant">Next automatic transfer</p>
+</div>
+<span class="material-symbols-outlined text-on-tertiary-fixed">payments</span>
+</div>
+<div class="flex flex-col gap-md mb-xl">
+<div class="flex justify-between items-end">
+<span class="text-display-lg font-display-lg">$14,200.00</span>
+<span class="px-sm py-xs bg-green-500/20 text-green-400 text-label-md rounded border border-green-500/30">Pending Approval</span>
+</div>
+<div class="grid grid-cols-2 gap-md mt-md">
+<div class="bg-white/5 p-md rounded-lg">
+<p class="text-label-md text-on-primary-fixed-variant uppercase">Last Payout</p>
+<p class="text-body-lg font-bold">Oct 01, 2023</p>
+</div>
+<div class="bg-white/5 p-md rounded-lg">
+<p class="text-label-md text-on-primary-fixed-variant uppercase">Scheduled</p>
+<p class="text-body-lg font-bold">Nov 01, 2023</p>
+</div>
+</div>
+</div>
+</div>
+<button class="relative z-10 w-full py-md bg-white text-primary font-bold rounded-lg hover:bg-surface-container-high transition-all active:scale-95">
+                            Withdraw Funds Now
+                        </button>
+</div>
+</div>
+</div>
+<!-- Property Performance Table Section -->
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden">
+<div class="px-xl py-lg border-b border-outline-variant flex items-center justify-between bg-surface-bright">
+<h3 class="font-headline-md text-headline-md text-primary">Property Performance</h3>
+<div class="flex gap-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-sm">filter_list</span>
+<button class="pl-9 pr-4 py-2 border border-outline-variant rounded-lg text-body-md bg-white hover:bg-surface transition-colors">
+                                Filter Properties
+                            </button>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-xl py-md text-label-md font-label-md text-secondary uppercase">Property Name</th>
+<th class="px-md py-md text-label-md font-label-md text-secondary uppercase">City</th>
+<th class="px-md py-md text-label-md font-label-md text-secondary uppercase text-right">Yield %</th>
+<th class="px-md py-md text-label-md font-label-md text-secondary uppercase text-center">Occupancy</th>
+<th class="px-md py-md text-label-md font-label-md text-secondary uppercase text-right">Maintenance</th>
+<th class="px-xl py-md text-label-md font-label-md text-secondary uppercase text-right">Owner Share</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr class="hover:bg-surface-container-lowest transition-colors cursor-pointer group">
+<td class="px-xl py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary overflow-hidden border border-outline-variant">
+<img alt="Skyline Heights" class="w-full h-full object-cover" data-alt="A modern, high-end residential apartment building with floor-to-ceiling glass windows and sleek architectural lines. Shot during the golden hour with warm sunset tones reflecting off the glass. The style is professional and aspirational, consistent with luxury property management aesthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkLz-uZGiAPoQk3_qw21ejvD25GaBNr4VRr7QfnqJpRLoeFmWaQFJHA6rSVVQPSVfccMHmHNlpe7QNAxN2I9f62DkcgW8ga-agPCKSC-MQ9LZImiSFOVIMiWqgaLrS9adToMeCHflf07Dtk9WKycE870yt9YHp8MjDsiOfxsEHUk76O0V160v25rn4YbkALLLWyje-y0Fj9mjhz2-UoAbzRn8Y4scadGfQ_V_iSEI8PsyfCgN-ZbM_XVtwFfhBmMlIBmyHcX6uN9lV"/>
+</div>
+<span class="text-body-md font-bold text-primary">Skyline Heights</span>
+</div>
+</td>
+<td class="px-md py-lg text-body-md text-secondary">New York, NY</td>
+<td class="px-md py-lg text-right">
+<span class="text-body-md font-bold text-green-600">9.2%</span>
+</td>
+<td class="px-md py-lg text-center">
+<span class="px-sm py-xs bg-green-100 text-green-700 text-label-md rounded-full font-bold">100%</span>
+</td>
+<td class="px-md py-lg text-right text-body-md text-error">-$1,240.00</td>
+<td class="px-xl py-lg text-right font-bold text-primary">$12,450.00</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors cursor-pointer group">
+<td class="px-xl py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary overflow-hidden border border-outline-variant">
+<img alt="Park View Villas" class="w-full h-full object-cover" data-alt="Luxurious contemporary villas nestled in a lush green park landscape. The architecture features clean white walls and natural stone textures. Bright daylight illuminating the scene creates a clean, airy, and high-quality feel suitable for an executive property portal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9HYgrIdF_PQbSo0OPpEpeey4WLr6DUe1VMpl1BBfJuSC2pCbBGj0pau2lrfJak_SO_-h_7JZ9A4WXAD7aYmKp3mCCGZvj9pBwXKS4uR1BtJ3cAhy33riUxrpxv_iJYKCYMcrZTZCOJvKrph3SeJk2fzkGnUyZiKQntk_u5Z-DR2gG2_2gQQ2HMTaUptC7Nr0xT8V9JOycLEgWme5oL31jkk4dPWvluboNuitfyXf22tnsn_2oclxEcSPPszbF0iF7jThOttNoWPmr"/>
+</div>
+<span class="text-body-md font-bold text-primary">Park View Villas</span>
+</div>
+</td>
+<td class="px-md py-lg text-body-md text-secondary">Miami, FL</td>
+<td class="px-md py-lg text-right">
+<span class="text-body-md font-bold text-primary">7.8%</span>
+</td>
+<td class="px-md py-lg text-center">
+<span class="px-sm py-xs bg-amber-100 text-amber-700 text-label-md rounded-full font-bold">88%</span>
+</td>
+<td class="px-md py-lg text-right text-body-md text-error">-$8,400.00</td>
+<td class="px-xl py-lg text-right font-bold text-primary">$8,120.00</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors cursor-pointer group">
+<td class="px-xl py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary overflow-hidden border border-outline-variant">
+<img alt="The Industrial Lofts" class="w-full h-full object-cover" data-alt="A stylish industrial-style loft building with exposed red brick and large black-framed windows. The scene is set in an urban environment with clean sidewalks and modern street furniture. The lighting is crisp and clear, emphasizing a high-fidelity, sophisticated real estate management style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOqXuE2M9SoYT3yvleL_CbUjzfYwlUrLfI8IOGZrnbiEZHYrpyTeqgPlYRiaed_LiccMZCyB745qPH0MNgp8tzm43_eO5x3SjEeE5z2eo1xa3Te56Lbm95gF1c4wIlFmPBLmrcm8XBVQtDaigmGIF8HSS6ysQK_iuabHzXoqmaQlW-tFeqdipMygpRtu3gJI-JDEHWiWD8BEKv-3Zwgn_EfjxaaYpclIdMIzE_wu3E2e0_scDqDZm9k9AQQXOG6vqXuwckyLonaUtZ"/>
+</div>
+<span class="text-body-md font-bold text-primary">The Industrial Lofts</span>
+</div>
+</td>
+<td class="px-md py-lg text-body-md text-secondary">Chicago, IL</td>
+<td class="px-md py-lg text-right">
+<span class="text-body-md font-bold text-green-600">11.4%</span>
+</td>
+<td class="px-md py-lg text-center">
+<span class="px-sm py-xs bg-green-100 text-green-700 text-label-md rounded-full font-bold">96%</span>
+</td>
+<td class="px-md py-lg text-right text-body-md text-error">-$450.00</td>
+<td class="px-xl py-lg text-right font-bold text-primary">$15,800.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-lg bg-surface-container-low flex items-center justify-center border-t border-outline-variant">
+<button class="text-body-md font-bold text-[#C2410C] hover:underline">View All 14 Properties</button>
+</div>
+</div>
+<!-- Footer Meta -->
+<footer class="mt-xxl flex flex-col md:flex-row justify-between items-center text-label-md text-secondary/60 gap-md">
+<div class="flex gap-xl">
+<span>© 2023 PropOps OS by NestPG. All rights reserved.</span>
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+<div class="flex items-center gap-sm">
+<span class="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+<span>System Status: All Operations Normal</span>
+</div>
+</footer>
+</main>
+</div>
+<!-- Interaction Script -->
+<script>
+        document.querySelectorAll('.active\\:scale-95').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-95');
+            });
+        });
+
+        // Simple Fade In on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('opacity-0');
+            setTimeout(() => {
+                document.body.classList.remove('opacity-0');
+                document.body.classList.add('transition-opacity', 'duration-700', 'opacity-100');
+            }, 100);
+        });
+    </script>
+</body></html>

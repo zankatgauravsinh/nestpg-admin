@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Operations OS — Bookings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .row-expanded { transition: max-height 0.3s ease-in-out; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#545f73",
+                      "surface-container-high": "#eae7e9",
+                      "primary-container": "#1e293b",
+                      "primary": "#091426",
+                      "tertiary": "#1e1200",
+                      "on-primary-container": "#8590a6",
+                      "background": "#fbf8fa",
+                      "on-secondary": "#ffffff",
+                      "inverse-primary": "#bcc7de",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed": "#111c2d",
+                      "outline": "#75777d",
+                      "surface-container": "#f0edef",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#dfe2ed",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed": "#271902",
+                      "surface-variant": "#e4e2e3",
+                      "surface-container-low": "#f5f3f4",
+                      "secondary": "#5b5e67",
+                      "secondary-container": "#dfe2ed",
+                      "surface-dim": "#dcd9db",
+                      "primary-fixed-dim": "#bcc7de",
+                      "outline-variant": "#c5c6cd",
+                      "surface": "#fbf8fa",
+                      "on-secondary-container": "#61646d",
+                      "secondary-fixed-dim": "#c3c6d1",
+                      "tertiary-fixed-dim": "#ddc39d",
+                      "tertiary-fixed": "#fadfb8",
+                      "tertiary-container": "#35260c",
+                      "on-primary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "on-background": "#1b1b1d",
+                      "surface-bright": "#fbf8fa",
+                      "error-container": "#ffdad6",
+                      "inverse-surface": "#303032",
+                      "on-surface-variant": "#45474c",
+                      "on-secondary-fixed-variant": "#43474f",
+                      "on-secondary-fixed": "#181c23",
+                      "surface-container-highest": "#e4e2e3",
+                      "on-tertiary-container": "#a38c6a",
+                      "on-primary-fixed-variant": "#3c475a",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed-variant": "#564427",
+                      "primary-fixed": "#d8e3fb",
+                      "on-surface": "#1b1b1d",
+                      "inverse-on-surface": "#f3f0f2",
+                      "accent": "#C2410C"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "4px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "gutter": "24px",
+                      "lg": "24px",
+                      "xxl": "48px",
+                      "md": "16px",
+                      "sm": "8px",
+                      "margin": "32px"
+              },
+              "fontFamily": {
+                      "display-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "code-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 bg-primary flex flex-col p-md border-r border-outline-variant z-50">
+<div class="flex items-center gap-sm px-sm py-md mb-xl">
+<div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div>
+<h1 class="font-display-lg text-headline-sm font-bold text-on-primary">NestPG</h1>
+<p class="font-label-md text-[10px] text-on-primary-container tracking-widest uppercase">Operations OS</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md px-md py-sm text-on-primary-container/70 hover:text-on-primary transition-colors group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Active State: Bookings -->
+<a class="flex items-center gap-md px-md py-sm bg-surface-tint/20 text-on-primary rounded-lg font-bold group scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="font-label-md text-label-md">Bookings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-md text-label-md">Residents</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="font-label-md text-label-md">Portfolio</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="font-label-md text-label-md">Operations</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Financials</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Intelligence</span>
+</a>
+</nav>
+<div class="mt-auto pt-md border-t border-on-primary-container/20 space-y-1">
+<a class="flex items-center gap-md px-md py-sm text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] flex-1 min-h-screen">
+<!-- TopAppBar -->
+<header class="h-16 fixed top-0 right-0 left-[260px] bg-surface z-40 border-b border-outline-variant flex items-center justify-between px-xl">
+<div class="flex items-center gap-xl">
+<h2 class="font-headline-sm text-headline-sm font-semibold text-primary">Bookings &amp; Reservations</h2>
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-secondary">search</span>
+<input class="w-full pl-[44px] pr-md py-sm bg-surface-container-low border border-outline-variant rounded-lg text-body-md focus:ring-2 focus:ring-accent/10 focus:border-accent outline-none" placeholder="Search residents, properties or booking IDs..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm text-secondary hover:bg-surface-container-high rounded-full relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-sm text-secondary hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-sm"></div>
+<div class="flex items-center gap-sm">
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a property manager in a corporate setting. The manager is wearing a charcoal suit and has a friendly, executive expression. The background is a blurred high-end office interior with warm lighting and a soft bokeh effect." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCytESdk8Jurtpe3aBL4n97eHvLfgn1mUV42vkm7ljD0zJfxxwn1l31WXPdZWoy0mjuRgiT-VODa7fqyCVWVIIVevGmd5JKUcKu3nYcxJbHqqtBsOnyKmeFAFKs1tLXHGUM-vgE36lP748xvyYnjZJrV0A0-y_7W7oY05IfDE75rZZqgf6hVaFfyJbeowAmmwCb_Bp6GknMIILqv2TxbKfrzMyZQJH5aD4B-SUuSV8l3oI9TDMICxQrQKli1yerx1qSpRM_-8jfMxYn"/>
+<span class="font-label-md text-on-surface">Admin User</span>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="pt-24 px-xl pb-xl space-y-xl max-w-[1440px] mx-auto">
+<!-- Header Actions -->
+<div class="flex items-end justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Daily Check-in Management</h3>
+<p class="font-body-md text-secondary mt-xs">Operational view for daily check-in management and bulk processing.</p>
+</div>
+<div class="flex items-center gap-sm">
+<button class="flex items-center gap-xs px-md py-sm border border-outline-variant rounded-lg font-label-md text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-md">upload</span> Import
+                    </button>
+<button class="flex items-center gap-xs px-md py-sm border border-outline-variant rounded-lg font-label-md text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-md">download</span> Export
+                    </button>
+<button class="flex items-center gap-xs px-md py-sm bg-accent text-white rounded-lg font-label-md hover:opacity-90 transition-colors">
+<span class="material-symbols-outlined text-md">add</span> Create Booking
+                    </button>
+</div>
+</div>
+<!-- Bulk Action Bar (Floating) -->
+<div class="hidden flex items-center justify-between p-md bg-primary text-on-primary rounded-xl shadow-lg transform transition-all animate-in slide-in-from-bottom-4" id="bulkActions">
+<div class="flex items-center gap-md">
+<span class="font-label-md text-on-primary-container"><span id="selectedCount">0</span> selected</span>
+<div class="w-[1px] h-6 bg-on-primary-container/20"></div>
+<div class="flex items-center gap-sm">
+<button class="flex items-center gap-xs px-sm py-1 rounded-md hover:bg-on-primary/10 text-body-sm"><span class="material-symbols-outlined text-sm">bed</span> Assign Beds</button>
+<button class="flex items-center gap-xs px-sm py-1 rounded-md hover:bg-on-primary/10 text-body-sm"><span class="material-symbols-outlined text-sm">chat</span> WhatsApp</button>
+<button class="flex items-center gap-xs px-sm py-1 rounded-md hover:bg-on-primary/10 text-body-sm"><span class="material-symbols-outlined text-sm">mail</span> Email</button>
+<button class="flex items-center gap-xs px-sm py-1 rounded-md hover:bg-on-primary/10 text-body-sm"><span class="material-symbols-outlined text-sm">verified</span> Approve KYC</button>
+<button class="flex items-center gap-xs px-sm py-1 rounded-md hover:bg-on-primary/10 text-body-sm"><span class="material-symbols-outlined text-sm">move_down</span> Move Stage</button>
+</div>
+</div>
+<button class="text-on-primary-container hover:text-on-primary" onclick="toggleBulkActions(false)">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Quick Filters -->
+<div class="flex items-center gap-xs overflow-x-auto pb-sm custom-scrollbar">
+<button class="px-md py-sm rounded-full font-label-md bg-primary text-on-primary whitespace-nowrap">Today’s Check-Ins</button>
+<button class="px-md py-sm rounded-full font-label-md bg-surface-container border border-outline-variant text-secondary hover:border-primary transition-colors whitespace-nowrap">Tomorrow</button>
+<button class="px-md py-sm rounded-full font-label-md bg-surface-container border border-outline-variant text-secondary hover:border-primary transition-colors whitespace-nowrap">This Week</button>
+<button class="px-md py-sm rounded-full font-label-md bg-surface-container border border-outline-variant text-secondary hover:border-primary transition-colors whitespace-nowrap">Pending KYC</button>
+<button class="px-md py-sm rounded-full font-label-md bg-surface-container border border-outline-variant text-secondary hover:border-primary transition-colors whitespace-nowrap">Deposit Pending</button>
+<button class="px-md py-sm rounded-full font-label-md bg-surface-container border border-outline-variant text-secondary hover:border-primary transition-colors whitespace-nowrap">Ready To Move-In</button>
+<button class="px-md py-sm rounded-full font-label-md bg-surface-container border border-outline-variant text-secondary hover:border-primary transition-colors whitespace-nowrap">Corporate</button>
+<button class="px-md py-sm rounded-full font-label-md bg-surface-container border border-outline-variant text-secondary hover:border-primary transition-colors whitespace-nowrap">VIP</button>
+<button class="px-md py-sm rounded-full font-label-md bg-surface-container border border-outline-variant text-secondary hover:border-primary transition-colors whitespace-nowrap">Cancelled</button>
+</div>
+<!-- Main Data Grid Container -->
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-md py-md w-12"><input class="rounded border-outline-variant text-accent focus:ring-accent" onclick="selectAllRows(this)" type="checkbox"/></th>
+<th class="px-md py-md font-label-md text-on-surface uppercase tracking-wider">Resident</th>
+<th class="px-md py-md font-label-md text-on-surface uppercase tracking-wider">Booking ID</th>
+<th class="px-md py-md font-label-md text-on-surface uppercase tracking-wider">Property &amp; Allocation</th>
+<th class="px-md py-md font-label-md text-on-surface uppercase tracking-wider">Move-In</th>
+<th class="px-md py-md font-label-md text-on-surface uppercase tracking-wider text-right">Financials</th>
+<th class="px-md py-md font-label-md text-on-surface uppercase tracking-wider">Status</th>
+<th class="px-md py-md font-label-md text-on-surface uppercase tracking-wider">Health</th>
+<th class="px-md py-md font-label-md text-on-surface uppercase tracking-wider">Manager</th>
+<th class="px-md py-md font-label-md text-on-surface uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/50">
+<!-- Expanded Row (Rahul Sharma) -->
+<tr class="bg-surface-container-lowest hover:bg-surface-container transition-colors group cursor-pointer" onclick="toggleRow('rahul-details')">
+<td class="px-md py-lg" onclick="event.stopPropagation()"><input class="row-checkbox rounded border-outline-variant text-accent focus:ring-accent" onchange="updateSelectedCount()" type="checkbox"/></td>
+<td class="px-md py-lg">
+<div class="flex items-center gap-md">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A portrait of a young Indian man with a modern haircut, smiling warmly. The lighting is natural and bright, suggesting an outdoor city environment with professional clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf3kJUc4wlylsnaoHfzbiF8bPSyWWUJmlwhFdy5X0rUKPLZs_-hEQguwvKCmhp_uh7P5aZDP7ViVDoXBO8WlBA1WYtahTnGdaH9RN3HD9Mbr_Cxm-fkyt9irTrtVy-vu_hSS7bWUM5T7sOHqc1LG3VhBfD5eIEeGl_d_Pe6FNYhdTeQgIvjzlhiWI8hcYOEAy5HCeJzan_7GKevsZZx95B8pzUrT3QvyQJy9X9kF2FrUt5_VOK0J9jLZjIeNOIl08ZWYc7lrvmLWvr"/>
+<div>
+<p class="font-body-md font-semibold text-primary">Rahul Sharma</p>
+<p class="text-[12px] text-secondary">+91 98765 43210</p>
+</div>
+</div>
+</td>
+<td class="px-md py-lg"><span class="font-code-sm text-secondary/60">BK-2025-000124</span></td>
+<td class="px-md py-lg">
+<p class="font-body-md text-primary font-medium">Sunrise Residency</p>
+<p class="text-[12px] text-secondary">Rm 203 / Bed A (Single)</p>
+</td>
+<td class="px-md py-lg">
+<p class="font-body-md text-primary">15 Jul 2026</p>
+<span class="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[11px] font-bold">In 2 days</span>
+</td>
+<td class="px-md py-lg text-right">
+<p class="font-body-md font-bold text-primary">₹17,500</p>
+<p class="text-[11px] text-secondary">Dep: ₹35,000</p>
+</td>
+<td class="px-md py-lg">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600 mr-1.5"></span> Ready To Move-In
+                                    </span>
+</td>
+<td class="px-md py-lg">
+<div class="flex items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-body-sm text-green-700 font-medium">Healthy</span>
+</div>
+</td>
+<td class="px-md py-lg">
+<div class="flex items-center gap-sm">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="Close up avatar of a professional male operations manager with spectacles, clear lighting, neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGFlfRegNjoRGvnoy15z3J3rmzguYtyGLBpfh41TnUsbyESuWXf589fQ9e2XOfg36EQVueG0-O7pNGwdbRkNSu4rZh_9V0c3q2uZq0mlBG71DuS-_SI-QmFqpo7TZOY-k0X3dr4g11d3Vqfdiu2gB68jLBx2BgvAU8OWovhEMtp8GeXAQXwlH71hCcmxu7GCgxg9RX-1uemhqco5zluoXjLUxJyrLjr8XzDHRxVUODji2izp5d6fWNw-Gf9JauliKHN9lRschffpF5"/>
+<span class="text-body-sm text-secondary">Vikas P.</span>
+</div>
+</td>
+<td class="px-md py-lg text-right" onclick="event.stopPropagation()">
+<div class="flex items-center justify-end gap-xs">
+<button class="p-1.5 hover:bg-surface-container-high rounded text-secondary transition-colors" title="View Profile"><span class="material-symbols-outlined text-lg">person</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded text-secondary transition-colors" title="Assign Bed"><span class="material-symbols-outlined text-lg">bed</span></button>
+<button class="px-3 py-1 bg-primary text-white text-[12px] font-bold rounded-lg hover:opacity-90">Check-In</button>
+<button class="p-1.5 hover:bg-surface-container-high rounded text-secondary"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Expansion Content -->
+<tr class="bg-surface-container-low border-b border-outline-variant" id="rahul-details">
+<td class="px-xxl py-xl" colspan="10">
+<div class="flex flex-col gap-lg">
+<div class="flex border-b border-outline-variant/30 overflow-x-auto">
+<button class="px-md py-sm border-b-2 border-accent text-accent font-bold font-label-md">Booking Timeline</button>
+<button class="px-md py-sm text-secondary hover:text-primary transition-colors font-label-md">Payment Summary</button>
+<button class="px-md py-sm text-secondary hover:text-primary transition-colors font-label-md">KYC &amp; Documents</button>
+<button class="px-md py-sm text-secondary hover:text-primary transition-colors font-label-md">Communication History</button>
+<button class="px-md py-sm text-secondary hover:text-primary transition-colors font-label-md">Internal Notes</button>
+</div>
+<div class="grid grid-cols-4 gap-xl">
+<div class="col-span-3">
+<div class="flex items-center justify-between gap-xl relative">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[1px] bg-outline-variant z-0"></div>
+<div class="relative z-10 flex flex-col items-center gap-sm bg-surface-container-low px-sm">
+<div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white"><span class="material-symbols-outlined text-sm">check</span></div>
+<div class="text-center">
+<p class="font-label-md text-primary">Booking Created</p>
+<p class="text-[10px] text-secondary">01 Jul, 10:20 AM</p>
+</div>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-sm bg-surface-container-low px-sm">
+<div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white"><span class="material-symbols-outlined text-sm">check</span></div>
+<div class="text-center">
+<p class="font-label-md text-primary">Deposit Received</p>
+<p class="text-[10px] text-secondary">02 Jul, 04:45 PM</p>
+</div>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-sm bg-surface-container-low px-sm">
+<div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white"><span class="material-symbols-outlined text-sm">check</span></div>
+<div class="text-center">
+<p class="font-label-md text-primary">KYC Verified</p>
+<p class="text-[10px] text-secondary">04 Jul, 09:15 AM</p>
+</div>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-sm bg-surface-container-low px-sm opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-secondary"><span class="material-symbols-outlined text-sm">hourglass_empty</span></div>
+<div class="text-center">
+<p class="font-label-md text-secondary">Scheduled Move-In</p>
+<p class="text-[10px] text-secondary">15 Jul, 11:00 AM</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white p-md rounded-lg border border-outline-variant space-y-sm">
+<h4 class="font-label-md text-secondary uppercase tracking-wider">Quick Actions</h4>
+<button class="w-full text-left flex items-center gap-sm px-sm py-2 hover:bg-surface-container rounded transition-colors text-body-sm"><span class="material-symbols-outlined text-md">edit</span> Edit Booking</button>
+<button class="w-full text-left flex items-center gap-sm px-sm py-2 hover:bg-surface-container rounded transition-colors text-body-sm"><span class="material-symbols-outlined text-md">share</span> Resend Receipt</button>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 2: Priya Iyer -->
+<tr class="bg-white hover:bg-surface-container transition-colors cursor-pointer">
+<td class="px-md py-lg"><input class="row-checkbox rounded border-outline-variant text-accent focus:ring-accent" onchange="updateSelectedCount()" type="checkbox"/></td>
+<td class="px-md py-lg">
+<div class="flex items-center gap-md">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Portrait of a professional young Indian woman, smiling, against a soft office background. Clean lighting, modern look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsSuZlptbZjQmIdMEwBKUEeNe50ZU-G7vIuPaB0kPXxn0ziXOlWo9EFEncD7fC9jiHgoGnHlyT1C6ADs7Wc65Qzt-HscANHosLig8jEt6Zn7RPEZ_cT0YKiM85alWGnKGGAQ0LUdIIyqS0VCL7ogSc-s6_ck8qt5GGXVze3LnRqOVt-JfFV10p-zcnEIUIYx0Pf7LSyiEpbyjK_4dtrnDxOLkInphBQuZi6n12VhUN06T76jdcbPXziwm7ZTVRHk9J_Oer1q_sTHID"/>
+<div>
+<p class="font-body-md font-semibold text-primary">Priya Iyer</p>
+<p class="text-[12px] text-secondary">+91 87654 32109</p>
+</div>
+</div>
+</td>
+<td class="px-md py-lg"><span class="font-code-sm text-secondary/60">BK-2025-000125</span></td>
+<td class="px-md py-lg">
+<p class="font-body-md text-primary font-medium">Urban Living Suites</p>
+<p class="text-[12px] text-secondary">Rm 104 / Bed B (Twin)</p>
+</td>
+<td class="px-md py-lg">
+<p class="font-body-md text-primary">16 Jul 2026</p>
+<span class="px-2 py-0.5 rounded-full bg-outline-variant text-secondary text-[11px] font-bold">In 3 days</span>
+</td>
+<td class="px-md py-lg text-right">
+<p class="font-body-md font-bold text-primary">₹22,000</p>
+<p class="text-[11px] text-secondary font-medium text-error">Bal: ₹22,000</p>
+</td>
+<td class="px-md py-lg">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600 mr-1.5"></span> Deposit Pending
+                                    </span>
+</td>
+<td class="px-md py-lg">
+<div class="flex items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-amber-500"></div>
+<span class="text-body-sm text-amber-700 font-medium">Attention</span>
+</div>
+</td>
+<td class="px-md py-lg">
+<div class="flex items-center gap-sm">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="Avatar of a female manager in professional attire, high contrast, warm neutral tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA70IswoqXtAxMI3BCYRKtuYsb7a5gUQXGPc5SY1eg7DYSKDDGIrVSUcJxXxp7n0F0LUVRf9bvmbtnNVY3XSfeEftyjHVsYg7gHHOFsF__YIuPAxD4eFzaweaPvRqqZv-XdJXlCOukkb3pLVtM7SIpv_yy1uSZhz3cettZFK3Ehee-mb3T62EieS8Q7sDb6z3Dc70j46hDNzml3Ke3WbE5rIG68twB5khI5X6ZR3_pqm51OGYlEHSGI7P1c6B-CCbT7Pva-xEGf6H8F"/>
+<span class="text-body-sm text-secondary">Anita K.</span>
+</div>
+</td>
+<td class="px-md py-lg text-right">
+<div class="flex items-center justify-end gap-xs">
+<button class="p-1.5 hover:bg-surface-container-high rounded text-secondary"><span class="material-symbols-outlined text-lg">person</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded text-secondary"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Kevin Dsouza -->
+<tr class="bg-white hover:bg-surface-container transition-colors cursor-pointer">
+<td class="px-md py-lg"><input class="row-checkbox rounded border-outline-variant text-accent focus:ring-accent" onchange="updateSelectedCount()" type="checkbox"/></td>
+<td class="px-md py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">KD</div>
+<div>
+<p class="font-body-md font-semibold text-primary">Kevin Dsouza</p>
+<p class="text-[12px] text-secondary">+91 99008 87766</p>
+</div>
+</div>
+</td>
+<td class="px-md py-lg"><span class="font-code-sm text-secondary/60">BK-2025-000126</span></td>
+<td class="px-md py-lg">
+<p class="font-body-md text-primary font-medium">Skyview Apartments</p>
+<p class="text-[12px] text-secondary">Rm 502 / Bed A (Single)</p>
+</td>
+<td class="px-md py-lg">
+<p class="font-body-md text-primary">14 Jul 2026</p>
+<span class="px-2 py-0.5 rounded-full bg-error/10 text-error text-[11px] font-bold">Tomorrow</span>
+</td>
+<td class="px-md py-lg text-right">
+<p class="font-body-md font-bold text-primary">₹14,500</p>
+<p class="text-[11px] text-green-600 font-bold">Paid</p>
+</td>
+<td class="px-md py-lg">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+<span class="w-1.5 h-1.5 rounded-full bg-red-600 mr-1.5"></span> KYC Pending
+                                    </span>
+</td>
+<td class="px-md py-lg">
+<div class="flex items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-red-500"></div>
+<span class="text-body-sm text-red-700 font-medium">High Risk</span>
+</div>
+</td>
+<td class="px-md py-lg">
+<div class="flex items-center gap-sm">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center text-[10px] font-bold">RL</div>
+<span class="text-body-sm text-secondary">Rajesh L.</span>
+</div>
+</td>
+<td class="px-md py-lg text-right">
+<div class="flex items-center justify-end gap-xs">
+<button class="p-1.5 hover:bg-surface-container-high rounded text-secondary"><span class="material-symbols-outlined text-lg">person</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded text-secondary"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="flex items-center justify-between px-xl py-md bg-surface-container-low border-t border-outline-variant">
+<span class="text-body-sm text-secondary">Showing 1 to 3 of 124 results</span>
+<div class="flex items-center gap-xs">
+<button class="p-sm rounded border border-outline-variant text-secondary hover:bg-white transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded bg-primary text-on-primary font-bold text-body-sm">1</button>
+<button class="w-8 h-8 rounded border border-outline-variant text-secondary hover:bg-white text-body-sm">2</button>
+<button class="w-8 h-8 rounded border border-outline-variant text-secondary hover:bg-white text-body-sm">3</button>
+<button class="p-sm rounded border border-outline-variant text-secondary hover:bg-white transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dashboard Analytics Preview (Bento-style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg mt-xl">
+<div class="bg-white p-lg rounded-xl border border-outline-variant">
+<h4 class="font-label-md text-secondary uppercase mb-md">Current Occupancy</h4>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-display-lg font-bold text-primary">94.2%</p>
+<p class="text-body-sm text-green-600 font-medium">↑ 2.1% from last month</p>
+</div>
+<div class="w-16 h-12 flex items-end gap-0.5">
+<div class="w-2 bg-accent/20 h-1/2 rounded-t"></div>
+<div class="w-2 bg-accent/30 h-2/3 rounded-t"></div>
+<div class="w-2 bg-accent/50 h-3/4 rounded-t"></div>
+<div class="w-2 bg-accent h-full rounded-t"></div>
+</div>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant">
+<h4 class="font-label-md text-secondary uppercase mb-md">KYC Verification Rate</h4>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-display-lg font-bold text-primary">88/124</p>
+<p class="text-body-sm text-amber-600 font-medium">36 Pending approval</p>
+</div>
+<div class="relative w-12 h-12">
+<svg class="w-12 h-12 -rotate-90">
+<circle cx="24" cy="24" fill="transparent" r="20" stroke="#f0edef" stroke-width="4"></circle>
+<circle cx="24" cy="24" fill="transparent" r="20" stroke="#C2410C" stroke-dasharray="125.6" stroke-dashoffset="30" stroke-width="4"></circle>
+</svg>
+</div>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant">
+<h4 class="font-label-md text-secondary uppercase mb-md">Move-ins This Week</h4>
+<div class="flex items-end justify-between">
+<div>
+<p class="text-display-lg font-bold text-primary">42</p>
+<p class="text-body-sm text-secondary">Peak on Thursday (18)</p>
+</div>
+<span class="material-symbols-outlined text-[48px] text-outline-variant">event_upcoming</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        function toggleRow(id) {
+            const el = document.getElementById(id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        function selectAllRows(source) {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const count = document.querySelectorAll('.row-checkbox:checked').length;
+            const bulkBar = document.getElementById('bulkActions');
+            const counter = document.getElementById('selectedCount');
+            
+            if (count > 0) {
+                bulkBar.classList.remove('hidden');
+                counter.textContent = count;
+            } else {
+                bulkBar.classList.add('hidden');
+            }
+        }
+
+        function toggleBulkActions(show) {
+            const bulkBar = document.getElementById('bulkActions');
+            if (!show) {
+                bulkBar.classList.add('hidden');
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            }
+        }
+
+        // Initially hide expanded row details for demo
+        document.getElementById('rahul-details').classList.add('hidden');
+    </script>
+</body></html>

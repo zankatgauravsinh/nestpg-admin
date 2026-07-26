@@ -1,0 +1,33 @@
+// Angular Material M3 theme. Tailwind/design tokens live in theme.css.
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: (
+        plain-family: 'Inter',
+        brand-family: 'Inter',
+      ),
+      density: -1,
+    )
+  );
+}
+
+// Bridge Material system tokens to the Operations OS palette so the few
+// Material components we use (buttons, menus, tooltips, snackbar) sit on-brand.
+:root {
+  --mat-sys-primary: var(--accent);
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-surface: var(--panel);
+  --mat-sys-on-surface: var(--text-primary);
+  --mat-sys-outline-variant: var(--border);
+}
+
+// Material Symbols sizing inside mat-icon
+.mat-icon.material-symbols-outlined {
+  overflow: visible;
+}

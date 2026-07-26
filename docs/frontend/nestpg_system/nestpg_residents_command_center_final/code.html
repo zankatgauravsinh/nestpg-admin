@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Residents Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#75777d",
+                    "primary-fixed": "#d8e3fb",
+                    "on-background": "#1b1b1d",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#dfe2ed",
+                    "on-secondary-container": "#61646d",
+                    "secondary-fixed": "#dfe2ed",
+                    "primary-fixed-dim": "#bcc7de",
+                    "tertiary-fixed": "#fadfb8",
+                    "background": "#fbf8fa",
+                    "surface-container": "#f0edef",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#1b1b1d",
+                    "surface-variant": "#e4e2e3",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#45474c",
+                    "surface-bright": "#fbf8fa",
+                    "tertiary-fixed-dim": "#ddc39d",
+                    "on-tertiary-container": "#a38c6a",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#dcd9db",
+                    "surface-container-high": "#eae7e9",
+                    "primary-container": "#1e293b",
+                    "inverse-surface": "#303032",
+                    "inverse-on-surface": "#f3f0f2",
+                    "on-tertiary-fixed-variant": "#564427",
+                    "surface-tint": "#545f73",
+                    "outline-variant": "#c5c6cd",
+                    "on-primary-container": "#8590a6",
+                    "tertiary": "#1e1200",
+                    "primary": "#091426",
+                    "on-secondary-fixed-variant": "#43474f",
+                    "surface-container-highest": "#e4e2e3",
+                    "secondary-fixed-dim": "#c3c6d1",
+                    "surface-container-low": "#f5f3f4",
+                    "on-secondary-fixed": "#181c23",
+                    "inverse-primary": "#bcc7de",
+                    "tertiary-container": "#35260c",
+                    "on-tertiary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "secondary": "#5b5e67",
+                    "on-error-container": "#93000a",
+                    "surface": "#fbf8fa",
+                    "on-primary-fixed-variant": "#3c475a",
+                    "on-tertiary-fixed": "#271902",
+                    "on-primary-fixed": "#111c2d",
+                    "accent": "#C2410C"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "xxl": "48px",
+                    "lg": "24px",
+                    "base": "4px",
+                    "margin": "32px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf8fa; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .health-bar-healthy { width: 82%; background: #16A34A; }
+        .health-bar-warning { width: 12%; background: #EAB308; }
+        .health-bar-risk { width: 6%; background: #DC2626; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Sidebar Shell -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary flex flex-col py-md px-md gap-sm border-r border-outline-variant z-50">
+<div class="flex flex-col gap-xs mb-lg px-xs">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">NestPG</h1>
+<p class="font-body-md text-body-md text-on-primary-container/70">Operations OS</p>
+</div>
+<nav class="flex-1 flex flex-col gap-xs">
+<a class="flex items-center gap-md p-sm text-on-primary-container/70 hover:text-on-primary hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md p-sm bg-primary-container text-on-primary-container rounded-lg font-semibold" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md">Residents</span>
+</a>
+<a class="flex items-center gap-md p-sm text-on-primary-container/70 hover:text-on-primary hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">location_city</span>
+<span class="font-body-md">Portfolio</span>
+</a>
+<a class="flex items-center gap-md p-sm text-on-primary-container/70 hover:text-on-primary hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-body-md">Operations</span>
+</a>
+<a class="flex items-center gap-md p-sm text-on-primary-container/70 hover:text-on-primary hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md">Financials</span>
+</a>
+<a class="flex items-center gap-md p-sm text-on-primary-container/70 hover:text-on-primary hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-body-md">Intelligence</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-xs pt-md border-t border-on-primary-container/10">
+<button class="mb-md bg-[#C2410C] text-white py-sm px-md rounded-lg font-semibold text-body-md flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined">add</span> New Management
+            </button>
+<a class="flex items-center gap-md p-sm text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-md p-sm text-on-primary-container/70 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-md">Support</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation -->
+<header class="flex justify-between items-center h-16 px-xl ml-[260px] w-[calc(100%-260px)] sticky top-0 bg-surface z-40 border-b border-outline-variant">
+<div class="flex items-center gap-lg">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">NestPG Operations OS</span>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container-low border border-outline-variant rounded-lg w-64 text-body-md focus:ring-2 focus:ring-accent/20 outline-none transition-all" placeholder="Global search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors scale-95 active:scale-100"><span class="material-symbols-outlined">notifications</span></button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors scale-95 active:scale-100"><span class="material-symbols-outlined">apps</span></button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<button class="text-label-md font-label-md text-on-surface-variant hover:text-primary px-2 transition-colors">Help</button>
+<div class="flex items-center gap-sm cursor-pointer hover:bg-surface-container p-1 rounded-lg transition-all">
+<img alt="User Profile Avatar" class="h-8 w-8 rounded-full border border-outline-variant object-cover" data-alt="A professional corporate headshot of a male executive in his 40s, wearing a crisp dark navy suit and white shirt. He has a warm, confident expression and is framed in a brightly lit, minimalist office setting with soft natural light. The background is a clean, neutral tone consistent with a modern Operations OS design aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtYPKA07Fib3tpmZubLRj9MvaT2-yBOmlRCVeFOxikml9z79gfbZcLMD_Hx9bg3LHlmHRyiNq0E6aVdyiQUa1IqgHMulBmRPmJihEsJtsZH8MlEF5I1ceq3TiSsmFs5UZk1geqFdkjPkCqYk6CJSI5a-Y_L8OXjU7tZpHP4Zdxge7AuxAQAsJ3mPolNUgEnrw9DhTZiSqtcZxoDqpPu7dKxbV1zbyMnCG37e6ht59z9LCQCnwlkBq_x3eLS2FX7oMAAN2n-joJ9Sy9"/>
+<span class="text-label-md font-label-md text-primary font-bold">Profile</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] p-xl flex gap-gutter">
+<div class="flex-1 max-w-[1100px]">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-xl">
+<div>
+<h2 class="font-display-lg text-display-lg text-primary">Residents</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Manage residents, monitor stay health, renewals, payments, and support activity.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm border border-outline-variant rounded-lg text-body-md font-semibold text-primary hover:bg-surface-container transition-colors flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">ios_share</span> Export
+                    </button>
+<button class="px-md py-sm border border-outline-variant rounded-lg text-body-md font-semibold text-primary hover:bg-surface-container transition-colors flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">filter_list</span> Filters
+                    </button>
+<button class="px-md py-sm bg-[#C2410C] text-white rounded-lg text-body-md font-semibold hover:opacity-90 transition-opacity flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">add</span> Add Resident
+                    </button>
+</div>
+</div>
+<!-- SECTION 1: Snapshot Metrics -->
+<div class="grid grid-cols-6 gap-md mb-xl">
+<div class="bg-white p-md border border-outline-variant rounded-xl">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Active Residents</p>
+<h3 class="text-headline-lg font-headline-lg text-primary mt-xs">3,482</h3>
+<p class="text-xs text-green-600 font-semibold flex items-center mt-xs"><span class="material-symbols-outlined text-[14px]">arrow_upward</span> 2.4%</p>
+</div>
+<div class="bg-white p-md border border-outline-variant rounded-xl">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Move-ins</p>
+<h3 class="text-headline-lg font-headline-lg text-primary mt-xs">128</h3>
+<p class="text-xs text-on-surface-variant/60 font-semibold flex items-center mt-xs">This month</p>
+</div>
+<div class="bg-white p-md border border-outline-variant rounded-xl">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Notice Given</p>
+<h3 class="text-headline-lg font-headline-lg text-error mt-xs">42</h3>
+<p class="text-xs text-on-surface-variant/60 font-semibold flex items-center mt-xs">Active cycles</p>
+</div>
+<div class="bg-white p-md border border-outline-variant rounded-xl">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Renewals Due</p>
+<h3 class="text-headline-lg font-headline-lg text-primary mt-xs">87</h3>
+<p class="text-xs text-on-surface-variant/60 font-semibold flex items-center mt-xs">Next 30d</p>
+</div>
+<div class="bg-white p-md border border-outline-variant rounded-xl">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Overdue</p>
+<h3 class="text-headline-lg font-headline-lg text-error mt-xs">63</h3>
+<p class="text-xs text-error font-semibold flex items-center mt-xs">₹4.2L Total</p>
+</div>
+<div class="bg-white p-md border border-outline-variant rounded-xl">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Open Tickets</p>
+<h3 class="text-headline-lg font-headline-lg text-primary mt-xs">104</h3>
+<p class="text-xs text-amber-600 font-semibold flex items-center mt-xs">12 Critical</p>
+</div>
+</div>
+<!-- SECTION 2: Health Engine -->
+<div class="bg-white border border-outline-variant rounded-xl p-lg flex items-center mb-xl">
+<div class="flex-1 pr-xl border-r border-outline-variant">
+<div class="flex justify-between items-center mb-md">
+<h4 class="font-headline-sm text-headline-sm text-primary">Portfolio Health Score</h4>
+<span class="text-display-lg font-display-lg text-primary">82%</span>
+</div>
+<div class="w-full h-3 bg-surface-container rounded-full overflow-hidden flex mb-sm">
+<div class="health-bar-healthy"></div>
+<div class="health-bar-warning"></div>
+<div class="health-bar-risk"></div>
+</div>
+<div class="flex gap-lg">
+<div class="flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-green-600"></span>
+<span class="text-label-md font-label-md text-on-surface-variant">Healthy (2,855)</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+<span class="text-label-md font-label-md text-on-surface-variant">Needs Attention (417)</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-red-600"></span>
+<span class="text-label-md font-label-md text-on-surface-variant">At Risk (210)</span>
+</div>
+</div>
+</div>
+<div class="pl-xl flex gap-xxl">
+<div class="text-center">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase">Avg Stay</p>
+<p class="text-headline-md font-headline-md text-primary mt-xs">11.2m</p>
+</div>
+<div class="text-center">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase">Satisfaction</p>
+<p class="text-headline-md font-headline-md text-primary mt-xs">4.7/5</p>
+</div>
+<div class="text-center">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase">Renewal Rate</p>
+<p class="text-headline-md font-headline-md text-primary mt-xs">88%</p>
+</div>
+</div>
+</div>
+<!-- SECTION 3: Urgent Action Needed -->
+<div class="grid grid-cols-3 gap-gutter mb-xl">
+<div class="bg-white border border-outline-variant p-lg rounded-xl">
+<div class="flex items-center gap-md mb-md">
+<div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-red-600">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<h5 class="font-headline-sm text-headline-sm text-primary">Overdue Rent</h5>
+<p class="text-body-sm text-on-surface-variant">12 Residents Outstanding</p>
+</div>
+</div>
+<div class="mb-lg">
+<p class="text-display-lg font-display-lg text-red-600">₹2,10,000</p>
+<p class="text-body-sm text-on-surface-variant">Avg. delay: 4.2 days</p>
+</div>
+<button class="w-full py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors">Send Reminders</button>
+</div>
+<div class="bg-white border border-outline-variant p-lg rounded-xl">
+<div class="flex items-center gap-md mb-md">
+<div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+<span class="material-symbols-outlined">assignment_ind</span>
+</div>
+<div>
+<h5 class="font-headline-sm text-headline-sm text-primary">KYC Pending</h5>
+<p class="text-body-sm text-on-surface-variant">8 Residents Flagged</p>
+</div>
+</div>
+<div class="mb-lg">
+<div class="flex -space-x-2 overflow-hidden mb-xs">
+<img alt="" class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="Close-up headshot of a young professional male, diverse ethnicity, clean modern look, focused lighting on a neutral grey background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWbO2RTmbmhll3XIjnbh0XHTSS4rbPi3qZopVj9LuNoBW9s8H_reexWAhcN2WghqP6wdmIhrPhqqPOB-sL4fXCU7Llie8DoSMTCs8Ei0RVQfD10SGlGw_PzUhmjBCYGRkqnXzuMaAe4Pjgs7rgO_Dn8Nri-ErtG3CHk7M774tP7jEwY5px7sCzs8f0lKjtgEfui-ixlYlKc-H72vRaNhoypdDyG-VIeZCy22GGinioGipoxjlkr3jgkzLSgIsB_1Izl0TcrvZw1EYB"/>
+<img alt="" class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="Portrait of a professional young female with a friendly smile, vibrant corporate lighting, soft office background, minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9fuz93dA_LrPc4RXWEDCBCVcghffW0nlz5SEbIKwM5vRTF9VaNN5De11Wn6tBcgS1M6Kg0K8W8o3I2n8xH_TqljQo-2saIVMSaEC-Nk8dcOGDJIXXRX9ZH7zJqA1Ah2xKYzrM5O66Flzg9zM9t_6wy6iTgDNwuZn3ix-LWa7htNPPEa-CL4Dscwf_EhI-UU__tfP5IjY1wxyrHJtaxOVJISusX8LjdVsBoEUumR3o5tVKwjF77cTvmOcBFo9eJ98oulvrq60vDC-4"/>
+<img alt="" class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="Close-up of a smiling male resident, diverse background, high-end photography with sharp focus and clean corporate color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYDk4FAIVP6doV-PA4FfSl8B88wwnQQ2fRUVO1HCHAKGjBsQGlNGuIV3yPV-BDkSJW2d6BRNLU_KsSY_Jg3_ENH2nHnR6E0ur1mNZNHN0wucbCvW6Q1YaShelelsxYesxgneMs32xxnOmLrMkO6mEnLUsdotaHDvN7eSBwZCP3pOTUrTUz2qSzMVIk_ROR1ZpZQNhHwsT37WUD610HC3sZsmJ6MlwNtVDkGjXoVXvnQ382bmulgjwwOS8iDlQHF3OJciOVKeRHK7Gz"/>
+</div>
+<p class="text-body-sm text-on-surface-variant">Deadline: End of Week</p>
+</div>
+<button class="w-full py-2 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition-colors">Call Residents</button>
+</div>
+<div class="bg-white border border-outline-variant p-lg rounded-xl">
+<div class="flex items-center gap-md mb-md">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined">history_edu</span>
+</div>
+<div>
+<h5 class="font-headline-sm text-headline-sm text-primary">Lease Expiring</h5>
+<p class="text-body-sm text-on-surface-variant">5 Critical Expiries</p>
+</div>
+</div>
+<div class="mb-lg">
+<p class="text-display-lg font-display-lg text-blue-600">Next 48h</p>
+<p class="text-body-sm text-on-surface-variant">Potential vacancy: ₹1,42k</p>
+</div>
+<button class="w-full py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">Generate Renewal</button>
+</div>
+</div>
+<!-- SECTION 4: Renewal Pipeline -->
+<div class="mb-xl">
+<h4 class="font-headline-sm text-headline-sm text-primary mb-md">Renewal Pipeline</h4>
+<div class="flex gap-md overflow-x-auto pb-sm custom-scrollbar">
+<!-- Pipeline Column -->
+<div class="flex-shrink-0 w-[240px]">
+<div class="flex justify-between items-center mb-sm px-xs">
+<span class="text-label-md font-label-md text-on-surface-variant">90+ DAYS (32)</span>
+<span class="material-symbols-outlined text-outline">more_horiz</span>
+</div>
+<div class="flex flex-col gap-sm">
+<div class="bg-white border border-outline-variant p-sm rounded-lg hover:border-accent transition-colors cursor-pointer shadow-sm">
+<div class="flex justify-between items-start mb-xs">
+<p class="font-body-md font-semibold text-primary">Alexander Pierce</p>
+<span class="text-[10px] px-1.5 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">92% Health</span>
+</div>
+<p class="text-xs text-on-surface-variant">Uptown • #402-B</p>
+<div class="mt-sm pt-sm border-t border-outline-variant/50 flex justify-between">
+<span class="text-[10px] text-on-surface-variant">88% Probability</span>
+<span class="text-[10px] font-bold text-primary">₹22,500</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pipeline Column -->
+<div class="flex-shrink-0 w-[240px]">
+<div class="flex justify-between items-center mb-sm px-xs">
+<span class="text-label-md font-label-md text-on-surface-variant">60 DAYS (18)</span>
+</div>
+<div class="flex flex-col gap-sm">
+<div class="bg-white border border-outline-variant p-sm rounded-lg shadow-sm">
+<div class="flex justify-between items-start mb-xs">
+<p class="font-body-md font-semibold text-primary">Sofia Chen</p>
+<span class="text-[10px] px-1.5 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">85% Health</span>
+</div>
+<p class="text-xs text-on-surface-variant">Heights • #101</p>
+<div class="mt-sm pt-sm border-t border-outline-variant/50 flex justify-between">
+<span class="text-[10px] text-on-surface-variant">72% Probability</span>
+<span class="text-[10px] font-bold text-primary">₹18,000</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pipeline Column -->
+<div class="flex-shrink-0 w-[240px]">
+<div class="flex justify-between items-center mb-sm px-xs">
+<span class="text-label-md font-label-md text-on-surface-variant">30 DAYS (12)</span>
+</div>
+<div class="flex flex-col gap-sm">
+<div class="bg-white border border-outline-variant p-sm rounded-lg shadow-sm">
+<div class="flex justify-between items-start mb-xs">
+<p class="font-body-md font-semibold text-primary">Jordan Smith</p>
+<span class="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full font-bold">64% Health</span>
+</div>
+<p class="text-xs text-on-surface-variant">Villa • #12-A</p>
+<div class="mt-sm pt-sm border-t border-outline-variant/50 flex justify-between">
+<span class="text-[10px] text-on-surface-variant">45% Probability</span>
+<span class="text-[10px] font-bold text-primary">₹32,500</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pipeline Column -->
+<div class="flex-shrink-0 w-[240px]">
+<div class="flex justify-between items-center mb-sm px-xs">
+<span class="text-label-md font-label-md text-red-600 font-bold">DUE NOW (5)</span>
+</div>
+<div class="flex flex-col gap-sm">
+<div class="bg-red-50 border border-red-200 p-sm rounded-lg shadow-sm">
+<div class="flex justify-between items-start mb-xs">
+<p class="font-body-md font-semibold text-primary">Elena Rodriguez</p>
+<span class="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-700 rounded-full font-bold">42% Health</span>
+</div>
+<p class="text-xs text-on-surface-variant">Nest Central • #802</p>
+<div class="mt-sm pt-sm border-t border-red-200 flex justify-between">
+<span class="text-[10px] text-red-600 font-semibold">12% Probability</span>
+<span class="text-[10px] font-bold text-primary">₹28,500</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 5: Main Resident Directory -->
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden">
+<div class="p-lg border-b border-outline-variant flex justify-between items-center">
+<h4 class="font-headline-sm text-headline-sm text-primary">Resident Directory</h4>
+<div class="flex gap-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="pl-9 pr-4 py-1 bg-surface-container-low border border-outline-variant rounded-lg text-body-md focus:ring-1 focus:ring-accent/20 outline-none w-48" placeholder="Search directory..." type="text"/>
+</div>
+<button class="p-1.5 border border-outline-variant rounded-lg hover:bg-surface-container"><span class="material-symbols-outlined text-[20px]">sort</span></button>
+</div>
+</div>
+<!-- High Density Rows -->
+<div class="divide-y divide-outline-variant/40">
+<!-- Row 1 -->
+<div class="flex items-center px-lg py-md hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-md w-[280px]">
+<img alt="" class="h-10 w-10 rounded-full object-cover border border-outline-variant" data-alt="Headshot of Alexander Pierce, a male resident in his late 20s, smart casual attire, neutral expression, clean studio lighting on a soft gray background, high-resolution aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKz_OPC-4MMAcARpuYxKDw59AXwgxDc1RGNZKjsYTrNXrpdZis5wq2Ed1Ap47KFve29TEqCAqk6twRHGOIPhzy_5YIvAbJHAHYOxu_QsP43zXhOgP4TOkNy-X2BqIkP9al1LT1rxoPwqwhEFn41wZXaTlB0kv3EcxGWQhxKBKQvHucYYcF_6CCC-LZfGWPSYUW_qqWXj2rCEcill9UnxH3YtDAVUqDK9ZoTNBJJ7T0pEJQ1cfVrB0B34-rkPmN5UpRxtXishkdiAJY"/>
+<div>
+<p class="font-body-md font-semibold text-primary">Alexander Pierce</p>
+<p class="text-body-sm text-on-surface-variant">#RES-9421</p>
+</div>
+</div>
+<div class="flex-1">
+<p class="text-body-sm text-primary font-medium">Nest Uptown</p>
+<p class="text-xs text-on-surface-variant">Room 402-B</p>
+</div>
+<div class="w-[120px]">
+<span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-200">Healthy</span>
+</div>
+<div class="w-[120px]">
+<span class="text-body-sm font-medium text-primary">Active</span>
+<p class="text-[10px] text-on-surface-variant">Exp: 12 Jan 2025</p>
+</div>
+<div class="w-[100px]">
+<p class="text-body-sm font-bold text-primary">₹17,500</p>
+</div>
+<div class="flex gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-white rounded-lg text-on-surface-variant hover:text-accent border border-transparent hover:border-outline-variant"><span class="material-symbols-outlined text-[20px]">chat_bubble</span></button>
+<button class="p-1.5 hover:bg-white rounded-lg text-on-surface-variant hover:text-primary border border-transparent hover:border-outline-variant"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-1.5 hover:bg-white rounded-lg text-on-surface-variant hover:text-primary border border-transparent hover:border-outline-variant"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center px-lg py-md hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-md w-[280px]">
+<img alt="" class="h-10 w-10 rounded-full object-cover border border-outline-variant" data-alt="Portrait of Sofia Chen, a young female resident, professional look, soft natural light, minimalist and high-end aesthetic consistent with a luxury property management app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAU2HBY7WUt8GYR_uZKt0_RZu3veVGhL5GgulxFbgW0T5nFr-cwsYzEP6N7PLWt0ImNL6NEJ7yDOXDQzhB7KohtwuJRJKi6NwpqQT5Ue6tcXQXXFTfr0csloxgPOqEMqKGMrBISnAdzeL4Yvo4f4s89lVibO1wNnBB-bwmPD7oZvvuNF5qmMu4bBcDTMaWlldDOXiYnPscBx7s64UFWJtQ6XDDyzm_hRdBPp3AG26UnAOlC7MdKXmJkHhoLFIlSppmoytSbx8T0-XdI"/>
+<div>
+<p class="font-body-md font-semibold text-primary">Sofia Chen</p>
+<p class="text-body-sm text-on-surface-variant">#RES-8832</p>
+</div>
+</div>
+<div class="flex-1">
+<p class="text-body-sm text-primary font-medium">Nest Uptown</p>
+<p class="text-xs text-on-surface-variant">Room 312-A</p>
+</div>
+<div class="w-[120px]">
+<span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-200">Healthy</span>
+</div>
+<div class="w-[120px]">
+<span class="text-body-sm font-medium text-primary">Active</span>
+<p class="text-[10px] text-on-surface-variant">Exp: 05 Feb 2025</p>
+</div>
+<div class="w-[100px]">
+<p class="text-body-sm font-bold text-primary">₹18,200</p>
+</div>
+<div class="flex gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-white rounded-lg text-on-surface-variant hover:text-accent border border-transparent hover:border-outline-variant"><span class="material-symbols-outlined text-[20px]">chat_bubble</span></button>
+<button class="p-1.5 hover:bg-white rounded-lg text-on-surface-variant hover:text-primary border border-transparent hover:border-outline-variant"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-1.5 hover:bg-white rounded-lg text-on-surface-variant hover:text-primary border border-transparent hover:border-outline-variant"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="flex items-center px-lg py-md hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-md w-[280px]">
+<img alt="" class="h-10 w-10 rounded-full object-cover border border-outline-variant" data-alt="Close-up headshot of Jordan Smith, a male resident in his early 30s, friendly expression, clean corporate style, high-end photography with depth of field effects." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCGZdbdSl6FIq4g91801KpPn6CP3Y9HgMT-kNxk2Kea2E5N24gAxDBozyVCdHRsh23esAYjjBFjrx0PX1NBJgOwlvntIkrlkXwwVaMV0cyCvM58EPk5U9M66D9cBB0uhRBkMkiCmHa5z2hUymMH05hSX7FHgQ7UbGcMQvkGGaDv0SvTsETARofmNNbNzTfPXdZNY5R7xIqmcXg2nWxylLwQu8yqqywVOINqRzkWZkWPcwbxYBkxhFlCHTJpnMQcQz5xGAknDigHAl1"/>
+<div>
+<p class="font-body-md font-semibold text-primary">Jordan Smith</p>
+<p class="text-body-sm text-on-surface-variant">#RES-7215</p>
+</div>
+</div>
+<div class="flex-1">
+<p class="text-body-sm text-primary font-medium">Nest Heights</p>
+<p class="text-xs text-on-surface-variant">Room 1004</p>
+</div>
+<div class="w-[120px]">
+<span class="px-2 py-0.5 bg-amber-50 text-amber-700 text-xs font-bold rounded-full border border-amber-200">Warning</span>
+</div>
+<div class="w-[120px]">
+<span class="text-body-sm font-medium text-red-600">Expiring</span>
+<p class="text-[10px] text-red-500 font-bold">In 48 Hours</p>
+</div>
+<div class="w-[100px]">
+<p class="text-body-sm font-bold text-primary">₹21,000</p>
+</div>
+<div class="flex gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-white rounded-lg text-on-surface-variant hover:text-accent border border-transparent hover:border-outline-variant"><span class="material-symbols-outlined text-[20px]">chat_bubble</span></button>
+<button class="p-1.5 hover:bg-white rounded-lg text-on-surface-variant hover:text-primary border border-transparent hover:border-outline-variant"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-1.5 hover:bg-white rounded-lg text-on-surface-variant hover:text-primary border border-transparent hover:border-outline-variant"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+</div>
+</div>
+<div class="p-md bg-surface-container-low border-t border-outline-variant flex justify-between items-center">
+<p class="text-body-sm text-on-surface-variant">Showing 1-10 of 3,482 residents</p>
+<div class="flex gap-xs">
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-white transition-colors text-body-sm">Previous</button>
+<button class="px-3 py-1 bg-primary text-white rounded text-body-sm">1</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-white transition-colors text-body-sm">2</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-white transition-colors text-body-sm">3</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-white transition-colors text-body-sm">Next</button>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT RAIL: Sticky Intelligence -->
+<aside class="w-[320px] flex flex-col gap-gutter">
+<div class="sticky top-20 flex flex-col gap-gutter">
+<!-- AI Copilot -->
+<div class="bg-primary-container text-on-primary-container p-lg rounded-xl shadow-lg border border-primary-fixed-dim/20">
+<div class="flex items-center gap-md mb-md">
+<span class="material-symbols-outlined text-accent" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<h5 class="font-headline-sm text-headline-sm">Intelligence Copilot</h5>
+</div>
+<p class="text-body-sm text-on-primary-container/80 mb-lg">Ask me anything about your resident data.</p>
+<div class="flex flex-col gap-sm">
+<button class="text-left p-md bg-white/10 hover:bg-white/20 transition-colors rounded-lg border border-white/10 flex items-center justify-between group">
+<span class="text-body-sm">Who is likely to churn?</span>
+<span class="material-symbols-outlined text-[16px] opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</button>
+<button class="text-left p-md bg-white/10 hover:bg-white/20 transition-colors rounded-lg border border-white/10 flex items-center justify-between group">
+<span class="text-body-sm">Satisfaction by property?</span>
+<span class="material-symbols-outlined text-[16px] opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</button>
+<button class="text-left p-md bg-white/10 hover:bg-white/20 transition-colors rounded-lg border border-white/10 flex items-center justify-between group">
+<span class="text-body-sm">Predictive renewal volume?</span>
+<span class="material-symbols-outlined text-[16px] opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</button>
+</div>
+<div class="mt-lg relative">
+<input class="w-full bg-white/5 border border-white/20 rounded-lg py-2 px-md text-body-sm focus:bg-white/10 focus:outline-none transition-all pr-10" placeholder="Type a command..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-white/40 text-[20px]">auto_awesome</span>
+</div>
+</div>
+<!-- Key Alerts -->
+<div class="bg-white border border-outline-variant p-lg rounded-xl">
+<div class="flex items-center justify-between mb-lg">
+<h5 class="font-headline-sm text-headline-sm text-primary">Key Alerts</h5>
+<span class="px-2 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded-full">3 CRITICAL</span>
+</div>
+<div class="flex flex-col gap-md">
+<div class="flex gap-md items-start">
+<div class="mt-1 w-2 h-2 rounded-full bg-red-600 flex-shrink-0"></div>
+<div>
+<p class="text-body-sm font-semibold text-primary">Maintenance Surge</p>
+<p class="text-xs text-on-surface-variant">Nest Uptown reports +40% surge in water issues this week.</p>
+<a class="text-[11px] text-accent font-bold uppercase mt-1 block" href="#">Inspect Asset</a>
+</div>
+</div>
+<div class="flex gap-md items-start">
+<div class="mt-1 w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></div>
+<div>
+<p class="text-body-sm font-semibold text-primary">Unpaid Invoices</p>
+<p class="text-xs text-on-surface-variant">Batch 942-D (₹84,000) is past its grace period.</p>
+<a class="text-[11px] text-accent font-bold uppercase mt-1 block" href="#">View Batch</a>
+</div>
+</div>
+<div class="flex gap-md items-start">
+<div class="mt-1 w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"></div>
+<div>
+<p class="text-body-sm font-semibold text-primary">Feedback Loop</p>
+<p class="text-xs text-on-surface-variant">Resident Sofia Chen gave a 2/5 rating for move-in.</p>
+<a class="text-[11px] text-accent font-bold uppercase mt-1 block" href="#">Service Recovery</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Performance Card (Mini Graph Concept) -->
+<div class="bg-white border border-outline-variant p-lg rounded-xl">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase mb-sm">Occupancy Trends</p>
+<div class="h-24 flex items-end gap-1 mb-md">
+<div class="w-full bg-primary-fixed-dim h-[60%] rounded-t-sm"></div>
+<div class="w-full bg-primary-fixed-dim h-[70%] rounded-t-sm"></div>
+<div class="w-full bg-primary-fixed-dim h-[65%] rounded-t-sm"></div>
+<div class="w-full bg-primary-fixed-dim h-[85%] rounded-t-sm"></div>
+<div class="w-full bg-primary-fixed-dim h-[92%] rounded-t-sm"></div>
+<div class="w-full bg-primary h-[95%] rounded-t-sm"></div>
+</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="text-headline-sm font-headline-sm text-primary">96.4%</p>
+<p class="text-[10px] text-on-surface-variant">Portfolio Utilization</p>
+</div>
+<span class="text-xs text-green-600 font-bold">+1.2%</span>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<script>
+        // Simple micro-interaction for cards
+        document.querySelectorAll('.hover\\:bg-surface-container-low').forEach(row => {
+            row.addEventListener('click', () => {
+                console.log('Navigating to resident profile...');
+            });
+        });
+
+        // Initialize tooltips or popovers if needed
+        // For now keeping it pure CSS/Tailwind for maximum performance
+    </script>
+</body></html>

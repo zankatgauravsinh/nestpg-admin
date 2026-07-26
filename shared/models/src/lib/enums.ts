@@ -1,0 +1,75 @@
+export enum UserRole {
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  OPS_ADMIN = 'OPS_ADMIN',
+  OWNER = 'OWNER',
+  PROPERTY_MANAGER = 'PROPERTY_MANAGER',
+  TENANT = 'TENANT',
+}
+
+export enum UserStatus {
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+  PENDING_VERIFICATION = 'PENDING_VERIFICATION',
+}
+
+export enum KycStatus {
+  PENDING = 'PENDING',
+  SUBMITTED = 'SUBMITTED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+export enum PropertyStatus {
+  DRAFT = 'DRAFT',
+  PENDING_REVIEW = 'PENDING_REVIEW',
+  VERIFIED = 'VERIFIED',
+  REJECTED = 'REJECTED',
+}
+
+export enum PropertyType {
+  PG = 'PG',
+  HOSTEL = 'HOSTEL',
+  COLIVING = 'COLIVING',
+}
+
+export enum RoomType {
+  SINGLE = 'SINGLE',
+  DOUBLE = 'DOUBLE',
+  TRIPLE = 'TRIPLE',
+  DORMITORY = 'DORMITORY',
+}
+
+export enum BedStatus {
+  AVAILABLE = 'AVAILABLE',
+  OCCUPIED = 'OCCUPIED',
+  RESERVED = 'RESERVED',
+  BLOCKED = 'BLOCKED',
+  MAINTENANCE = 'MAINTENANCE',
+}
+
+export enum BookingStatus {
+  RESERVED = 'RESERVED',
+  CHECKED_IN = 'CHECKED_IN',
+  CHECKED_OUT = 'CHECKED_OUT',
+  CANCELLED = 'CANCELLED',
+  NO_SHOW = 'NO_SHOW',
+  NOTICE_GIVEN = 'NOTICE_GIVEN',
+}
+
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  ANY = 'ANY',
+}
+
+export enum PaymentMode {
+  CASH = 'CASH',
+  UPI = 'UPI',
+  BANK_TRANSFER = 'BANK_TRANSFER',
+}
+
+export enum OtpPurpose {
+  REGISTRATION = 'REGISTRATION',
+  LOGIN = 'LOGIN',
+  PASSWORD_RESET = 'PASSWORD_RESET',
+}

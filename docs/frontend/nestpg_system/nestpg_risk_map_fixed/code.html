@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG - Risk Map Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#fbf8fa",
+                        "on-primary-container": "#8590a6",
+                        "inverse-primary": "#bcc7de",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ddc39d",
+                        "tertiary-fixed": "#fadfb8",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#dfe2ed",
+                        "on-error": "#ffffff",
+                        "primary-container": "#1e293b",
+                        "on-secondary-fixed-variant": "#43474f",
+                        "on-secondary-fixed": "#181c23",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#45474c",
+                        "on-tertiary-container": "#a38c6a",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "on-tertiary-fixed-variant": "#564427",
+                        "on-secondary-container": "#61646d",
+                        "background": "#fbf8fa",
+                        "surface-container": "#f0edef",
+                        "on-background": "#1b1b1d",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#5b5e67",
+                        "primary-fixed": "#d8e3fb",
+                        "surface-container-high": "#eae7e9",
+                        "surface-container-highest": "#e4e2e3",
+                        "on-tertiary-fixed": "#271902",
+                        "on-surface": "#1b1b1d",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f5f3f4",
+                        "primary": "#091426",
+                        "outline": "#75777d",
+                        "inverse-on-surface": "#f3f0f2",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#35260c",
+                        "surface-dim": "#dcd9db",
+                        "surface": "#fbf8fa",
+                        "secondary-fixed-dim": "#c3c6d1",
+                        "secondary-fixed": "#dfe2ed",
+                        "outline-variant": "#c5c6cd",
+                        "surface-variant": "#e4e2e3",
+                        "surface-tint": "#545f73",
+                        "on-primary-fixed": "#111c2d",
+                        "primary-fixed-dim": "#bcc7de",
+                        "inverse-surface": "#303032",
+                        "tertiary": "#1e1200",
+                        "accent-warning": "#EA580C",
+                        "accent-danger": "#DC2626",
+                        "accent-success": "#16A34A"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "sm": "8px",
+                        "gutter": "24px",
+                        "base": "4px",
+                        "xxl": "48px",
+                        "xl": "32px",
+                        "margin": "32px",
+                        "xs": "4px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "code-sm": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .risk-gradient { background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(234, 88, 12, 0.05) 100%); }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid #E2E8F0; }
+        .map-dot { position: absolute; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .pulse-danger { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface-bright text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-primary border-r border-outline-variant flex flex-col py-spacing-xl z-50 overflow-hidden">
+<div class="px-6 mb-8 flex items-center gap-3 shrink-0">
+<div class="w-10 h-10 rounded-lg bg-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[24px]" style="font-variation-settings: 'FILL' 1;">nest_multi_room</span>
+</div>
+<div class="truncate">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary leading-tight truncate">NestPG</h1>
+<p class="text-[10px] text-on-primary-container font-medium tracking-wider uppercase opacity-60 truncate">Executive Command</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto px-2">
+<a class="flex items-center gap-3 text-on-primary-container opacity-80 hover:opacity-100 px-4 py-2.5 rounded-lg hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-primary-container opacity-80 hover:opacity-100 px-4 py-2.5 rounded-lg hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">domain</span>
+<span class="font-body-md text-body-md">Portfolio</span>
+</a>
+<a class="flex items-center gap-3 text-on-primary-container opacity-80 hover:opacity-100 px-4 py-2.5 rounded-lg hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">engineering</span>
+<span class="font-body-md text-body-md">Operations</span>
+</a>
+<a class="flex items-center gap-3 text-on-primary-container opacity-80 hover:opacity-100 px-4 py-2.5 rounded-lg hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<span class="font-body-md text-body-md">Financials</span>
+</a>
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container rounded-lg px-4 py-2.5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-body-md text-body-md font-semibold">Intelligence</span>
+</a>
+<a class="flex items-center gap-3 text-on-primary-container opacity-80 hover:opacity-100 px-4 py-2.5 rounded-lg hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-4 border-t border-white/5 pt-6 shrink-0">
+<div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl">
+<img class="w-10 h-10 rounded-full border border-white/10 shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIt2UX-8mQy7PppNfKz9GP8zvOBWn5Eu0hKB1wVVsEM3eO6pHnXsNOkIDd28D5OrHAIL4dOHqs76W7Uq8Wt-4YXsP_3fFnoKiac3fzo36OaDNEn_mCG-AUyBUDPTxHREPZePc9-Nv9VipXqrK8sNv_LWBjQD1bWac7QLMWQpm4CXr4XMqZE0pBBfKfk1uivL3v9jmpOpiW1_iraRg1yLT2tKC1frmFLxMmzqLwWufrcmKvVTjs3MVorYr2uFGKDJ-4Fh04El6SHxQo"/>
+<div class="truncate">
+<p class="text-on-primary font-body-sm font-semibold truncate">Alex Sterling</p>
+<p class="text-[10px] text-on-primary-container opacity-70 truncate uppercase tracking-tighter">Chief Risk Officer</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-white border-b border-outline-variant flex justify-between items-center px-spacing-xl z-40">
+<div class="flex items-center gap-6">
+<h2 class="font-headline-sm text-headline-sm font-bold text-primary whitespace-nowrap">Risk Map</h2>
+<div class="relative w-80 max-w-md hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-[20px]">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary outline-none transition-all" placeholder="Search properties or cities..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center text-secondary hover:text-primary transition-colors rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-secondary hover:text-primary transition-colors rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-6 w-[1px] bg-outline-variant mx-2"></div>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span class="whitespace-nowrap">Export Intelligence</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[260px] pt-16 pr-80 min-h-screen">
+<div class="p-spacing-xl">
+<!-- Section 1: Risk Snapshot -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-gutter mb-xl">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-between min-h-[100px] overflow-hidden">
+<span class="font-label-md text-[10px] text-secondary uppercase tracking-widest truncate">High Risk Props</span>
+<div class="flex items-end justify-between gap-2 mt-2">
+<span class="text-3xl font-bold text-accent-danger">14</span>
+<span class="text-[10px] font-bold text-accent-danger bg-error-container/30 px-2 py-0.5 rounded-full whitespace-nowrap">+2 this week</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-between min-h-[100px] overflow-hidden">
+<span class="font-label-md text-[10px] text-secondary uppercase tracking-widest truncate">Occupancy Churn</span>
+<div class="flex items-end justify-between gap-2 mt-2">
+<span class="text-3xl font-bold text-accent-warning">2.1%</span>
+<span class="text-[10px] font-bold text-accent-warning bg-orange-100 px-2 py-0.5 rounded-full">Warning</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-between min-h-[100px] overflow-hidden">
+<span class="font-label-md text-[10px] text-secondary uppercase tracking-widest truncate">Maint. Backlog</span>
+<div class="flex items-end justify-between gap-2 mt-2">
+<span class="text-3xl font-bold text-primary">156</span>
+<span class="text-[10px] font-bold text-secondary bg-surface-container px-2 py-0.5 rounded-full">Items</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-between min-h-[100px] overflow-hidden">
+<span class="font-label-md text-[10px] text-secondary uppercase tracking-widest truncate">Overdue Comm.</span>
+<div class="flex items-end justify-between gap-2 mt-2">
+<span class="text-3xl font-bold text-accent-danger">₹12.4 L</span>
+<span class="text-[10px] font-bold text-accent-danger bg-error-container/30 px-2 py-0.5 rounded-full">Critical</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-between min-h-[100px] overflow-hidden">
+<span class="font-label-md text-[10px] text-secondary uppercase tracking-widest truncate">Regulatory</span>
+<div class="flex items-end justify-between gap-2 mt-2">
+<span class="text-3xl font-bold text-accent-success">94%</span>
+<span class="text-[10px] font-bold text-accent-success bg-green-100 px-2 py-0.5 rounded-full">Healthy</span>
+</div>
+</div>
+</section>
+<!-- Section 2: Geographic Risk Intelligence -->
+<section class="mb-xl">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col h-[500px]">
+<div class="p-5 border-b border-outline-variant flex flex-wrap justify-between items-center gap-4">
+<h3 class="font-headline-sm text-headline-sm text-primary">Geographic Risk Intelligence</h3>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-accent-danger"></span>
+<span class="text-[11px] text-secondary font-semibold uppercase tracking-wider">Critical</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-accent-warning"></span>
+<span class="text-[11px] text-secondary font-semibold uppercase tracking-wider">High</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container"></span>
+<span class="text-[11px] text-secondary font-semibold uppercase tracking-wider">Moderate</span>
+</div>
+</div>
+</div>
+<div class="relative flex-1 bg-surface-container overflow-hidden">
+<img alt="India map data visualization" class="w-full h-full object-cover grayscale brightness-50 opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDP_VYfDwTC-wjEMD3nxfKALIAj_RwaYdwEq2v_PfGAkjgKZ4NQ7jSGyLQ_gtt6ZvY_IAJCoKmJPCo4rqTR2Slode9bdfxKG9Zb86DTHDQ5kmOzUJO-55eSk2yNNulYw49uJfmUwI-KN_4n_HADoA0qHGc52daT6H2FYaka6iC1MBjgoYLbX0G-Y0q6Pt_0Ff6xiosjGyrYKGm2otU65Q052JqngvNkdFAaMLRel87w_8VqPCebBymraVFz1jVmEEHCnqHdooHTtu-h"/>
+<!-- Map Markers -->
+<div class="absolute top-[40%] left-[30%] group">
+<div class="map-dot bg-accent-danger pulse-danger"></div>
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white p-3 rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none w-48 z-10 border border-outline-variant">
+<p class="font-bold text-sm text-primary">Pune</p>
+<p class="text-[11px] text-accent-danger font-semibold">High Maintenance Backlog</p>
+<p class="text-[10px] text-secondary mt-1">42 open critical tickets</p>
+</div>
+</div>
+<div class="absolute top-[55%] left-[35%] group">
+<div class="map-dot bg-accent-warning"></div>
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white p-3 rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none w-48 z-10 border border-outline-variant">
+<p class="font-bold text-sm text-primary">Bangalore</p>
+<p class="text-[11px] text-accent-warning font-semibold">Occupancy Dip (-12%)</p>
+<p class="text-[10px] text-secondary mt-1">Market saturation alert</p>
+</div>
+</div>
+<div class="absolute bottom-[20%] left-[45%] group">
+<div class="map-dot bg-accent-success"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Tables and Insights Grid -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-gutter mb-xl">
+<!-- Cities Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl flex flex-col overflow-hidden">
+<div class="p-5 border-b border-outline-variant">
+<h4 class="font-headline-sm text-headline-sm text-primary">Cities at Risk</h4>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full table-fixed">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="text-left font-label-md text-[11px] text-secondary py-3 px-5 uppercase tracking-wider w-1/4">City</th>
+<th class="text-right font-label-md text-[11px] text-secondary py-3 px-5 uppercase tracking-wider w-1/4">Churn</th>
+<th class="text-right font-label-md text-[11px] text-secondary py-3 px-5 uppercase tracking-wider w-1/4">Backlog</th>
+<th class="text-center font-label-md text-[11px] text-secondary py-3 px-5 uppercase tracking-wider w-1/4">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-5 font-semibold text-sm truncate text-primary">Pune</td>
+<td class="py-4 px-5 text-sm text-right font-medium text-accent-danger">+4.2%</td>
+<td class="py-4 px-5 text-sm text-right font-medium">82</td>
+<td class="py-4 px-5 text-center">
+<span class="inline-block px-2 py-0.5 bg-red-100 text-accent-danger text-[9px] font-black rounded uppercase">Critical</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-5 font-semibold text-sm truncate text-primary">Bangalore</td>
+<td class="py-4 px-5 text-sm text-right font-medium text-accent-warning">+3.1%</td>
+<td class="py-4 px-5 text-sm text-right font-medium">64</td>
+<td class="py-4 px-5 text-center">
+<span class="inline-block px-2 py-0.5 bg-orange-100 text-accent-warning text-[9px] font-black rounded uppercase">High</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-5 font-semibold text-sm truncate text-primary">Chennai</td>
+<td class="py-4 px-5 text-sm text-right font-medium text-primary">+1.2%</td>
+<td class="py-4 px-5 text-sm text-right font-medium">31</td>
+<td class="py-4 px-5 text-center">
+<span class="inline-block px-2 py-0.5 bg-blue-100 text-primary text-[9px] font-black rounded uppercase">Moderate</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Owners List -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl flex flex-col overflow-hidden">
+<div class="p-5 border-b border-outline-variant">
+<h4 class="font-headline-sm text-headline-sm text-primary">Top Owners by Backlog</h4>
+</div>
+<div class="p-5 space-y-4">
+<div class="flex items-center justify-between p-3.5 border border-outline-variant rounded-xl hover:border-primary transition-all bg-white">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center font-bold text-primary shrink-0">VS</div>
+<div class="truncate">
+<p class="font-bold text-sm text-primary truncate">Vikram Sethi</p>
+<p class="text-[11px] text-secondary truncate">12 Properties • Mumbai</p>
+</div>
+</div>
+<div class="text-right shrink-0 ml-4">
+<p class="font-bold text-sm text-accent-danger">42 Items</p>
+<p class="text-[10px] text-secondary font-medium uppercase">₹4.2L At Risk</p>
+</div>
+</div>
+<div class="flex items-center justify-between p-3.5 border border-outline-variant rounded-xl hover:border-primary transition-all bg-white">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center font-bold text-primary shrink-0">AK</div>
+<div class="truncate">
+<p class="font-bold text-sm text-primary truncate">Anjali Kapoor</p>
+<p class="text-[11px] text-secondary truncate">8 Properties • Pune</p>
+</div>
+</div>
+<div class="text-right shrink-0 ml-4">
+<p class="font-bold text-sm text-accent-danger">38 Items</p>
+<p class="text-[10px] text-secondary font-medium uppercase">₹2.8L At Risk</p>
+</div>
+</div>
+<div class="flex items-center justify-between p-3.5 border border-outline-variant rounded-xl hover:border-primary transition-all bg-white">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center font-bold text-primary shrink-0">RM</div>
+<div class="truncate">
+<p class="font-bold text-sm text-primary truncate">Rajesh Mehta</p>
+<p class="text-[11px] text-secondary truncate">5 Properties • Delhi</p>
+</div>
+</div>
+<div class="text-right shrink-0 ml-4">
+<p class="font-bold text-sm text-accent-warning">29 Items</p>
+<p class="text-[10px] text-secondary font-medium uppercase">₹1.5L At Risk</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Critical Property Alerts -->
+<section class="mb-xl">
+<h4 class="font-headline-sm text-headline-sm text-primary mb-5">Critical Property Alerts</h4>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col">
+<div class="h-40 bg-surface-container relative shrink-0">
+<img alt="Serene Stay PG" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS0TK24o_V-ULQkY2nzolPvB5LrJv51tCnmz5tyZ0Nk8OAOYJWsk0OmEcW8l_VuM_EzOTfub9weCnO91ZQEQzIlItDsLVhgnIOXLtdwEesrXNiOsY21uERcM_VCF06mpi3g9B9unR9Y8HW0Stk_WfdSt_RndvJd173OOSxm7wI4ImrsIVzJGSmd7sKwjcQK159pkTioSS8wAAHE7wU3LYzxdYxK4pSftHy5eQKwUDJiM6w3-CHn6dZqXRKCrFlvR04U0GVl5clxaiT"/>
+<div class="absolute top-3 right-3 bg-accent-danger text-white text-[9px] font-black px-2 py-1 rounded uppercase tracking-wider shadow-sm">Occupancy Alert</div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="mb-4">
+<h5 class="font-bold text-primary truncate text-base">Serene Stay PG</h5>
+<p class="text-[11px] text-secondary">Viman Nagar, Pune</p>
+</div>
+<div class="mt-auto">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-semibold text-secondary">Occupancy Rate</span>
+<span class="text-sm font-black text-accent-danger">61%</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-accent-danger h-full w-[61%]"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col">
+<div class="h-40 bg-surface-container relative shrink-0">
+<img alt="Grand Central PG" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApr_qCQQq87Td4MiCD-mRMfIHnJGv9_Eir6646mdacQ-mrSYVZ0-U8t1S5Sb95y2ONoACs-TQDxcWgWbLOV8HYH8-NaN-HJypIWmmc6gXYQCDnOvRmWSamx2enGWb5GZUZTiNlfbSNcwW25pa4h9kZvitr3nmqp8nrs2xioSiHXNGPoFxV_F3xC6MRBWoq3tMzplcTAHSHefrT22B2UxST3jlKvn9WHFfEkbDhCmwztmgLSMHy3daOQ_dVRJcPZnzwLSRDzhyV3-65"/>
+<div class="absolute top-3 right-3 bg-accent-danger text-white text-[9px] font-black px-2 py-1 rounded uppercase tracking-wider shadow-sm">Operational Danger</div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="mb-4">
+<h5 class="font-bold text-primary truncate text-base">Grand Central PG</h5>
+<p class="text-[11px] text-secondary">Indiranagar, Bangalore</p>
+</div>
+<div class="mt-auto">
+<div class="p-3 bg-error-container/20 border border-accent-danger/10 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-accent-danger text-[24px]">elevator</span>
+<div class="truncate">
+<p class="text-xs font-black text-accent-danger uppercase">Elevator Outage</p>
+<p class="text-[10px] text-secondary font-medium truncate">Out of service for &gt; 48h</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col">
+<div class="h-40 bg-surface-container relative shrink-0">
+<img alt="Skyline Vista" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCmXW-1Wg-CwcTSzInYKU-ZxN4Oazu7tNcnSY5Iv8LIiOgnh72-_CYqaf2V8ypgTMS132G7V-jyta4IDUaIlIwiQfXMt_5ITyCa1w-5WbYXqU-tHXiY7d_Z_VC5_1zrH7ghxBATqfT2QkZau4jcivFZyleXD_JSTMXrvIs1rsxi-8FKtpvBZ8NMfO2yCTAHEffAW2OdfHdWn9VO_UcXiPEHWLC99FrytBsbhITlhUBKQVcVmmNVmusDFso6mrVV190cFjPqPu3nr-t"/>
+<div class="absolute top-3 right-3 bg-accent-warning text-white text-[9px] font-black px-2 py-1 rounded uppercase tracking-wider shadow-sm">Compliance Warning</div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="mb-4">
+<h5 class="font-bold text-primary truncate text-base">Skyline Vista</h5>
+<p class="text-[11px] text-secondary">Gachibowli, Hyderabad</p>
+</div>
+<div class="mt-auto bg-surface-container-low p-3 rounded-lg border border-outline-variant">
+<div class="flex items-center gap-2 text-accent-warning mb-1">
+<span class="material-symbols-outlined text-[18px]">gavel</span>
+<span class="text-xs font-black uppercase">Legal Warning</span>
+</div>
+<p class="text-[10px] text-secondary leading-tight line-clamp-2">Fire safety certificate renewal overdue by 12 days.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Financial Exposure Chart Area -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 mb-xl">
+<div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-primary">Financial Exposure</h4>
+<p class="text-xs text-secondary mt-1">Commission at risk vs recovery rates</p>
+</div>
+<div class="flex gap-5">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-sm bg-accent-danger"></div>
+<span class="text-[10px] font-bold text-secondary uppercase tracking-wider">Exposure</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-sm bg-accent-success"></div>
+<span class="text-[10px] font-bold text-secondary uppercase tracking-wider">Recovery</span>
+</div>
+</div>
+</div>
+<!-- Simulated Chart Area -->
+<div class="h-64 w-full flex items-end gap-3 px-4 border-b border-outline-variant pb-2 relative">
+<div class="absolute top-0 left-0 w-full h-full flex flex-col justify-between pointer-events-none opacity-5">
+<div class="border-t border-primary w-full"></div>
+<div class="border-t border-primary w-full"></div>
+<div class="border-t border-primary w-full"></div>
+<div class="border-t border-primary w-full"></div>
+</div>
+<!-- Column Groups -->
+<div class="flex-1 flex flex-col justify-end gap-1 h-full max-w-[60px]">
+<div class="w-full bg-accent-danger/20 h-[60%] rounded-t-sm relative group cursor-help transition-all hover:bg-accent-danger/40">
+<div class="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] bg-primary text-white px-2 py-0.5 rounded shadow-lg opacity-0 group-hover:opacity-100 whitespace-nowrap z-10 transition-opacity">₹8.2L</div>
+</div>
+<div class="w-full bg-accent-success h-[20%] rounded-b-sm"></div>
+</div>
+<div class="flex-1 flex flex-col justify-end gap-1 h-full max-w-[60px]">
+<div class="w-full bg-accent-danger/20 h-[75%] rounded-t-sm transition-all hover:bg-accent-danger/40"></div>
+<div class="w-full bg-accent-success h-[25%] rounded-b-sm"></div>
+</div>
+<div class="flex-1 flex flex-col justify-end gap-1 h-full max-w-[60px]">
+<div class="w-full bg-accent-danger/20 h-[50%] rounded-t-sm transition-all hover:bg-accent-danger/40"></div>
+<div class="w-full bg-accent-success h-[40%] rounded-b-sm"></div>
+</div>
+<div class="flex-1 flex flex-col justify-end gap-1 h-full max-w-[60px]">
+<div class="w-full bg-accent-danger/20 h-[80%] rounded-t-sm transition-all hover:bg-accent-danger/40"></div>
+<div class="w-full bg-accent-success h-[35%] rounded-b-sm"></div>
+</div>
+<div class="flex-1 flex flex-col justify-end gap-1 h-full max-w-[60px]">
+<div class="w-full bg-accent-danger/20 h-[65%] rounded-t-sm transition-all hover:bg-accent-danger/40"></div>
+<div class="w-full bg-accent-success h-[30%] rounded-b-sm"></div>
+</div>
+<div class="flex-1 flex flex-col justify-end gap-1 h-full max-w-[60px]">
+<div class="w-full bg-accent-danger/20 h-[85%] rounded-t-sm transition-all hover:bg-accent-danger/40"></div>
+<div class="w-full bg-accent-success h-[45%] rounded-b-sm"></div>
+</div>
+</div>
+<div class="flex justify-between mt-4 px-4">
+<span class="text-[10px] text-secondary font-bold uppercase">Jan</span>
+<span class="text-[10px] text-secondary font-bold uppercase">Feb</span>
+<span class="text-[10px] text-secondary font-bold uppercase">Mar</span>
+<span class="text-[10px] text-secondary font-bold uppercase">Apr</span>
+<span class="text-[10px] text-secondary font-bold uppercase">May</span>
+<span class="text-[10px] text-secondary font-bold uppercase">Jun</span>
+</div>
+</section>
+</div>
+</main>
+<!-- Right Sidebar -->
+<aside class="fixed top-16 right-0 w-80 h-[calc(100vh-64px)] bg-white border-l border-outline-variant p-6 flex flex-col gap-6 z-30 overflow-y-auto">
+<!-- Status Highlight -->
+<div class="bg-primary text-on-primary p-6 rounded-2xl shadow-xl relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
+<span class="material-symbols-outlined text-[100px]">warning</span>
+</div>
+<p class="font-label-md text-[10px] uppercase tracking-[0.2em] opacity-60 mb-2">Critical Exposure</p>
+<div class="flex items-center justify-between relative z-10">
+<span class="text-4xl font-black">214</span>
+<span class="material-symbols-outlined text-3xl opacity-80">error</span>
+</div>
+<p class="text-xs mt-4 font-medium opacity-80 leading-relaxed">Total unresolved critical issues across portfolio</p>
+<button class="w-full mt-6 bg-on-primary text-primary font-black py-3 rounded-xl text-xs hover:bg-white transition-all uppercase tracking-widest relative z-10">
+            View Escalations
+        </button>
+</div>
+<!-- System Health -->
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2.5 h-2.5 rounded-full bg-accent-success animate-pulse shadow-[0_0_8px_rgba(22,163,74,0.4)]"></div>
+<span class="font-bold text-xs uppercase tracking-tight">System Health</span>
+</div>
+<span class="text-[10px] font-black text-accent-success uppercase bg-green-50 px-2 py-0.5 rounded">Operational</span>
+</div>
+<!-- Region Insight -->
+<div class="bg-surface-container-lowest border border-outline-variant p-5 rounded-xl">
+<div class="flex items-center justify-between mb-4">
+<h4 class="text-[11px] font-black text-secondary uppercase tracking-widest">Top Risk Region</h4>
+<span class="material-symbols-outlined text-secondary opacity-50 text-[18px]">location_on</span>
+</div>
+<div class="flex items-center justify-between mb-3">
+<span class="text-xl font-bold text-primary">Pune</span>
+<div class="text-right">
+<span class="text-accent-danger font-black text-xs block">+15% ↑</span>
+<span class="text-[9px] text-secondary font-medium uppercase">Last 30d</span>
+</div>
+</div>
+<p class="text-[11px] text-secondary leading-relaxed bg-surface-container-low p-2.5 rounded-lg">Risk increase driven by sudden maintenance backlog growth in Sector 7 clusters.</p>
+</div>
+<!-- AI Copilot -->
+<div class="mt-auto bg-gradient-to-br from-primary to-primary-container p-6 rounded-2xl shadow-lg border border-white/5">
+<div class="flex items-center gap-2 mb-5">
+<div class="w-6 h-6 rounded-md bg-white/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[14px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<span class="text-[10px] font-black text-white uppercase tracking-[0.15em]">AI Intelligence</span>
+</div>
+<div class="bg-white/10 rounded-xl p-3.5 border border-white/10 mb-5">
+<p class="text-xs text-white/90 leading-relaxed italic">"How can I reduce occupancy churn in Pune properties?"</p>
+</div>
+<button class="w-full flex items-center justify-center gap-2 bg-on-primary text-primary font-black py-3 rounded-xl text-xs hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest">
+            Run Analysis
+        </button>
+</div>
+</aside>
+<script>
+    // Micro-interactions and stable responsiveness
+    document.querySelectorAll('.hover\\:shadow-lg').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-2px)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+</body></html>

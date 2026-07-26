@@ -1,0 +1,9 @@
+{
+  "name": "layouts",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "shared/layouts/src",
+  "prefix": "nestpg",
+  "tags": ["scope:shared", "type:layouts"],
+  "targets": {}
+}

@@ -1,0 +1,27 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend-api",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["nx", "serve", "api"],
+      "port": 3000,
+      "autoPort": false,
+      "cwd": "backend"
+    },
+    {
+      "name": "web-admin",
+      "runtimeExecutable": "/Users/gaurav/.nvm/versions/node/v22.22.3/bin/node",
+      "runtimeArgs": ["node_modules/@angular/cli/bin/ng.js", "serve", "--port", "4200"],
+      "port": 4200,
+      "cwd": "apps/web-admin"
+    },
+    {
+      "name": "web-admin-verify",
+      "runtimeExecutable": "/Users/gaurav/.nvm/versions/node/v22.22.3/bin/node",
+      "runtimeArgs": ["node_modules/@angular/cli/bin/ng.js", "serve", "--port", "4310"],
+      "port": 4310,
+      "cwd": "apps/web-admin"
+    }
+  ]
+}

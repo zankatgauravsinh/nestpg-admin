@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Residents Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            font-size: 20px;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid #E2E8F0;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#eae7e9",
+                        "outline-variant": "#c5c6cd",
+                        "secondary-fixed": "#dfe2ed",
+                        "outline": "#75777d",
+                        "secondary-fixed-dim": "#c3c6d1",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#1e293b",
+                        "error-container": "#ffdad6",
+                        "background": "#fbf8fa",
+                        "primary": "#091426",
+                        "tertiary-container": "#35260c",
+                        "tertiary-fixed": "#fadfb8",
+                        "inverse-primary": "#bcc7de",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f3f0f2",
+                        "on-secondary-container": "#61646d",
+                        "on-primary-fixed": "#111c2d",
+                        "surface-tint": "#545f73",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-surface": "#1b1b1d",
+                        "tertiary-fixed-dim": "#ddc39d",
+                        "tertiary": "#1e1200",
+                        "on-tertiary-fixed-variant": "#564427",
+                        "surface-bright": "#fbf8fa",
+                        "surface": "#fbf8fa",
+                        "inverse-surface": "#303032",
+                        "secondary": "#5b5e67",
+                        "surface-variant": "#e4e2e3",
+                        "on-tertiary-fixed": "#271902",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e4e2e3",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#43474f",
+                        "on-primary-container": "#8590a6",
+                        "surface-container-low": "#f5f3f4",
+                        "secondary-container": "#dfe2ed",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "surface-dim": "#dcd9db",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#a38c6a",
+                        "surface-container": "#f0edef",
+                        "on-surface-variant": "#45474c",
+                        "on-background": "#1b1b1d",
+                        "primary-fixed": "#d8e3fb",
+                        "on-secondary-fixed": "#181c23",
+                        "accent-vermillion": "#C2410C"
+                    },
+                    spacing: {
+                        "sm": "8px", "md": "16px", "xs": "4px", "lg": "24px", "margin": "32px", "gutter": "24px", "xxl": "48px", "xl": "32px", "base": "4px"
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    fontFamily: {
+                        "body-md": ["Inter"], "headline-lg": ["Inter"], "headline-sm": ["Inter"], "label-md": ["Inter"], "display-lg": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-sm": ["13px", {"lineHeight": "18px"}],
+                        "body-md": ["14px", {"lineHeight": "20px"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface-container-low text-on-surface">
+<!-- Sidebar Navigation Shell -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary dark:bg-primary-container flex flex-col py-lg z-50">
+<div class="px-lg mb-xxl flex items-center gap-sm">
+<div class="w-8 h-8 bg-accent-vermillion rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">nest_eco_leaf</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-black text-on-primary">NestPG</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-primary/50 font-bold">Operations OS</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md px-md py-sm text-on-primary/70 hover:text-on-primary mx-2 hover:bg-on-primary-fixed-variant/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm bg-on-primary-fixed-variant text-on-primary-fixed rounded-lg mx-2 scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-body-md text-body-md">Residents</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary/70 hover:text-on-primary mx-2 hover:bg-on-primary-fixed-variant/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="font-body-md text-body-md">Portfolio</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary/70 hover:text-on-primary mx-2 hover:bg-on-primary-fixed-variant/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-body-md text-body-md">Operations</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary/70 hover:text-on-primary mx-2 hover:bg-on-primary-fixed-variant/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">Financials</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-primary/70 hover:text-on-primary mx-2 hover:bg-on-primary-fixed-variant/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-body-md text-body-md">Intelligence</span>
+</a>
+</nav>
+<div class="mt-auto px-2 space-y-1">
+<a class="flex items-center gap-md px-md py-sm text-on-primary/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<button class="w-full flex items-center justify-center gap-sm bg-accent-vermillion text-white py-sm rounded-lg mt-md font-bold text-sm">
+<span class="material-symbols-outlined">add</span>
+                New Asset
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] min-h-screen">
+<!-- Top Nav Bar -->
+<header class="flex justify-between items-center h-16 px-margin w-full bg-surface border-b border-outline-variant sticky top-0 z-40">
+<div class="flex items-center gap-md">
+<span class="font-label-md text-label-md text-secondary uppercase tracking-widest">Residents / Dashboard</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-sm w-80 focus:ring-2 focus:ring-accent-vermillion/20 focus:border-accent-vermillion transition-all outline-none" placeholder="Search residents, units, or IDs..." type="text"/>
+</div>
+<div class="flex items-center gap-md text-primary">
+<span class="material-symbols-outlined hover:bg-surface-container-low p-2 rounded-full cursor-pointer transition-colors">notifications</span>
+<span class="material-symbols-outlined hover:bg-surface-container-low p-2 rounded-full cursor-pointer transition-colors">help</span>
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant">
+<img class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional headshot of a property manager with a warm and approachable expression, set in a clean modern office environment with soft natural light. The style is professional and high-fidelity, using the NestPG deep navy and clean white aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvYcvDgZif2F4O7Gs1MO9pIhX0Hniw4k2lHB2gUqDpvzuuWIt0g8oA9tsYv-YdbObFi-tvMYgqeFMOX6flJkAdm-opotaikqogPDhrVu0vuyAUy0ntUlV41mTS6UZswD1LL8cL-BjRFF9JvylVjZ-m23xnnEvLWFdRZzTj1J7iYvmWMgpublKpoi51W6gAimVxh3TdCf505gueQP5xeYMyUiORo4Pdzzkq2RNorwS8F6bCk5ciDVYV301JSaySyZitckp4uqu8yrrx"/>
+<span class="material-symbols-outlined text-outline">expand_more</span>
+</div>
+</div>
+</div>
+</header>
+<div class="p-margin max-w-[1440px] mx-auto">
+<!-- Page Title & Header Actions -->
+<div class="flex justify-between items-end mb-xl">
+<div>
+<h2 class="font-headline-lg text-headline-lg font-extrabold text-primary mb-xs tracking-tight">Residents Command Center</h2>
+<p class="font-body-md text-body-md text-secondary">Manage residents, monitor stay health, renewals, payments, and support activity.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm bg-white border border-outline-variant rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm">upload</span> Export
+                    </button>
+<button class="px-md py-sm bg-white border border-outline-variant rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm">filter_alt</span> Filters
+                    </button>
+<button class="px-md py-sm bg-accent-vermillion text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:opacity-90 transition-all shadow-sm">
+<span class="material-symbols-outlined text-sm">person_add</span> Add Resident
+                    </button>
+</div>
+</div>
+<!-- Metric Strip (Section 1) -->
+<div class="grid grid-cols-6 gap-gutter mb-xl">
+                {[
+                    {label: "Active Residents", val: "3,482", icon: "groups", color: "text-primary"},
+                    {label: "Move-ins", val: "128", icon: "login", color: "text-primary"},
+                    {label: "Notice Given", val: "42", icon: "logout", color: "text-error"},
+                    {label: "Lease Renewals Due", val: "87", icon: "event_repeat", color: "text-primary"},
+                    {label: "Overdue Payments", val: "63", icon: "warning", color: "text-error"},
+                    {label: "Open Tickets", val: "104", icon: "support_agent", color: "text-primary"}
+                ].map(metric =&gt; `
+                    <div class="bg-white p-md rounded-xl border border-outline-variant flex flex-col gap-xs transition-all hover:border-accent-vermillion/40 group">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-outline group-hover:text-accent-vermillion transition-colors">attractions</span>
+<span class="text-[10px] font-bold text-success flex items-center gap-0.5"><span class="material-symbols-outlined !text-[12px]">trending_up</span> 4%</span>
+</div>
+<p class="text-headline-sm font-black ${metric.color}">${metric.val}</p>
+<p class="text-[11px] font-bold text-secondary uppercase tracking-wider">${metric.label}</p>
+</div>
+                `).join('')}
+            </div>
+<div class="grid grid-cols-12 gap-xl">
+<!-- Main Activity Stream -->
+<div class="col-span-12 lg:col-span-9 space-y-xl">
+<!-- Section 2: Resident Health Overview -->
+<div class="bg-primary text-white p-xl rounded-xl border border-primary flex items-center justify-between shadow-xl overflow-hidden relative">
+<div class="absolute top-0 right-0 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined !text-[320px] -mr-32 -mt-24">health_metrics</span>
+</div>
+<div class="w-2/3 z-10">
+<div class="flex items-center gap-2 mb-md">
+<span class="bg-accent-vermillion text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded">Live Ecosystem Health</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold mb-lg">82% Portfolio Health Score</h3>
+<div class="w-full h-4 bg-white/10 rounded-full flex overflow-hidden mb-md">
+<div class="bg-green-500 h-full w-[82%]" title="Healthy"></div>
+<div class="bg-amber-500 h-full w-[14%]" title="Attention Needed"></div>
+<div class="bg-error h-full w-[4%]" title="At Risk"></div>
+</div>
+<div class="flex gap-lg">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-green-500"></div>
+<span class="text-sm font-medium text-on-primary/70">82% Healthy</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-amber-500"></div>
+<span class="text-sm font-medium text-on-primary/70">14% Needs Attention</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-error"></div>
+<span class="text-sm font-medium text-on-primary/70">4% At Risk</span>
+</div>
+</div>
+</div>
+<div class="w-1/3 border-l border-white/10 pl-xl flex flex-col gap-lg z-10">
+<div>
+<p class="text-on-primary/50 text-xs font-bold uppercase tracking-widest mb-1">Avg Stay Length</p>
+<p class="text-2xl font-bold">11.2 <span class="text-sm font-normal text-on-primary/60">months</span></p>
+</div>
+<div>
+<p class="text-on-primary/50 text-xs font-bold uppercase tracking-widest mb-1">Resident Satisfaction</p>
+<p class="text-2xl font-bold">4.7<span class="text-sm font-normal text-on-primary/60">/5.0</span></p>
+</div>
+<div>
+<p class="text-on-primary/50 text-xs font-bold uppercase tracking-widest mb-1">Renewal Rate</p>
+<p class="text-2xl font-bold">88<span class="text-sm font-normal text-on-primary/60">%</span></p>
+</div>
+</div>
+</div>
+<!-- Section 4: Resident Directory Workspace -->
+<div class="bg-white rounded-xl border border-outline-variant overflow-hidden">
+<div class="px-xl py-lg border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+<h3 class="font-headline-sm text-headline-sm text-primary">Resident Directory</h3>
+<div class="flex items-center gap-md">
+<div class="flex border border-outline-variant rounded-lg overflow-hidden">
+<button class="p-2 bg-surface-container-high text-primary"><span class="material-symbols-outlined">list</span></button>
+<button class="p-2 hover:bg-surface-container-low text-secondary transition-colors"><span class="material-symbols-outlined">grid_view</span></button>
+</div>
+<div class="flex border border-outline-variant rounded-lg overflow-hidden h-9 items-center px-sm bg-white">
+<span class="material-symbols-outlined text-sm text-outline pr-1">filter_list</span>
+<select class="border-none text-xs font-bold focus:ring-0 bg-transparent py-0">
+<option>Sort by: Health Score</option>
+<option>Sort by: Recent</option>
+<option>Sort by: Payment Status</option>
+</select>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="py-3 px-xl text-[10px] font-black text-secondary uppercase tracking-widest">Resident Details</th>
+<th class="py-3 px-md text-[10px] font-black text-secondary uppercase tracking-widest">Property &amp; Unit</th>
+<th class="py-3 px-md text-[10px] font-black text-secondary uppercase tracking-widest">Health Score</th>
+<th class="py-3 px-md text-[10px] font-black text-secondary uppercase tracking-widest">Status</th>
+<th class="py-3 px-md text-[10px] font-black text-secondary uppercase tracking-widest">Rent</th>
+<th class="py-3 px-xl text-[10px] font-black text-secondary uppercase tracking-widest text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 px-xl">
+<div class="flex items-center gap-md">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional close-up of a diverse male professional in his 30s, smiling confidently. The lighting is crisp and modern, reflecting a premium resident profile photo for a luxury property management app. The aesthetic is clean and high-fidelity with the NestPG color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPfikPWeJBbqPaUvlAu-Rtp0WdQxD92LMLu3OwRXfX7-MIOS-qXBfbW5AzZiRa_9bLbqaGLX3r9nkHHpazdyNd-96lTl85RB7sUj8vFkuuADrtKa9ZtLSmnoi8jzNOlWhyXFeQtQZTJnYgR4VbxwDQmvhS4x65io6-js06584bcsw93QmVcfd1zeBM6C7nacp2J3TQnWBeqGE32kVia9xFlvyVydNVk0RbF9M5gGWehAMUo--nceU3zn1UXTPY7-ElQRxr9A3kPHVi"/>
+<div>
+<p class="font-bold text-primary">Arjun Mehta</p>
+<p class="text-[11px] text-outline font-mono">ID: NPG-88219</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-md">
+<p class="text-sm font-medium text-primary">Sunrise Residency</p>
+<p class="text-[12px] text-secondary">Tower A • Rm 203</p>
+</td>
+<td class="py-4 px-md">
+<div class="flex items-center gap-2">
+<div class="w-10 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="bg-green-500 h-full w-[95%]"></div>
+</div>
+<span class="text-xs font-bold text-green-600">95</span>
+</div>
+<span class="text-[10px] text-secondary font-medium">Healthy</span>
+</td>
+<td class="py-4 px-md space-y-1">
+<div class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-green-100 text-green-700">Paid</div>
+<div class="block text-[11px] text-secondary italic">Active Lease</div>
+</td>
+<td class="py-4 px-md">
+<p class="font-bold text-primary">₹17,500</p>
+</td>
+<td class="py-4 px-xl text-right">
+<div class="flex justify-end gap-1">
+<button class="p-2 rounded-lg hover:bg-white transition-all text-secondary hover:text-accent-vermillion" title="Message"><span class="material-symbols-outlined">chat_bubble</span></button>
+<button class="p-2 rounded-lg hover:bg-white transition-all text-secondary hover:text-accent-vermillion" title="Record Payment"><span class="material-symbols-outlined">payments</span></button>
+<button class="p-2 rounded-lg hover:bg-white transition-all text-secondary" title="Options"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group bg-error/5">
+<td class="py-4 px-xl">
+<div class="flex items-center gap-md">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A high-quality portrait of a professional female resident in an urban setting, featuring natural light and a contemporary aesthetic. The photograph is clean, sharp, and high-end, fitting for an executive property management dashboard like NestPG." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByZZfFmNrrWoCj2tvza7psMHGT67QjFstc2d5Vo41BbPe044cNkxRGZRp2wHGYorpO0ciIN9fbNRvA9KlF0Hrz7JWYkwyEcsiF2P0a_yw5TlypjL_5-L6xKc30M7LoY49R7Eo-kbyNhgCCQguJGncZRDU5puz95Mzd5w75VOTQYFKuwrx64xnVuiWPdOIvNx-4jxnTttdMGkhT4mojNq0QAIF8MOcOLPpX0h62DbgCk-xIeni2SM4fmNi6YcwSzAxmoAgoJdbal8LX"/>
+<div>
+<p class="font-bold text-primary">Sarah Jennings</p>
+<p class="text-[11px] text-outline font-mono">ID: NPG-44102</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-md">
+<p class="text-sm font-medium text-primary">North Tower</p>
+<p class="text-[12px] text-secondary">Apt 12B</p>
+</td>
+<td class="py-4 px-md">
+<div class="flex items-center gap-2">
+<div class="w-10 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="bg-error h-full w-[42%]"></div>
+</div>
+<span class="text-xs font-bold text-error">42</span>
+</div>
+<span class="text-[10px] text-error font-medium uppercase tracking-tighter">At Risk</span>
+</td>
+<td class="py-4 px-md space-y-1">
+<div class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-error/10 text-error">Overdue</div>
+<div class="block text-[11px] text-amber-600 font-bold">Renewal Due</div>
+</td>
+<td class="py-4 px-md">
+<p class="font-bold text-primary">₹22,000</p>
+</td>
+<td class="py-4 px-xl text-right">
+<div class="flex justify-end gap-1">
+<button class="p-2 rounded-lg bg-white text-error shadow-sm" title="Urgent Message"><span class="material-symbols-outlined">notification_important</span></button>
+<button class="p-2 rounded-lg hover:bg-white transition-all text-secondary hover:text-accent-vermillion" title="Record Payment"><span class="material-symbols-outlined">payments</span></button>
+<button class="p-2 rounded-lg hover:bg-white transition-all text-secondary" title="Ticket"><span class="material-symbols-outlined">confirmation_number</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 px-xl">
+<div class="flex items-center gap-md">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional portrait of a young male resident in a modern, well-lit apartment interior. The photography style is high-end architectural lifestyle, clean and crisp, reflecting the luxury positioning of the NestPG brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBslaMj_H-vyP9dRM0FiaAX_j2kRdfZ00di1akwVJ1ZLLxSc7KWARi1U8ZRz4BcnoL6str8swTdd_aG5vmkhvrELai4voPkdrUFDvyGfPMBOGhzHDX_ZoF2cm4kBSDFTNbnbVUfdQFmexD7yiohq9e5zeHALIiT2DBHltWBJgruINDDeQKY70HPT9KqbOX8bPTI8BSDgOOCYZYcD0gkXVfM8HMaqsPvLhiy3R_2MIDfgX0oImVir6sREifPt3AMaXtVhNjnToljo5fs"/>
+<div>
+<p class="font-bold text-primary">Rohan Kapoor</p>
+<p class="text-[11px] text-outline font-mono">ID: NPG-12093</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-md">
+<p class="text-sm font-medium text-primary">City Center Lofts</p>
+<p class="text-[12px] text-secondary">Unit 405</p>
+</td>
+<td class="py-4 px-md">
+<div class="flex items-center gap-2">
+<div class="w-10 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="bg-amber-500 h-full w-[78%]"></div>
+</div>
+<span class="text-xs font-bold text-amber-600">78</span>
+</div>
+<span class="text-[10px] text-secondary font-medium">Attention Needed</span>
+</td>
+<td class="py-4 px-md space-y-1">
+<div class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-green-100 text-green-700">Paid</div>
+<div class="block text-[11px] text-secondary italic">Active Lease</div>
+</td>
+<td class="py-4 px-md">
+<p class="font-bold text-primary">₹18,200</p>
+</td>
+<td class="py-4 px-xl text-right">
+<div class="flex justify-end gap-1">
+<button class="p-2 rounded-lg hover:bg-white transition-all text-secondary hover:text-accent-vermillion"><span class="material-symbols-outlined">chat_bubble</span></button>
+<button class="p-2 rounded-lg hover:bg-white transition-all text-secondary"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-md bg-surface-container-lowest border-t border-outline-variant flex justify-between items-center px-xl">
+<span class="text-xs text-secondary">Showing 1-20 of 3,482 residents</span>
+<div class="flex gap-1">
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-low transition-colors text-xs font-bold">Previous</button>
+<button class="px-3 py-1 bg-primary text-white rounded text-xs font-bold">1</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-low transition-colors text-xs font-bold">2</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-low transition-colors text-xs font-bold">3</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-low transition-colors text-xs font-bold">Next</button>
+</div>
+</div>
+</div>
+<!-- Section 5: Attention Needed & Pipelines -->
+<div class="grid grid-cols-2 gap-xl">
+<div class="bg-white p-lg rounded-xl border border-outline-variant">
+<div class="flex justify-between items-center mb-lg">
+<h4 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-error">priority_high</span> Urgent Action Needed
+                                </h4>
+<a class="text-accent-vermillion text-xs font-bold hover:underline" href="#">View All</a>
+</div>
+<div class="space-y-md">
+<div class="p-md bg-error/5 border border-error/10 rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-error/10 flex items-center justify-center text-error">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<div>
+<p class="text-sm font-bold text-primary">Overdue Rent (12 Residents)</p>
+<p class="text-xs text-secondary">Total: ₹2,42,000 • Avg 8 days late</p>
+</div>
+</div>
+<button class="material-symbols-outlined text-outline">chevron_right</button>
+</div>
+<div class="p-md bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
+<span class="material-symbols-outlined">hourglass_empty</span>
+</div>
+<div>
+<p class="text-sm font-bold text-primary">KYC Pending (8 Residents)</p>
+<p class="text-xs text-secondary">Action required for compliance</p>
+</div>
+</div>
+<button class="material-symbols-outlined text-outline">chevron_right</button>
+</div>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant">
+<h4 class="font-headline-sm text-headline-sm text-primary mb-lg">Renewal Pipeline</h4>
+<div class="grid grid-cols-4 gap-2">
+                                {[
+                                    {label: '90+ Days', count: 42, color: 'bg-green-500'},
+                                    {label: '60 Days', count: 21, color: 'bg-blue-500'},
+                                    {label: '30 Days', count: 18, color: 'bg-amber-500'},
+                                    {label: 'Due Now', count: 6, color: 'bg-error'}
+                                ].map(step =&gt; `
+                                    <div class="bg-surface-container-low p-sm rounded-lg text-center border border-outline-variant/50">
+<p class="text-[10px] font-black text-secondary uppercase tracking-tighter mb-1">${step.label}</p>
+<p class="text-xl font-black text-primary">${step.count}</p>
+<div class="w-full h-1 ${step.color} rounded-full mt-2"></div>
+</div>
+                                `).join('')}
+                            </div>
+<button class="w-full mt-lg py-sm border border-accent-vermillion text-accent-vermillion font-bold rounded-lg text-xs hover:bg-accent-vermillion/5 transition-colors">Generate Renewal Campaigns</button>
+</div>
+</div>
+</div>
+<!-- Right Insights Rail (Sticky) -->
+<aside class="col-span-12 lg:col-span-3 space-y-xl">
+<!-- Quick Filters Rail (Integrated in Side) -->
+<div class="bg-white p-lg rounded-xl border border-outline-variant sticky top-24">
+<h3 class="font-label-md text-label-md text-secondary uppercase tracking-widest mb-lg">Smart Filters</h3>
+<div class="space-y-lg">
+<div>
+<label class="text-[11px] font-bold text-primary uppercase block mb-2">Property Cluster</label>
+<select class="w-full bg-surface-container-low border-outline-variant rounded-lg text-sm focus:ring-accent-vermillion border">
+<option>All Properties</option>
+<option>Sunrise Residency</option>
+<option>North Tower</option>
+<option>City Center Lofts</option>
+</select>
+</div>
+<div>
+<label class="text-[11px] font-bold text-primary uppercase block mb-2">Resident Status</label>
+<div class="space-y-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-4 h-4 text-accent-vermillion rounded focus:ring-accent-vermillion border-outline-variant" type="checkbox"/>
+<span class="text-sm font-medium text-secondary group-hover:text-primary transition-colors">Active Residents</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-4 h-4 text-accent-vermillion rounded focus:ring-accent-vermillion border-outline-variant" type="checkbox"/>
+<span class="text-sm font-medium text-secondary group-hover:text-primary transition-colors">Notice Period</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-4 h-4 text-accent-vermillion rounded focus:ring-accent-vermillion border-outline-variant" type="checkbox"/>
+<span class="text-sm font-medium text-secondary group-hover:text-primary transition-colors">Lease Expired</span>
+</label>
+</div>
+</div>
+<hr class="border-outline-variant"/>
+<div>
+<h4 class="text-[11px] font-black text-secondary uppercase tracking-widest mb-md">Insights Summary</h4>
+<div class="space-y-md">
+<div class="flex justify-between items-center">
+<span class="text-sm text-secondary">Net Promoter Score</span>
+<span class="text-sm font-bold text-green-600">72.4</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-sm text-secondary">Churn Probability</span>
+<span class="text-sm font-bold text-error">4.2%</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-sm text-secondary">Rent Collection</span>
+<span class="text-sm font-bold text-primary">96.8%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Resident Copilot -->
+<div class="mt-xl bg-primary text-on-primary rounded-xl p-md overflow-hidden relative">
+<div class="absolute top-0 right-0 w-24 h-24 bg-accent-vermillion rounded-full blur-[40px] opacity-20"></div>
+<div class="flex items-center gap-2 mb-md z-10 relative">
+<div class="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary !text-[14px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<span class="text-xs font-bold">Resident Copilot</span>
+</div>
+<div class="bg-white/10 rounded-lg p-sm mb-md text-[13px] italic z-10 relative">
+                                "Analysis: 12 residents in Sunrise Residency have not responded to renewal offers. Suggest a site-visit or callback?"
+                            </div>
+<div class="space-y-1">
+<button class="w-full text-left p-2 hover:bg-white/10 rounded text-[11px] text-on-primary/70 transition-colors">"List residents with overdue rent"</button>
+<button class="w-full text-left p-2 hover:bg-white/10 rounded text-[11px] text-on-primary/70 transition-colors">"Who is likely to churn next month?"</button>
+<button class="w-full text-left p-2 hover:bg-white/10 rounded text-[11px] text-on-primary/70 transition-colors">"Check KYC pending status"</button>
+</div>
+<div class="mt-md relative">
+<input class="w-full bg-white/5 border border-white/20 rounded-lg py-2 px-3 text-xs focus:ring-accent-vermillion focus:border-accent-vermillion transition-all outline-none text-white" placeholder="Ask Resident Copilot..." type="text"/>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-white/50 cursor-pointer">send</span>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</main>
+<!-- Floating Assistant for Mobile/Global Context -->
+<div class="fixed bottom-margin right-margin z-50">
+<button class="w-14 h-14 bg-accent-vermillion text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all group">
+<span class="material-symbols-outlined !text-[28px] group-hover:rotate-12 transition-transform">support_agent</span>
+</button>
+</div>
+</body></html>

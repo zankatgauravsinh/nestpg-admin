@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Operational Intelligence Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            font-size: 20px;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid #E2E8F0;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fbf8fa;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#1e1200",
+                        "primary-container": "#1e293b",
+                        "on-secondary-container": "#61646d",
+                        "surface": "#fbf8fa",
+                        "surface-container-low": "#f5f3f4",
+                        "primary": "#091426",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#dcd9db",
+                        "on-secondary-fixed": "#181c23",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#eae7e9",
+                        "secondary-container": "#dfe2ed",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e4e2e3",
+                        "on-primary-fixed": "#111c2d",
+                        "inverse-primary": "#bcc7de",
+                        "surface-container": "#f0edef",
+                        "on-tertiary-fixed": "#271902",
+                        "secondary-fixed-dim": "#c3c6d1",
+                        "secondary-fixed": "#dfe2ed",
+                        "on-primary-container": "#8590a6",
+                        "tertiary-container": "#35260c",
+                        "on-tertiary-container": "#a38c6a",
+                        "inverse-on-surface": "#f3f0f2",
+                        "outline": "#75777d",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#43474f",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "outline-variant": "#c5c6cd",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ddc39d",
+                        "primary-fixed-dim": "#bcc7de",
+                        "tertiary-fixed": "#fadfb8",
+                        "on-surface-variant": "#45474c",
+                        "on-surface": "#1b1b1d",
+                        "surface-bright": "#fbf8fa",
+                        "surface-container-highest": "#e4e2e3",
+                        "secondary": "#5b5e67",
+                        "background": "#fbf8fa",
+                        "on-background": "#1b1b1d",
+                        "inverse-surface": "#303032",
+                        "on-tertiary-fixed-variant": "#564427",
+                        "surface-tint": "#545f73",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#d8e3fb",
+                        "accent": "#C2410C"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "gutter": "24px",
+                        "xxl": "48px",
+                        "margin": "32px",
+                        "sm": "8px",
+                        "md": "16px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary text-on-primary flex flex-col p-md border-r border-outline-variant z-50">
+<div class="mb-xxl px-sm">
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-primary">NestPG</h1>
+<p class="text-xs opacity-60">Premium Management</p>
+</div>
+<nav class="flex-1 space-y-sm">
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-70 hover:opacity-100 hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-70 hover:opacity-100 hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="font-body-md text-body-md">Portfolio</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-70 hover:opacity-100 hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-body-md text-body-md">Operations</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-70 hover:opacity-100 hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">Financials</span>
+</a>
+<a class="flex items-center gap-md p-md bg-primary-container text-on-primary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Intelligence</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-70 hover:opacity-100 hover:bg-primary-container/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full flex items-center justify-center gap-sm bg-accent text-white py-md rounded-lg font-bold hover:brightness-110 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">add</span>
+<span>New Property</span>
+</button>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-surface border-b border-outline-variant flex justify-between items-center px-xl z-40">
+<div class="flex items-center gap-xl flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container rounded-lg border-none focus:ring-2 focus:ring-accent/20 text-body-md" placeholder="Search analytics, properties..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<button class="p-sm hover:bg-surface-container rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border-2 border-white"></span>
+</button>
+<button class="p-sm hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="p-sm hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">apps</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="Manager Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBryGGkeE3Cw-O9TSnfV5BYXlXzbW4noMBn8hvEPMRPq9c-yxcVfn_jtbEGBwvrEuN2X-BOO7k8U89dVSaYM9pqpKkbAWzNRXZgXreAUKyF2aD0KosLk2I_ygZtaqFe8OPC12-aEAQNczb4CBzwVNiCLsYShaqgbggo_XBykYS1gWC-gw16W0qj7jRfP0-cn058ghHOpSPU2x_1fLY6Np_lqs1_qXa6Sy6EPatse9C3spvSr5Ljhs_GWA43aSD1ae-pA4VNMBoeNAzv"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] mt-16 p-xl">
+<!-- Header Actions -->
+<div class="flex justify-between items-end mb-xl">
+<div>
+<h2 class="text-[28px] font-bold tracking-tight text-primary">Operational Intelligence</h2>
+<p class="text-secondary">Executive analytics and automated performance reporting.</p>
+</div>
+<div class="flex gap-md">
+<button class="flex items-center gap-sm px-lg py-md border border-outline-variant bg-white rounded-lg text-primary font-medium hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined">calendar_today</span>
+                    Schedule Report
+                </button>
+<button class="flex items-center gap-sm px-lg py-md border border-outline-variant bg-white rounded-lg text-primary font-medium hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined">add_box</span>
+                    Create Custom View
+                </button>
+<button class="flex items-center gap-sm px-lg py-md bg-accent text-white rounded-lg font-bold hover:brightness-110 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">download</span>
+                    Download All
+                </button>
+</div>
+</div>
+<!-- Section 1: Executive Intelligence Rail -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-xl">
+<div class="bg-white p-lg rounded-xl border border-outline-variant hover:border-accent transition-colors">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-secondary font-medium text-label-md">PORTFOLIO REVENUE</span>
+<span class="text-green-600 bg-green-50 px-2 py-1 rounded text-[10px] font-bold">+12.4%</span>
+</div>
+<div class="text-[24px] font-extrabold text-primary">₹4.2 Cr</div>
+<div class="w-full bg-surface-container h-1 mt-md rounded-full overflow-hidden">
+<div class="bg-accent h-full w-[78%]"></div>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant hover:border-accent transition-colors">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-secondary font-medium text-label-md">OCCUPANCY RATE</span>
+<span class="text-green-600 bg-green-50 px-2 py-1 rounded text-[10px] font-bold">STABLE</span>
+</div>
+<div class="text-[24px] font-extrabold text-primary">94.2%</div>
+<div class="w-full bg-surface-container h-1 mt-md rounded-full overflow-hidden">
+<div class="bg-accent h-full w-[94.2%]"></div>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant hover:border-accent transition-colors">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-secondary font-medium text-label-md">MAINTENANCE SPEND</span>
+<span class="text-red-600 bg-red-50 px-2 py-1 rounded text-[10px] font-bold">-4.2%</span>
+</div>
+<div class="text-[24px] font-extrabold text-primary">₹12.8 L</div>
+<div class="w-full bg-surface-container h-1 mt-md rounded-full overflow-hidden">
+<div class="bg-accent h-full w-[45%]"></div>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant hover:border-accent transition-colors">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-secondary font-medium text-label-md">NET PROMOTER SCORE</span>
+<span class="text-accent bg-accent/10 px-2 py-1 rounded text-[10px] font-bold">HIGH</span>
+</div>
+<div class="text-[24px] font-extrabold text-primary">8.4</div>
+<div class="w-full bg-surface-container h-1 mt-md rounded-full overflow-hidden">
+<div class="bg-accent h-full w-[84%]"></div>
+</div>
+</div>
+</section>
+<!-- Main Analytics Grid -->
+<div class="grid grid-cols-12 gap-gutter mb-xl">
+<!-- Section 2: Revenue vs. Projection Chart -->
+<div class="col-span-8 bg-white p-xl rounded-xl border border-outline-variant">
+<div class="flex justify-between items-start mb-xl">
+<div>
+<h3 class="text-headline-sm font-bold text-primary">Revenue vs. Projection</h3>
+<p class="text-body-sm text-secondary">Monthly performance tracking across luxury and standard tiers</p>
+</div>
+<div class="flex items-center gap-sm bg-surface-container p-1 rounded-lg">
+<button class="px-md py-1 bg-white rounded shadow-sm text-xs font-bold">12 Months</button>
+<button class="px-md py-1 text-xs text-secondary font-medium">QTD</button>
+<button class="px-md py-1 text-xs text-secondary font-medium">YTD</button>
+</div>
+</div>
+<div class="h-[320px] relative w-full flex items-end gap-1">
+<!-- Faux Area Chart Implementation with CSS/Divs for visual density -->
+<div class="absolute inset-0 flex items-end overflow-hidden">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 800 300">
+<path d="M0,250 C100,220 200,240 300,180 C400,120 500,140 600,100 C700,60 800,80 800,80 L800,300 L0,300 Z" fill="rgba(194, 65, 12, 0.05)"></path>
+<path d="M0,250 C100,220 200,240 300,180 C400,120 500,140 600,100 C700,60 800,80 800,80" fill="none" stroke="#C2410C" stroke-linecap="round" stroke-width="3"></path>
+<path d="M0,280 C150,260 250,230 400,220 C550,210 650,180 800,150" fill="none" opacity="0.5" stroke="#94a3b8" stroke-dasharray="8 4" stroke-width="2"></path>
+</svg>
+</div>
+<!-- Axis Labels -->
+<div class="absolute left-0 bottom-0 w-full flex justify-between px-md text-[10px] text-secondary font-bold">
+<span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span><span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span><span>NOV</span><span>DEC</span>
+</div>
+</div>
+</div>
+<!-- Section 3: Risk & Compliance Distribution -->
+<div class="col-span-4 bg-white p-xl rounded-xl border border-outline-variant flex flex-col">
+<h3 class="text-headline-sm font-bold text-primary mb-xl">Risk &amp; Compliance</h3>
+<div class="space-y-xl flex-1">
+<div>
+<div class="flex justify-between mb-sm">
+<span class="text-body-sm font-bold">Critical Risk</span>
+<span class="text-body-sm font-bold">04 Units</span>
+</div>
+<div class="flex gap-1 h-3">
+<div class="w-1/12 bg-red-500 rounded-sm"></div>
+<div class="w-1/12 bg-red-500 rounded-sm"></div>
+<div class="w-1/12 bg-red-500 rounded-sm"></div>
+<div class="w-1/12 bg-red-500 rounded-sm"></div>
+<div class="flex-1 bg-surface-container rounded-sm"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-sm">
+<span class="text-body-sm font-bold text-on-surface">High Exposure</span>
+<span class="text-body-sm font-bold">12 Units</span>
+</div>
+<div class="flex gap-1 h-3">
+<div class="w-1/12 bg-orange-400 rounded-sm"></div>
+<div class="w-1/12 bg-orange-400 rounded-sm"></div>
+<div class="w-1/12 bg-orange-400 rounded-sm"></div>
+<div class="w-1/12 bg-orange-400 rounded-sm"></div>
+<div class="w-1/12 bg-orange-400 rounded-sm"></div>
+<div class="w-1/12 bg-orange-400 rounded-sm"></div>
+<div class="flex-1 bg-surface-container rounded-sm"></div>
+</div>
+</div>
+<div class="p-lg bg-surface-container rounded-lg">
+<div class="flex items-center justify-between mb-md">
+<span class="text-label-md font-bold text-secondary">COMPLIANCE SCORE</span>
+<span class="text-green-600 font-bold text-body-sm">98.2%</span>
+</div>
+<div class="flex gap-2">
+<div class="h-2 w-full bg-green-500 rounded-full"></div>
+</div>
+<p class="mt-md text-[11px] text-on-secondary-container leading-relaxed">All statutory audits for Gurgaon and Mumbai zones completed ahead of schedule.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 4 & 5 Combined Row -->
+<div class="grid grid-cols-12 gap-gutter mb-xl">
+<!-- Automated Reports Library -->
+<div class="col-span-7">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="text-headline-sm font-bold text-primary">Automated Reports Library</h3>
+<a class="text-accent text-label-md font-bold hover:underline" href="#">VIEW ALL</a>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="bg-white p-lg rounded-xl border border-outline-variant hover:shadow-md transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-md">
+<div class="p-sm bg-primary-fixed-dim rounded-lg text-primary">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<span class="text-[10px] font-bold text-green-600 flex items-center gap-1">
+<span class="w-1 h-1 bg-green-600 rounded-full animate-pulse"></span>
+                                ACTIVE
+                            </span>
+</div>
+<h4 class="font-bold text-body-md mb-xs">Monthly Financial Audit</h4>
+<p class="text-xs text-secondary mb-md">Last Generated: 2h ago</p>
+<div class="pt-md border-t border-outline-variant flex justify-between items-center">
+<span class="text-[10px] text-secondary font-bold uppercase tracking-wider">Auto-Delivery</span>
+<span class="material-symbols-outlined text-outline group-hover:text-accent">arrow_forward</span>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant hover:shadow-md transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-md">
+<div class="p-sm bg-primary-fixed-dim rounded-lg text-primary">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<span class="text-[10px] font-bold text-green-600 flex items-center gap-1">
+<span class="w-1 h-1 bg-green-600 rounded-full animate-pulse"></span>
+                                ACTIVE
+                            </span>
+</div>
+<h4 class="font-bold text-body-md mb-xs">Quarterly Occupancy Forecast</h4>
+<p class="text-xs text-secondary mb-md">Last Generated: 12 Oct</p>
+<div class="pt-md border-t border-outline-variant flex justify-between items-center">
+<span class="text-[10px] text-secondary font-bold uppercase tracking-wider">Auto-Delivery</span>
+<span class="material-symbols-outlined text-outline group-hover:text-accent">arrow_forward</span>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant hover:shadow-md transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-md">
+<div class="p-sm bg-primary-fixed-dim rounded-lg text-primary">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<span class="text-[10px] font-bold text-outline">MANUAL</span>
+</div>
+<h4 class="font-bold text-body-md mb-xs">Annual Compliance Review</h4>
+<p class="text-xs text-secondary mb-md">Last Generated: Jan 2024</p>
+<div class="pt-md border-t border-outline-variant flex justify-between items-center">
+<span class="text-[10px] text-secondary font-bold uppercase tracking-wider">On-Demand</span>
+<span class="material-symbols-outlined text-outline group-hover:text-accent">arrow_forward</span>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant hover:shadow-md transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-md">
+<div class="p-sm bg-primary-fixed-dim rounded-lg text-primary">
+<span class="material-symbols-outlined">assessment</span>
+</div>
+<span class="text-[10px] font-bold text-green-600 flex items-center gap-1">
+<span class="w-1 h-1 bg-green-600 rounded-full animate-pulse"></span>
+                                ACTIVE
+                            </span>
+</div>
+<h4 class="font-bold text-body-md mb-xs">Vendor Performance Analysis</h4>
+<p class="text-xs text-secondary mb-md">Last Generated: Yesterday</p>
+<div class="pt-md border-t border-outline-variant flex justify-between items-center">
+<span class="text-[10px] text-secondary font-bold uppercase tracking-wider">Auto-Delivery</span>
+<span class="material-symbols-outlined text-outline group-hover:text-accent">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Custom Report Builder -->
+<div class="col-span-5 flex flex-col">
+<h3 class="text-headline-sm font-bold text-primary mb-lg">Custom Report Builder</h3>
+<div class="bg-white border-2 border-dashed border-outline-variant rounded-xl flex-1 flex flex-col items-center justify-center p-xl text-center group hover:border-accent/40 transition-colors">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-outline text-display-lg">drag_pan</span>
+</div>
+<h4 class="font-bold text-primary mb-sm">Drag &amp; Drop Data Points</h4>
+<p class="text-body-sm text-secondary mb-xl">Assemble your executive brief by dragging modules into this frame.</p>
+<div class="flex flex-wrap justify-center gap-sm max-w-[280px]">
+<span class="px-md py-1 bg-surface-container text-xs font-medium rounded-full border border-outline-variant">ROI</span>
+<span class="px-md py-1 bg-surface-container text-xs font-medium rounded-full border border-outline-variant">Lease Pipeline</span>
+<span class="px-md py-1 bg-surface-container text-xs font-medium rounded-full border border-outline-variant">EBITDA</span>
+<span class="px-md py-1 bg-surface-container text-xs font-medium rounded-full border border-outline-variant">Capex</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 6: AI Intelligence Copilot -->
+<section class="bg-primary-container rounded-xl p-xl relative overflow-hidden">
+<!-- Background element for "AI" feel -->
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+
+</div>
+<div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-xl">
+<div>
+<div class="flex items-center gap-md mb-md">
+<div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<h3 class="text-headline-sm font-bold text-white">AI Intelligence Copilot</h3>
+</div>
+<p class="text-on-primary-container text-body-md mb-xl leading-relaxed">
+                        Query your entire property management engine using natural language. Get instant data visualizations and predictive insights.
+                    </p>
+<div class="relative">
+<input class="w-full bg-primary/40 border border-on-primary-container/20 rounded-xl px-xl py-lg text-white placeholder:text-on-primary-container focus:ring-2 focus:ring-accent outline-none" placeholder="Ask anything: 'Compare maintenance costs between North and South zones'..." type="text"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 bg-accent text-white p-sm rounded-lg">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col justify-center">
+<span class="text-xs font-bold text-on-primary-container uppercase tracking-widest mb-md opacity-60">SUGGESTED QUERIES</span>
+<div class="space-y-sm">
+<button class="w-full text-left p-md bg-white/5 border border-white/10 rounded-lg text-on-primary-container text-body-sm hover:bg-white/10 transition-colors flex items-center justify-between group">
+<span>"Predict occupancy for Q4 across luxury units"</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">north_east</span>
+</button>
+<button class="w-full text-left p-md bg-white/5 border border-white/10 rounded-lg text-on-primary-container text-body-sm hover:bg-white/10 transition-colors flex items-center justify-between group">
+<span>"Show revenue leakage by city for last quarter"</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">north_east</span>
+</button>
+<button class="w-full text-left p-md bg-white/5 border border-white/10 rounded-lg text-on-primary-container text-body-sm hover:bg-white/10 transition-colors flex items-center justify-between group">
+<span>"Analyze correlation between NPS and Maintenance"</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">north_east</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Contextual micro-interactions scripts -->
+<script>
+        document.querySelectorAll('.active\\:scale-\\[0\\.98\\]').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.style.transform = 'scale(0.98)';
+            });
+            button.addEventListener('mouseup', () => {
+                button.style.transform = 'scale(1)';
+            });
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

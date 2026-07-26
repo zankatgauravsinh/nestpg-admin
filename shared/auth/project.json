@@ -1,0 +1,9 @@
+{
+  "name": "auth",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "shared/auth/src",
+  "prefix": "nestpg",
+  "tags": ["scope:shared", "type:auth"],
+  "targets": {}
+}

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Register Organization | NestPG</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-transition {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .form-container {
+            max-width: 480px;
+        }
+        /* Custom Success Green from Prompt */
+        .bg-success-nest { background-color: #16A34A; }
+        .text-success-nest { color: #16A34A; }
+        .ring-success-nest:focus { --tw-ring-color: #16A34A; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#091426",
+                      "on-primary-container": "#8590a6",
+                      "background": "#fbf8fa",
+                      "tertiary-fixed-dim": "#ddc39d",
+                      "on-error-container": "#93000a",
+                      "surface-tint": "#545f73",
+                      "on-tertiary-fixed": "#271902",
+                      "on-tertiary-container": "#a38c6a",
+                      "tertiary": "#1e1200",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed": "#181c23",
+                      "surface-bright": "#fbf8fa",
+                      "surface-variant": "#e4e2e3",
+                      "primary-fixed-dim": "#bcc7de",
+                      "surface-container-high": "#eae7e9",
+                      "surface": "#fbf8fa",
+                      "tertiary-container": "#35260c",
+                      "secondary": "#5b5e67",
+                      "on-primary": "#ffffff",
+                      "surface-container-low": "#f5f3f4",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#dfe2ed",
+                      "secondary-fixed-dim": "#c3c6d1",
+                      "on-secondary-container": "#61646d",
+                      "inverse-surface": "#303032",
+                      "primary-container": "#1e293b",
+                      "surface-container": "#f0edef",
+                      "primary-fixed": "#d8e3fb",
+                      "on-primary-fixed": "#111c2d",
+                      "secondary-container": "#dfe2ed",
+                      "surface-container-lowest": "#ffffff",
+                      "error": "#ba1a1a",
+                      "outline-variant": "#c5c6cd",
+                      "on-surface-variant": "#45474c",
+                      "inverse-primary": "#bcc7de",
+                      "surface-dim": "#dcd9db",
+                      "inverse-on-surface": "#f3f0f2",
+                      "on-background": "#1b1b1d",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-fixed-variant": "#3c475a",
+                      "on-error": "#ffffff",
+                      "on-surface": "#1b1b1d",
+                      "on-secondary-fixed-variant": "#43474f",
+                      "on-tertiary-fixed-variant": "#564427",
+                      "outline": "#75777d",
+                      "surface-container-highest": "#e4e2e3",
+                      "tertiary-fixed": "#fadfb8"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "sm": "8px",
+                      "gutter": "24px",
+                      "xl": "32px",
+                      "margin": "32px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "xxl": "48px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "code-sm": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "label-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-md": ["Inter"]
+              },
+              "fontSize": {
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface min-h-screen overflow-x-hidden">
+<main class="flex min-h-screen">
+<!-- Left Side: Visual/Branding -->
+<div class="hidden lg:flex lg:w-1/2 relative bg-primary items-center justify-center overflow-hidden">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+
+</div>
+<div class="relative z-10 p-xxl max-w-xl text-on-primary">
+<div class="mb-xl">
+<span class="font-headline-md text-headline-md font-bold tracking-tight">NestPG</span>
+</div>
+<h2 class="font-display-lg text-display-lg mb-md leading-tight">Master your portfolio with executive precision.</h2>
+<p class="font-body-lg text-body-lg text-on-primary-container leading-relaxed">
+                    Join over 5,000 professional property managers using NestPG to automate operations, manage residents, and scale their real estate empire.
+                </p>
+<div class="mt-xxl grid grid-cols-2 gap-lg">
+<div class="p-md bg-white/5 border border-white/10 rounded-xl">
+<div class="font-headline-sm text-headline-sm font-bold text-white mb-xs">99.9%</div>
+<div class="font-label-md text-label-md text-on-primary-container">UPTIME GUARANTEE</div>
+</div>
+<div class="p-md bg-white/5 border border-white/10 rounded-xl">
+<div class="font-headline-sm text-headline-sm font-bold text-white mb-xs">Enterprise</div>
+<div class="font-label-md text-label-md text-on-primary-container">SECURITY PROTOCOLS</div>
+</div>
+</div>
+</div>
+<!-- Subtle background image for depth -->
+<div class="absolute bottom-0 right-0 w-full h-full z-0 opacity-10">
+<img alt="Corporate skyscraper architecture" class="w-full h-full object-cover" data-alt="A grand low-angle shot of a glass-and-steel corporate skyscraper reaching towards a clear sky. The architecture is ultra-modern with sharp, clean lines reflecting a professional and high-stakes real estate environment. The lighting is crisp and natural, emphasizing the scale and precision of the building. The overall mood is ambitious and stable, aligned with professional property management." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYmuWhAN7QmPsCz5yy1zH1mrx8IZ1OHtPkXcTBVKSgoEt3sLR0kqgGe_YVI7kUydiTD8iCfh_QYscTIaokIRdgegcH1z8kCDdd7RIyZ5Q_6bal3wLrJAxcvzVc-YqAZy1nAPdwQafauXOi3YGP_UhrVHrapmjxLsLrPMhymptacO2G5fbHqi0kmuMW_tgK1PsdQ4oAuPu6-Ja1Z5M6umvrDcxdyUFj1M5NMLtcEBU_m2xkYF85GafWJ8XywEpC8w0H1oVKrDWiwChG"/>
+</div>
+</div>
+<!-- Right Side: Multi-step Form -->
+<div class="w-full lg:w-1/2 bg-surface-container-lowest flex flex-col justify-center items-center px-margin py-xxl overflow-y-auto">
+<div class="form-container w-full">
+<!-- Header -->
+<div class="mb-xl text-center lg:text-left">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Create your NestPG workspace</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Start managing your properties in minutes.</p>
+</div>
+<!-- Stepper Indicator -->
+<div class="flex items-center justify-between mb-xl px-xs">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full flex items-center justify-center font-label-md text-label-md transition-all duration-300 bg-primary text-on-primary" id="step-indicator-1">1</div>
+<div class="w-8 h-8 rounded-full flex items-center justify-center font-label-md text-label-md transition-all duration-300 bg-surface-container text-on-surface-variant" id="step-indicator-2">2</div>
+<div class="w-8 h-8 rounded-full flex items-center justify-center font-label-md text-label-md transition-all duration-300 bg-surface-container text-on-surface-variant" id="step-indicator-3">3</div>
+</div>
+<div class="h-[2px] flex-1 bg-surface-container mx-lg relative overflow-hidden">
+<div class="absolute left-0 top-0 h-full bg-primary transition-all duration-500 w-0" id="step-progress-bar"></div>
+</div>
+</div>
+<!-- Steps Container -->
+<div class="relative overflow-hidden min-h-[420px]">
+<!-- Step 1: Organization Details -->
+<div class="step-transition opacity-100 translate-x-0" id="step-1">
+<div class="space-y-lg">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="org_name">Organization Name</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-surface transition-all" id="org_name" placeholder="Acme Property Group" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="business_email">Business Email</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-surface transition-all" id="business_email" placeholder="operations@acme.com" type="email"/>
+</div>
+<div class="grid grid-cols-2 gap-lg">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="phone">Phone Number</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-surface transition-all" id="phone" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="country">Country</label>
+<select class="w-full px-md py-sm border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-surface transition-all" id="country">
+<option>United States</option>
+<option>Canada</option>
+<option>United Kingdom</option>
+<option>Australia</option>
+</select>
+</div>
+</div>
+<button class="w-full py-md px-lg bg-primary text-on-primary font-headline-sm text-headline-sm rounded-lg hover:opacity-90 transition-all flex items-center justify-center gap-sm mt-xl" onclick="goToStep(2)">
+                                Continue
+                                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Step 2: Admin Account -->
+<div class="step-transition absolute inset-0 opacity-0 translate-x-full pointer-events-none" id="step-2">
+<div class="space-y-lg">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="admin_name">Admin Full Name</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-surface transition-all" id="admin_name" placeholder="Jane Cooper" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="admin_email">Admin Email</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-surface transition-all" id="admin_email" placeholder="jane@acme.com" type="email"/>
+</div>
+<div class="grid grid-cols-2 gap-lg">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="password">Password</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-surface transition-all" id="password" placeholder="••••••••" type="password"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="confirm_password">Confirm</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-surface transition-all" id="confirm_password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="flex gap-md pt-md">
+<button class="flex-1 py-md px-lg border border-outline-variant text-on-surface font-headline-sm text-headline-sm rounded-lg hover:bg-surface-container-low transition-all" onclick="goToStep(1)">
+                                    Back
+                                </button>
+<button class="flex-[2] py-md px-lg bg-primary text-on-primary font-headline-sm text-headline-sm rounded-lg hover:opacity-90 transition-all flex items-center justify-center gap-sm" onclick="goToStep(3)">
+                                    Verify Details
+                                    <span class="material-symbols-outlined">check_circle</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Step 3: Workspace Preview -->
+<div class="step-transition absolute inset-0 opacity-0 translate-x-full pointer-events-none" id="step-3">
+<div class="space-y-lg">
+<p class="font-body-md text-body-md text-on-surface-variant mb-md">Review your workspace identity before finalizing.</p>
+<!-- Preview Card -->
+<div class="p-xl border border-outline-variant rounded-xl bg-white shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-lg opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-[64px]">domain</span>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-md mb-lg">
+<div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl" id="preview-logo-initial">A</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface" id="preview-org-name">Acme Property Group</h3>
+<p class="font-label-md text-label-md text-on-surface-variant" id="preview-admin-email">jane@acme.com</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-md border-t border-surface-variant pt-lg">
+<div>
+<div class="font-label-md text-label-md text-on-surface-variant">PROPERTIES</div>
+<div class="font-headline-sm text-headline-sm">0</div>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-surface-variant">RESIDENTS</div>
+<div class="font-headline-sm text-headline-sm">0</div>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-surface-variant">PLAN</div>
+<div class="inline-flex items-center px-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold">STARTER</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex gap-md pt-md">
+<button class="flex-1 py-md px-lg border border-outline-variant text-on-surface font-headline-sm text-headline-sm rounded-lg hover:bg-surface-container-low transition-all" onclick="goToStep(2)">
+                                    Back
+                                </button>
+<button class="flex-[2] py-md px-lg bg-success-nest text-on-primary font-headline-sm text-headline-sm rounded-lg hover:opacity-90 shadow-lg shadow-green-500/20 transition-all flex items-center justify-center gap-sm">
+                                    Create Workspace
+                                    <span class="material-symbols-outlined">rocket_launch</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Links -->
+<div class="mt-xxl pt-xl border-t border-surface-variant flex justify-between items-center">
+<p class="font-label-md text-label-md text-on-surface-variant">Already have a workspace?</p>
+<a class="font-label-md text-label-md text-primary font-bold hover:underline" href="#">Login instead</a>
+</div>
+</div>
+</div>
+</main>
+<script>
+        function goToStep(stepNumber) {
+            const steps = [1, 2, 3];
+            const progressBar = document.getElementById('step-progress-bar');
+            
+            steps.forEach(s => {
+                const stepEl = document.getElementById(`step-${s}`);
+                const indicatorEl = document.getElementById(`step-indicator-${s}`);
+                
+                if (s === stepNumber) {
+                    // Show current step
+                    stepEl.classList.remove('opacity-0', 'translate-x-full', 'pointer-events-none');
+                    stepEl.classList.add('opacity-100', 'translate-x-0');
+                    
+                    indicatorEl.classList.remove('bg-surface-container', 'text-on-surface-variant');
+                    indicatorEl.classList.add('bg-primary', 'text-on-primary');
+                } else if (s < stepNumber) {
+                    // Previous steps
+                    stepEl.classList.add('opacity-0', '-translate-x-full', 'pointer-events-none');
+                    stepEl.classList.remove('opacity-100', 'translate-x-0');
+                    
+                    indicatorEl.classList.remove('bg-surface-container', 'text-on-surface-variant');
+                    indicatorEl.classList.add('bg-primary', 'text-on-primary');
+                } else {
+                    // Future steps
+                    stepEl.classList.add('opacity-0', 'translate-x-full', 'pointer-events-none');
+                    stepEl.classList.remove('opacity-100', 'translate-x-0');
+                    
+                    indicatorEl.classList.add('bg-surface-container', 'text-on-surface-variant');
+                    indicatorEl.classList.remove('bg-primary', 'text-on-primary');
+                }
+            });
+
+            // Update Progress Bar Width
+            const progressWidths = { 1: '0%', 2: '50%', 3: '100%' };
+            progressBar.style.width = progressWidths[stepNumber];
+
+            // Update Preview Data if moving to Step 3
+            if (stepNumber === 3) {
+                const orgName = document.getElementById('org_name').value || 'New Workspace';
+                const adminEmail = document.getElementById('admin_email').value || 'admin@example.com';
+                
+                document.getElementById('preview-org-name').textContent = orgName;
+                document.getElementById('preview-admin-email').textContent = adminEmail;
+                document.getElementById('preview-logo-initial').textContent = orgName.charAt(0).toUpperCase();
+            }
+        }
+    </script>
+</body></html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Resident CRM - Stay History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#c3c6d1",
+                    "tertiary-fixed-dim": "#ddc39d",
+                    "tertiary-fixed": "#fadfb8",
+                    "on-primary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#35260c",
+                    "surface-dim": "#dcd9db",
+                    "primary-fixed-dim": "#bcc7de",
+                    "secondary-container": "#dfe2ed",
+                    "surface": "#fbf8fa",
+                    "on-secondary-container": "#61646d",
+                    "outline-variant": "#c5c6cd",
+                    "on-tertiary-fixed-variant": "#564427",
+                    "surface-container-highest": "#e4e2e3",
+                    "on-tertiary-container": "#a38c6a",
+                    "on-primary-fixed-variant": "#3c475a",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#d8e3fb",
+                    "on-surface": "#1b1b1d",
+                    "inverse-on-surface": "#f3f0f2",
+                    "on-background": "#1b1b1d",
+                    "surface-bright": "#fbf8fa",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#43474f",
+                    "on-secondary-fixed": "#181c23",
+                    "inverse-surface": "#303032",
+                    "on-surface-variant": "#45474c",
+                    "inverse-primary": "#bcc7de",
+                    "on-error-container": "#93000a",
+                    "on-secondary": "#ffffff",
+                    "surface-tint": "#545f73",
+                    "surface-container-high": "#eae7e9",
+                    "primary-container": "#1e293b",
+                    "primary": "#091426",
+                    "tertiary": "#1e1200",
+                    "on-primary-container": "#8590a6",
+                    "background": "#fbf8fa",
+                    "on-tertiary-fixed": "#271902",
+                    "secondary": "#5b5e67",
+                    "surface-variant": "#e4e2e3",
+                    "surface-container-low": "#f5f3f4",
+                    "surface-container": "#f0edef",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#111c2d",
+                    "outline": "#75777d",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#dfe2ed"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "xl": "32px",
+                    "gutter": "24px",
+                    "lg": "24px",
+                    "base": "4px",
+                    "sm": "8px",
+                    "margin": "32px",
+                    "xxl": "48px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "code-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .timeline-line {
+            width: 2px;
+            background: linear-gradient(to bottom, #d8e3fb 0%, #091426 50%, #d8e3fb 100%);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e4e2e3; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-background overflow-hidden h-screen flex">
+<!-- Side Navigation Shell (The Anchor) -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-surface border-r border-outline-variant flex flex-col p-md gap-sm z-50">
+<div class="mb-lg">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">NestPG</h1>
+</div>
+<div class="flex items-center gap-sm mb-lg p-sm bg-surface-container-low rounded-xl">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-primary-fixed flex-shrink-0">
+<img alt="Arjun Mehta" class="w-full h-full object-cover" data-alt="A professional portrait of a male resident in his 30s with a clean-cut appearance. He is set against a soft-focus architectural background with warm, natural interior lighting. The overall aesthetic is clean, sophisticated, and high-end corporate minimalist, matching the NestPG brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxjMMSt33UEdoAC7keYSsoj2bM1CoBe4dQ8QzCwu_kPfIf7NyLbIBJe5glqonMvWnHMsUvp6zMfyVF_0TTNGN7YxWlqRsF7wShYT9FAC6cgo1Lk-4KyY2UQ35wJxsjFtffn2IFLBSgwQzSiWmC6sS3vz2xCHg5ZmNNw6mn1cqQ_3DsHF0yMnHSXQ_4Ia9FKVlgovwd4AgEdyYpjNSeHNrCaV5X0w3tF76Ygp7sCBKlsaRjsxZrkSJquxX-uvUuP8SfdYukw25H2mO0"/>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary">Arjun Mehta</span>
+<span class="font-label-md text-label-md text-secondary">Resident ID: #NPG-8821</span>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-xs overflow-y-auto custom-scrollbar">
+<!-- Nav Item: Overview -->
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+<!-- Nav Item: Payments -->
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+<!-- Nav Item: Stay History (ACTIVE) -->
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg font-bold transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label-md text-label-md">Stay History</span>
+</a>
+<!-- Nav Item: Tickets -->
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">confirmation_number</span>
+<span class="font-label-md text-label-md">Tickets</span>
+</a>
+<!-- Nav Item: KYC -->
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+<span class="font-label-md text-label-md">KYC</span>
+</a>
+<!-- Nav Item: Documents -->
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">folder</span>
+<span class="font-label-md text-label-md">Documents</span>
+</a>
+<!-- Nav Item: Communications -->
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+<span class="font-label-md text-label-md">Communications</span>
+</a>
+<!-- Nav Item: Activity -->
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="font-label-md text-label-md">Activity</span>
+</a>
+</nav>
+<div class="mt-auto pt-md flex flex-col gap-xs">
+<button class="bg-primary text-on-primary py-md px-md rounded-lg font-headline-sm text-headline-sm flex items-center justify-center gap-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+                AI Resident Copilot
+            </button>
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas Area -->
+<main class="ml-[260px] flex-1 flex flex-col h-full bg-background relative">
+<!-- Top Bar Header -->
+<header class="h-16 flex justify-between items-center px-gutter w-full bg-primary text-on-primary sticky top-0 z-40">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-headline-md font-bold">NestPG Resident CRM</span>
+<span class="w-[1px] h-6 bg-on-primary/20"></span>
+<span class="font-headline-sm text-headline-sm opacity-80">Stay History</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-primary hover:bg-primary-container/20 p-2 rounded-full transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-primary hover:bg-primary-container/20 p-2 rounded-full transition-colors">settings</button>
+<button class="material-symbols-outlined text-on-primary hover:bg-primary-container/20 p-2 rounded-full transition-colors">help</button>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim text-on-primary-fixed flex items-center justify-center font-bold text-xs">
+                    AM
+                </div>
+</div>
+</header>
+<div class="flex-1 p-margin overflow-y-auto custom-scrollbar flex flex-col md:flex-row gap-gutter">
+<!-- Stay History Timeline Content -->
+<section class="flex-1 max-w-4xl mx-auto">
+<div class="mb-xl">
+<h2 class="font-headline-lg text-headline-lg text-primary">Resident Journey Milestone</h2>
+<p class="font-body-md text-body-md text-secondary mt-xs">A chronological view of Arjun's lifecycle with NestPG.</p>
+</div>
+<div class="relative pl-12 space-y-12">
+<!-- Vertical Line -->
+<div class="absolute left-5 top-2 bottom-2 timeline-line rounded-full opacity-20"></div>
+<!-- Milestone: Lease Renewal -->
+<div class="relative group">
+<div class="absolute -left-12 top-0 w-10 h-10 bg-primary rounded-full flex items-center justify-center z-10 border-4 border-background group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-on-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">refresh</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl transition-all hover:border-primary">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-sm text-headline-sm text-primary">Lease Renewal</h3>
+<span class="bg-primary-fixed text-on-primary-fixed px-sm py-[2px] rounded font-label-md text-label-md">01 Jan 2024</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Arjun renewed his lease for the Premium Studio wing for another 12-month period. Preferred resident status applied with a 5% loyalty discount.</p>
+</div>
+</div>
+<!-- Milestone: Room Transfer -->
+<div class="relative group">
+<div class="absolute -left-12 top-0 w-10 h-10 bg-surface-container-highest border border-primary rounded-full flex items-center justify-center z-10 border-4 border-background group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-[18px]">swap_horiz</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl transition-all hover:border-primary">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-sm text-headline-sm text-primary">Room Transfer</h3>
+<span class="bg-surface-container text-secondary px-sm py-[2px] rounded font-label-md text-label-md">15 Jun 2023</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Moved from Shared Suite (402) to Premium Studio (901) following a service request for more privacy. Transfer completed successfully within 4 hours.</p>
+</div>
+</div>
+<!-- Milestone: Check-In Completed -->
+<div class="relative group">
+<div class="absolute -left-12 top-0 w-10 h-10 bg-primary-fixed rounded-full flex items-center justify-center z-10 border-4 border-background group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">key</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl transition-all hover:border-primary">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-sm text-headline-sm text-primary">Check-In Completed</h3>
+<span class="bg-surface-container text-secondary px-sm py-[2px] rounded font-label-md text-label-md">12 Jan 2023</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Formal physical check-in and room handover. Welcome kit provided and property walkthrough completed. Digital keys activated.</p>
+</div>
+</div>
+<!-- Milestone: Booking Confirmed -->
+<div class="relative group">
+<div class="absolute -left-12 top-0 w-10 h-10 bg-tertiary-fixed-dim rounded-full flex items-center justify-center z-10 border-4 border-background group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-tertiary text-[18px]">task_alt</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl transition-all hover:border-primary">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-sm text-headline-sm text-primary">Booking Confirmed</h3>
+<span class="bg-surface-container text-secondary px-sm py-[2px] rounded font-label-md text-label-md">10 Dec 2022</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Security deposit and first month's rent received. Booking ID #BK-NEST-8821 confirmed for property 'The Horizon Suites'.</p>
+</div>
+</div>
+<!-- Milestone: KYC Submitted -->
+<div class="relative group">
+<div class="absolute -left-12 top-0 w-10 h-10 bg-secondary-container rounded-full flex items-center justify-center z-10 border-4 border-background group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary text-[18px]">how_to_reg</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl transition-all hover:border-primary">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-sm text-headline-sm text-primary">KYC Submitted</h3>
+<span class="bg-surface-container text-secondary px-sm py-[2px] rounded font-label-md text-label-md">05 Dec 2022</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Identity documents, proof of address, and employment verification uploaded. Background check initiated by verification team.</p>
+</div>
+</div>
+<!-- Milestone: Lead Created -->
+<div class="relative group">
+<div class="absolute -left-12 top-0 w-10 h-10 bg-surface-container-high rounded-full flex items-center justify-center z-10 border-4 border-background group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-outline text-[18px]">person_add</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl transition-all hover:border-primary">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-sm text-headline-sm text-primary">Lead Created</h3>
+<span class="bg-surface-container text-secondary px-sm py-[2px] rounded font-label-md text-label-md">01 Dec 2022</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Inquiry received via website. Lead categorized as high intent based on location preferences and budget alignment.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Intelligence Rail -->
+<aside class="hidden lg:block w-80 shrink-0">
+<div class="sticky top-gutter flex flex-col gap-lg">
+<!-- Resident Stats Card -->
+<div class="bg-surface border border-outline-variant rounded-xl p-lg">
+<h4 class="font-label-md text-label-md text-secondary uppercase mb-md">Resident Status</h4>
+<div class="flex items-center gap-sm mb-lg">
+<div class="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+<span class="font-headline-sm text-headline-sm text-primary">Active (Renewed)</span>
+</div>
+<div class="space-y-md">
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-secondary">Total Stay</span>
+<span class="font-headline-sm text-headline-sm text-primary">15 Months</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-secondary">Reward Points</span>
+<span class="font-headline-sm text-headline-sm text-primary">4,200</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-secondary">Compliance</span>
+<span class="text-green-600 font-headline-sm text-headline-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-xs">verified</span> 100%
+                                </span>
+</div>
+</div>
+</div>
+<!-- Room Info Card -->
+<div class="bg-primary text-on-primary rounded-xl overflow-hidden">
+<div class="h-32 w-full relative">
+<img alt="Current Room" class="w-full h-full object-cover opacity-80" data-alt="A modern, high-end studio apartment with minimalist furniture, large floor-to-ceiling windows showing a city skyline, and warm architectural lighting. The scene is elegant and professionally photographed, reflecting a premium urban living space that aligns with the NestPG luxury property brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsyRy_3GLCu24wip4rDs0Wr5d4spU09b3skdQvv9GPS6weymN6ykyVrPIuQLfHO0Obc2KEGspLVVWMTrl4UcnQJYyjFpAPh7Q3sIdZn0wbQoZbNeDt5S-vSl7Ufg7iwPy8ffThxzd9w5qwYbXQ2ijfj2fQGqsDApQA2OPkDfllfnWBqDVEU48PqX78IOCCLvDRDcDfdXJCrfRuDocSXeB8Fj81y2l30iBHbGVz2ISoWXy_jYHI8bcPFwShrQ4Dcmk6nluukUIJNd9d"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary to-transparent"></div>
+<div class="absolute bottom-md left-md">
+<h4 class="font-headline-sm text-headline-sm">Room 901</h4>
+<p class="font-label-md text-label-md opacity-70">Premium Studio Wing</p>
+</div>
+</div>
+<div class="p-lg space-y-md">
+<button class="w-full bg-on-primary text-primary py-sm rounded font-headline-sm text-headline-sm hover:bg-on-primary/90 transition-colors">
+                                View Floor Plan
+                            </button>
+<button class="w-full border border-on-primary/30 text-on-primary py-sm rounded font-headline-sm text-headline-sm hover:bg-on-primary/10 transition-colors">
+                                Inventory Check
+                            </button>
+</div>
+</div>
+<!-- AI Copilot Suggestion -->
+<div class="bg-secondary-container border border-outline-variant p-lg rounded-xl">
+<div class="flex items-center gap-sm mb-sm text-on-secondary-container">
+<span class="material-symbols-outlined text-[20px]">lightbulb</span>
+<span class="font-label-md text-label-md font-bold uppercase">Copilot Insight</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-secondary-container leading-relaxed">
+                            Arjun has an upcoming birthday on Feb 12th. Suggest offering a complimentary cleaning service or a club access voucher for his loyalty.
+                        </p>
+<button class="mt-md font-label-md text-label-md text-primary font-bold hover:underline">
+                            Action Suggestion
+                        </button>
+</div>
+</div>
+</aside>
+</div>
+<!-- Floating Action Button (FAB) suppression based on Contextual FAB Suppression rule: Suppress on Details/History screens -->
+</main>
+<script>
+        // Subtle micro-interactions
+        document.querySelectorAll('.active\\:scale-\\[0\\.98\\]').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-95');
+            });
+        });
+
+        // Simulating loading state for AI insights
+        window.addEventListener('DOMContentLoaded', () => {
+            const copilotBox = document.querySelector('.bg-secondary-container');
+            if (copilotBox) {
+                copilotBox.style.opacity = '0';
+                copilotBox.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    copilotBox.style.transition = 'all 0.5s ease-out';
+                    copilotBox.style.opacity = '1';
+                    copilotBox.style.transform = 'translateY(0)';
+                }, 800);
+            }
+        });
+    </script>
+</body></html>

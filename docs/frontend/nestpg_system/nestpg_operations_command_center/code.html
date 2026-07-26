@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Operations Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#181c23",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "on-surface-variant": "#45474c",
+                        "secondary": "#5b5e67",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#35260c",
+                        "on-tertiary-container": "#a38c6a",
+                        "inverse-surface": "#303032",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#dfe2ed",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#fbf8fa",
+                        "outline": "#75777d",
+                        "inverse-primary": "#bcc7de",
+                        "background": "#fbf8fa",
+                        "on-secondary-fixed-variant": "#43474f",
+                        "on-tertiary-fixed-variant": "#564427",
+                        "on-surface": "#1b1b1d",
+                        "tertiary-fixed": "#fadfb8",
+                        "surface-tint": "#545f73",
+                        "primary-fixed": "#d8e3fb",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#eae7e9",
+                        "outline-variant": "#c5c6cd",
+                        "on-primary-container": "#8590a6",
+                        "on-background": "#1b1b1d",
+                        "tertiary-fixed-dim": "#ddc39d",
+                        "on-tertiary-fixed": "#271902",
+                        "surface-container-low": "#f5f3f4",
+                        "surface-container-highest": "#e4e2e3",
+                        "surface-bright": "#fbf8fa",
+                        "secondary-fixed-dim": "#c3c6d1",
+                        "surface-dim": "#dcd9db",
+                        "on-secondary-container": "#61646d",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#f0edef",
+                        "primary": "#091426",
+                        "tertiary": "#1e1200",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#e4e2e3",
+                        "on-primary-fixed": "#111c2d",
+                        "primary-container": "#1e293b",
+                        "secondary-fixed": "#dfe2ed",
+                        "inverse-on-surface": "#f3f0f2",
+                        "accent-orange": "#C2410C"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "gutter": "24px",
+                        "sm": "8px",
+                        "xxl": "48px",
+                        "margin": "32px",
+                        "base": "4px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "code-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf8fa; color: #1b1b1d; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .sidebar-active { background-color: #1e293b; color: #8590a6; }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- Left Sidebar (SideNavBar) -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary flex flex-col py-gutter border-r border-outline-variant z-50">
+<div class="px-6 mb-10 flex items-center gap-3">
+<div class="w-10 h-10 bg-accent-orange rounded-lg flex items-center justify-center text-white font-black text-xl">N</div>
+<div>
+<h1 class="text-on-primary font-headline-md text-headline-md leading-none">NestPG</h1>
+<p class="text-on-primary-fixed-variant text-[10px] uppercase tracking-widest font-bold">Operations OS</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-4">
+<div class="bg-primary-container text-on-primary-container rounded-lg px-4 py-3 flex items-center gap-3 cursor-pointer active:scale-95 transition-transform">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</div>
+<div class="text-on-primary-fixed-variant hover:bg-on-primary-fixed-variant/10 rounded-lg px-4 py-3 flex items-center gap-3 cursor-pointer active:scale-95 transition-transform transition-colors">
+<span class="material-symbols-outlined">domain</span>
+<span class="font-body-md text-body-md">Properties</span>
+</div>
+<div class="text-on-primary-fixed-variant hover:bg-on-primary-fixed-variant/10 rounded-lg px-4 py-3 flex items-center gap-3 cursor-pointer active:scale-95 transition-transform transition-colors">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md text-body-md">Residents</span>
+</div>
+<div class="text-on-primary-fixed-variant hover:bg-on-primary-fixed-variant/10 rounded-lg px-4 py-3 flex items-center gap-3 cursor-pointer active:scale-95 transition-transform transition-colors">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">Revenue</span>
+</div>
+<div class="text-on-primary-fixed-variant hover:bg-on-primary-fixed-variant/10 rounded-lg px-4 py-3 flex items-center gap-3 cursor-pointer active:scale-95 transition-transform transition-colors">
+<span class="material-symbols-outlined">build</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</div>
+<div class="text-on-primary-fixed-variant hover:bg-on-primary-fixed-variant/10 rounded-lg px-4 py-3 flex items-center gap-3 cursor-pointer active:scale-95 transition-transform transition-colors">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-body-md text-body-md">Reports</span>
+</div>
+</nav>
+<div class="mt-auto px-4 space-y-4">
+<button class="w-full bg-accent-orange text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="text-sm">Add Property</span>
+</button>
+<div class="border-t border-on-primary-fixed-variant/20 pt-4">
+<div class="text-on-primary-fixed-variant hover:bg-on-primary-fixed-variant/10 rounded-lg px-4 py-2 flex items-center gap-3 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</div>
+<div class="text-on-primary-fixed-variant hover:bg-on-primary-fixed-variant/10 rounded-lg px-4 py-2 flex items-center gap-3 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="font-body-md text-body-md">Support</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Header (TopAppBar) -->
+<header class="fixed top-0 left-[260px] right-0 h-16 bg-surface flex items-center justify-between px-gutter border-b border-outline-variant z-40">
+<div class="flex items-center gap-8">
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-body-sm focus:ring-1 focus:ring-accent-orange" placeholder="Search across portfolio..." type="text"/>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 text-label-md font-label-md" href="#">Portfolio</a>
+<a class="text-secondary hover:text-primary pb-1 text-label-md font-label-md" href="#">Insights</a>
+<a class="text-secondary hover:text-primary pb-1 text-label-md font-label-md" href="#">Team</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 mr-4 border-r border-outline-variant pr-4">
+<button class="p-2 text-secondary hover:bg-surface-container-high rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-body-sm font-bold active:opacity-80 transition-opacity">Create Task</button>
+<div class="flex items-center gap-3 cursor-pointer">
+<img alt="Executive User Profile" class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A close-up professional portrait of a confident male executive in a sleek, modern corporate office environment. He is wearing a dark navy tailored suit and a crisp white shirt. The background is a soft, out-of-focus high-end workspace with warm ambient lighting and hints of architectural glass and steel. The overall aesthetic is clean, sharp, and authoritative, consistent with a high-stakes enterprise operation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-1YJmsVBdzkc9tqJddbIC60aFVqbf6TP-_ePyABFbF5VZp_elKSAgqGNqYnS53CPKNZ6UGsM6C0_fU_gqRYGVr5jHnC69nq6XgA19MxGjgyqmDwwqtsFEZcdEMpI5ZV8r6OEHtng_RJZbANV0LrWfJu0Appdf0XtjjHciNvLFoZR4gqZRgYIqx7nwwxZS_EIdO_AZk8l7rqMas62FYZfKczo_zv8UHz0w0wGG4z4er59d6Nz-HEeXuX5CsVpc7xpnUnCW_T0WuwaL"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] pt-16 h-screen overflow-y-auto custom-scrollbar bg-background">
+<div class="flex">
+<!-- Central Feed -->
+<div class="flex-1 p-8 max-w-[1100px]">
+<!-- 1. Attention Center -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white p-5 rounded-xl border-l-4 border-error shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1">report</span>
+<span class="bg-error-container text-on-error-container text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Critical</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">Expired KYC</h3>
+<p class="text-secondary text-body-sm">18 residents require immediate document re-verification.</p>
+</div>
+<button class="mt-4 text-error font-bold text-body-sm flex items-center gap-1 hover:underline">Resolve Now <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+<div class="bg-white p-5 rounded-xl border-l-4 border-accent-orange shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-accent-orange" style="font-variation-settings: 'FILL' 1">payments</span>
+<span class="bg-orange-100 text-accent-orange text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Warning</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">Overdue Payments</h3>
+<p class="text-secondary text-body-sm">₹3.4L outstanding across 12 properties. Due date +3 days.</p>
+</div>
+<button class="mt-4 text-accent-orange font-bold text-body-sm flex items-center gap-1 hover:underline">Bulk Remind <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+<div class="bg-white p-5 rounded-xl border-l-4 border-primary shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">exit_to_app</span>
+<span class="bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Action</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">Upcoming Move-outs</h3>
+<p class="text-secondary text-body-sm">42 rooms opening up next week. Start pre-marketing.</p>
+</div>
+<button class="mt-4 text-primary font-bold text-body-sm flex items-center gap-1 hover:underline">View Schedule <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+</section>
+<!-- 2. Portfolio Health -->
+<section class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm mb-8">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Portfolio Health</h2>
+<p class="text-secondary text-body-sm">Aggregated metrics across 24 properties</p>
+</div>
+<div class="text-right">
+<div class="text-[32px] font-black text-primary leading-none">92<span class="text-headline-sm font-normal text-secondary">/100</span></div>
+<div class="text-[10px] text-green-600 font-bold uppercase tracking-widest mt-1">Excellent Status</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+<div>
+<div class="text-secondary text-label-md font-label-md mb-2">OCCUPANCY</div>
+<div class="text-headline-lg font-headline-lg text-primary">92.4%</div>
+<div class="text-body-sm text-secondary mt-1">1248 / 1356 Beds</div>
+</div>
+<div class="col-span-3">
+<div class="text-secondary text-label-md font-label-md mb-2">OCCUPANCY SEGMENTATION</div>
+<div class="flex h-10 w-full rounded-lg overflow-hidden">
+<div class="bg-primary h-full" style="width: 82%" title="Occupied: 82%"></div>
+<div class="bg-accent-orange h-full" style="width: 10.4%" title="Reserved: 10.4%"></div>
+<div class="bg-secondary-fixed h-full" style="width: 5%" title="Vacant: 5%"></div>
+<div class="bg-error-container h-full" style="width: 2.6%" title="Maintenance: 2.6%"></div>
+</div>
+<div class="flex gap-4 mt-3">
+<div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary"></span><span class="text-[11px] text-secondary">Occupied</span></div>
+<div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-accent-orange"></span><span class="text-[11px] text-secondary">Reserved</span></div>
+<div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary-fixed"></span><span class="text-[11px] text-secondary">Vacant</span></div>
+<div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-error-container"></span><span class="text-[11px] text-secondary">Maintenance</span></div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Today's Operations -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+<!-- Check-ins / Check-outs -->
+<div class="space-y-6">
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="font-headline-sm text-headline-sm text-primary">Today's Check-ins</h3>
+<span class="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full font-bold">12 Total</span>
+</div>
+<div class="divide-y divide-outline-variant max-h-[300px] overflow-y-auto custom-scrollbar">
+<div class="p-4 flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center font-bold text-xs">RS</div>
+<div>
+<div class="font-body-md text-body-md text-primary font-semibold">Rahul Sharma</div>
+<div class="text-[11px] text-secondary">NestPG Hitech City • Room 402-A</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-body-sm font-bold text-primary">11:30 AM</div>
+<div class="text-[10px] text-green-600 font-bold uppercase tracking-tighter">Verified</div>
+</div>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center font-bold text-xs">AP</div>
+<div>
+<div class="font-body-md text-body-md text-primary font-semibold">Ananya Patel</div>
+<div class="text-[11px] text-secondary">NestPG Koramangala • Room 108</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-body-sm font-bold text-primary">02:00 PM</div>
+<div class="text-[10px] text-accent-orange font-bold uppercase tracking-tighter">KYC Pending</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="font-headline-sm text-headline-sm text-primary">Today's Check-outs</h3>
+<span class="bg-secondary text-white text-[10px] px-2 py-0.5 rounded-full font-bold">8 Total</span>
+</div>
+<div class="divide-y divide-outline-variant">
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center font-bold text-xs">MK</div>
+<div>
+<div class="font-body-md text-body-md text-primary font-semibold">Meera Kapoor</div>
+<div class="text-[11px] text-secondary">NestPG Powai • Room 210-B</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-body-sm font-bold text-primary">10:00 AM</div>
+<div class="text-[10px] text-secondary font-bold uppercase tracking-tighter">Inspected</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Maintenance Tasks -->
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col">
+<div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="font-headline-sm text-headline-sm text-primary">Open Maintenance Tasks</h3>
+<button class="text-primary font-bold text-[11px] uppercase flex items-center gap-1 hover:underline">View All</button>
+</div>
+<div class="flex-1 overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-bright border-b border-outline-variant">
+<tr>
+<th class="p-4 font-label-md text-label-md text-secondary">PRIORITY</th>
+<th class="p-4 font-label-md text-label-md text-secondary">ISSUE</th>
+<th class="p-4 font-label-md text-label-md text-secondary">PROPERTY</th>
+<th class="p-4 font-label-md text-label-md text-secondary text-right">STATUS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-4">
+<span class="bg-error-container text-on-error-container text-[10px] font-black px-2 py-0.5 rounded uppercase">Urgent</span>
+</td>
+<td class="p-4">
+<div class="text-body-sm font-semibold text-primary">AC Water Leak</div>
+<div class="text-[11px] text-secondary">Room 504 • Reported 2h ago</div>
+</td>
+<td class="p-4 text-body-sm text-primary">Gachibowli Prime</td>
+<td class="p-4 text-right">
+<span class="text-accent-orange text-[10px] font-bold uppercase">Assigned</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-4">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-2 py-0.5 rounded uppercase">Medium</span>
+</td>
+<td class="p-4">
+<div class="text-body-sm font-semibold text-primary">Wi-Fi Connectivity</div>
+<div class="text-[11px] text-secondary">Floor 2 Hub • Reported 5h ago</div>
+</td>
+<td class="p-4 text-body-sm text-primary">Indiranagar Heights</td>
+<td class="p-4 text-right">
+<span class="text-secondary text-[10px] font-bold uppercase">Pending</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- 4. Revenue Snapshot -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-sm relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[80px]" style="font-variation-settings: 'FILL' 1">trending_up</span>
+</div>
+<div class="text-secondary text-label-md font-label-md mb-2">MONTHLY REVENUE</div>
+<div class="flex items-baseline gap-2">
+<div class="text-headline-lg font-headline-lg text-primary">₹18.2L</div>
+<div class="text-green-600 text-[12px] font-bold">+8.4%</div>
+</div>
+<div class="mt-4 h-1 bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-green-500" style="width: 65%"></div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-sm relative overflow-hidden group">
+<div class="text-secondary text-label-md font-label-md mb-2">COLLECTIONS RATE</div>
+<div class="flex items-baseline gap-2">
+<div class="text-headline-lg font-headline-lg text-primary">96%</div>
+<div class="text-secondary text-[12px]">Target: 98%</div>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
+<span class="text-[11px] text-secondary">Consistent with last month</span>
+</div>
+</div>
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-sm relative overflow-hidden group">
+<div class="text-secondary text-label-md font-label-md mb-2">REVENUE LEAKAGE</div>
+<div class="flex items-baseline gap-2">
+<div class="text-headline-lg font-headline-lg text-accent-orange">₹42,000</div>
+<div class="text-error text-[12px] font-bold">↑ 2.1%</div>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-accent-orange text-[16px]">warning</span>
+<span class="text-[11px] text-secondary">Unfilled maintenance downtime</span>
+</div>
+</div>
+</section>
+<!-- 5. Operations Activity Feed -->
+<section class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden mb-8">
+<div class="p-6 border-b border-outline-variant">
+<h3 class="font-headline-md text-headline-md text-primary">Operations Activity Feed</h3>
+</div>
+<div class="p-6 relative">
+<div class="absolute left-[51px] top-6 bottom-6 w-px bg-outline-variant"></div>
+<div class="space-y-8">
+<div class="relative flex gap-6 items-start">
+<div class="relative z-10 w-10 h-10 rounded-full border-4 border-white bg-green-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600 text-sm">check</span>
+</div>
+<div class="flex-1 pb-1 border-b border-outline-variant/30">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-body-md font-semibold text-primary">KYC Approved <span class="font-normal text-secondary">for Amit Varma</span></p>
+<p class="text-[11px] text-secondary mt-0.5">Approved by System AI • NestPG Sector 5</p>
+</div>
+<span class="text-[11px] text-secondary font-medium">14 mins ago</span>
+</div>
+</div>
+</div>
+<div class="relative flex gap-6 items-start">
+<div class="relative z-10 w-10 h-10 rounded-full border-4 border-white bg-blue-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600 text-sm">payments</span>
+</div>
+<div class="flex-1 pb-1 border-b border-outline-variant/30">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-body-md font-semibold text-primary">Payment Received <span class="font-normal text-secondary">₹14,500</span></p>
+<p class="text-[11px] text-secondary mt-0.5">Transaction ID: TXN_98210 • Saniya Mirza</p>
+</div>
+<span class="text-[11px] text-secondary font-medium">32 mins ago</span>
+</div>
+</div>
+</div>
+<div class="relative flex gap-6 items-start">
+<div class="relative z-10 w-10 h-10 rounded-full border-4 border-white bg-accent-orange/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-accent-orange text-sm">login</span>
+</div>
+<div class="flex-1 pb-1">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-body-md font-semibold text-primary">New Check-in Registered</p>
+<p class="text-[11px] text-secondary mt-0.5">Karthik A. • NestPG Prestige Residency</p>
+</div>
+<span class="text-[11px] text-secondary font-medium">1 hour ago</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. AI Operations Copilot -->
+<section class="mb-12">
+<div class="bg-primary p-1 rounded-2xl">
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-xl relative overflow-hidden">
+<div class="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none">
+
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-xl">psychology</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-primary">Operations Copilot</h3>
+</div>
+<div class="relative mb-6">
+<input class="w-full h-16 bg-surface-container-low border border-outline-variant rounded-xl px-6 text-body-lg focus:ring-2 focus:ring-accent-orange transition-all pr-32" placeholder="Ask anything about your portfolio..." type="text"/>
+<button class="absolute right-2 top-2 bottom-2 bg-primary text-white px-6 rounded-lg font-bold flex items-center gap-2">
+<span>Ask AI</span>
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+</button>
+</div>
+<div class="flex flex-wrap gap-3">
+<span class="px-4 py-2 bg-surface-container border border-outline-variant rounded-full text-body-sm text-secondary cursor-pointer hover:border-accent-orange transition-colors">"Analyze revenue leakage in Bangalore"</span>
+<span class="px-4 py-2 bg-surface-container border border-outline-variant rounded-full text-body-sm text-secondary cursor-pointer hover:border-accent-orange transition-colors">"Predict vacancy for next month"</span>
+<span class="px-4 py-2 bg-surface-container border border-outline-variant rounded-full text-body-sm text-secondary cursor-pointer hover:border-accent-orange transition-colors">"Summarize open maintenance tasks"</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Rail (Sticky) -->
+<aside class="w-[320px] bg-white border-l border-outline-variant p-6 h-[calc(100vh-64px)] sticky top-16 overflow-y-auto custom-scrollbar">
+<div class="space-y-8">
+<!-- Quick Stats -->
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-secondary text-label-md font-label-md">OCCUPANCY TREND</span>
+<span class="text-green-600 text-xs font-bold flex items-center">↑ 3.2%</span>
+</div>
+<div class="h-24 w-full bg-surface-container-low rounded-lg relative flex items-end px-2 pb-1 gap-1">
+<div class="flex-1 bg-primary/20 rounded-t h-[40%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t h-[55%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t h-[45%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t h-[60%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t h-[75%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t h-[70%]"></div>
+<div class="flex-1 bg-primary rounded-t h-[90%]"></div>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-accent-orange">refresh</span>
+</div>
+<div>
+<div class="text-headline-sm font-headline-sm text-primary">23</div>
+<div class="text-[11px] text-secondary font-medium uppercase">Lease Renewals Due</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-green-600">verified_user</span>
+</div>
+<div>
+<div class="text-headline-sm font-headline-sm text-primary">98%</div>
+<div class="text-[11px] text-secondary font-medium uppercase">Compliance Status</div>
+</div>
+</div>
+</div>
+</div>
+<!-- System Health -->
+<div class="pt-6 border-t border-outline-variant">
+<h4 class="text-label-md font-label-md text-secondary uppercase mb-4 tracking-widest">System Health</h4>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-primary">Property Management Service</span>
+<span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-primary">Payment Gateway (Razorpay)</span>
+<span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-primary">Biometric Sync</span>
+<span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+</div>
+<div class="mt-4 p-3 bg-green-50 border border-green-100 rounded-lg">
+<p class="text-[11px] text-green-700 font-medium">All services operational. Last sync: 2 min ago.</p>
+</div>
+</div>
+</div>
+<!-- Quick Team Access -->
+<div class="pt-6 border-t border-outline-variant">
+<h4 class="text-label-md font-label-md text-secondary uppercase mb-4 tracking-widest">On-Duty Managers</h4>
+<div class="space-y-3">
+<div class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg cursor-pointer transition-colors">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="Professional headshot of a female property manager with a warm smile. She is in a modern workspace with soft natural light coming from a large window. The background is minimalist with a hint of indoor greenery, projecting an approachable yet professional enterprise vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByHqohDjCcqe6wjoSd0g0ciXKcZVHu_NOwJ9PIhheno1t2FKaWwy8W7-2hy8cEX-BlY-_7lNH22odRlfVHxL_umL1f2lCD5uEbpDI1SaDh75_5xFHOajC4_nSQ8DByL9hzslZgCnVc-yGK8ta7Fh80zLWwOQNqdcy9Va7ttXI-aVqWfRRJp85VPaqfmUWZgmIk-qKUriGxQH3qR9wLO2DMQtl-7JoXGgipJ8JeMLSrFu-7mNMfHknJ8x8K7YLGKtpNquZA5xTfw72s"/>
+<div class="flex-1">
+<div class="text-body-sm font-semibold text-primary">Sriya Reddy</div>
+<div class="text-[10px] text-secondary">Manager • Hitech City</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+</div>
+<div class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg cursor-pointer transition-colors">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A portrait of a male operations head wearing business casual attire. He is looking directly at the camera with a confident expression. The environment is a blurred professional office with clean lines and premium office furniture, in a high-key lighting setup suitable for a corporate application profile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcx9jRCxoDDoxLz6NCaNns8Cb5n5MkGfoS_WK_iQbc6YFFa1s6rz5f6SHhzr87KmzyLw0GDfsi_kmw4_m7O7-1z-khGsZm84l1xoToPgD_LZKIXMB9vJoDpZ3naixXKKlAusBzuz610zx3IFatxEno23xREqSX5v_JP2-IHYS2o1z6Q3KN479H5KzdrtPUExWuMCwEIt8Zhj33j2n0-PyW41dCDJj5FHFahw71yZALZblKvbg-MizuUoMq1PS4rMPZoBzJh-hARfli"/>
+<div class="flex-1">
+<div class="text-body-sm font-semibold text-primary">Vikram Dass</div>
+<div class="text-[10px] text-secondary">Ops Head • Bangalore</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+</div>
+<button class="w-full mt-4 py-2 border border-outline-variant rounded-lg text-[11px] font-bold text-secondary uppercase hover:bg-surface-container-low transition-colors">Broadcast Message</button>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<script>
+        // Micro-interactions for dashboard cards
+        document.querySelectorAll('.active\\:scale-95').forEach(el => {
+            el.addEventListener('mousedown', () => el.classList.add('scale-95'));
+            el.addEventListener('mouseup', () => el.classList.remove('scale-95'));
+            el.addEventListener('mouseleave', () => el.classList.remove('scale-95'));
+        });
+
+        // Simple tab switching logic for TopAppBar
+        const navLinks = document.querySelectorAll('header nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(l => {
+                    l.classList.remove('text-primary', 'font-bold', 'border-b-2', 'border-primary');
+                    l.classList.add('text-secondary');
+                });
+                link.classList.add('text-primary', 'font-bold', 'border-b-2', 'border-primary');
+                link.classList.remove('text-secondary');
+            });
+        });
+    </script>
+</body></html>

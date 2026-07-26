@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestPG Resident CRM - KYC Verification</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#c3c6d1",
+                        "tertiary-fixed-dim": "#ddc39d",
+                        "tertiary-fixed": "#fadfb8",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#35260c",
+                        "surface-dim": "#dcd9db",
+                        "primary-fixed-dim": "#bcc7de",
+                        "secondary-container": "#dfe2ed",
+                        "surface": "#fbf8fa",
+                        "on-secondary-container": "#61646d",
+                        "outline-variant": "#c5c6cd",
+                        "on-tertiary-fixed-variant": "#564427",
+                        "surface-container-highest": "#e4e2e3",
+                        "on-tertiary-container": "#a38c6a",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#d8e3fb",
+                        "on-surface": "#1b1b1d",
+                        "inverse-on-surface": "#f3f0f2",
+                        "on-background": "#1b1b1d",
+                        "surface-bright": "#fbf8fa",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#43474f",
+                        "on-secondary-fixed": "#181c23",
+                        "inverse-surface": "#303032",
+                        "on-surface-variant": "#45474c",
+                        "inverse-primary": "#bcc7de",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#545f73",
+                        "surface-container-high": "#eae7e9",
+                        "primary-container": "#1e293b",
+                        "primary": "#091426",
+                        "tertiary": "#1e1200",
+                        "on-primary-container": "#8590a6",
+                        "background": "#fbf8fa",
+                        "on-tertiary-fixed": "#271902",
+                        "secondary": "#5b5e67",
+                        "surface-variant": "#e4e2e3",
+                        "surface-container-low": "#f5f3f4",
+                        "surface-container": "#f0edef",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#111c2d",
+                        "outline": "#75777d",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#dfe2ed"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "gutter": "24px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "sm": "8px",
+                        "margin": "32px",
+                        "xxl": "48px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "code-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf8fa; color: #1b1b1d; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e4e2e3; border-radius: 10px; }
+        .card-hover:hover { border-color: #091426; }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex overflow-hidden">
+<!-- SideNavBar Anchor -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-surface border-r border-outline-variant flex flex-col p-md gap-sm z-50">
+<div class="mb-lg px-sm">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">NestPG</span>
+</div>
+<div class="flex items-center gap-md p-sm mb-md bg-surface-container-low rounded-xl">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">AM</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary">Arjun Mehta</span>
+<span class="font-label-md text-label-md text-secondary">Resident ID: #NPG-8821</span>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-xs overflow-y-auto custom-scrollbar">
+<a class="flex items-center gap-md p-sm text-secondary hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span> Overview
+            </a>
+<a class="flex items-center gap-md p-sm text-secondary hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">payments</span> Payments
+            </a>
+<a class="flex items-center gap-md p-sm text-secondary hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">history</span> Stay History
+            </a>
+<a class="flex items-center gap-md p-sm text-secondary hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">confirmation_number</span> Tickets
+            </a>
+<a class="flex items-center gap-md p-sm bg-secondary-container text-on-secondary-container rounded-lg font-bold font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">verified_user</span> KYC
+            </a>
+<a class="flex items-center gap-md p-sm text-secondary hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">folder</span> Documents
+            </a>
+<a class="flex items-center gap-md p-sm text-secondary hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">chat</span> Communications
+            </a>
+<a class="flex items-center gap-md p-sm text-secondary hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span> Activity
+            </a>
+</nav>
+<div class="mt-auto pt-md border-t border-outline-variant flex flex-col gap-xs">
+<button class="flex items-center gap-md p-sm text-secondary hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined">support_agent</span> Support
+            </button>
+<button class="flex items-center gap-md p-sm text-secondary hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined">logout</span> Logout
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-[260px] flex flex-col h-screen relative">
+<!-- TopNavBar Anchor -->
+<header class="flex justify-between items-center w-full px-xl h-16 bg-primary z-40 sticky top-0">
+<div class="flex items-center gap-xl">
+<span class="font-headline-md text-headline-md font-bold text-on-primary">NestPG</span>
+<div class="hidden md:flex items-center gap-lg">
+<span class="text-on-primary border-b-2 border-on-primary pb-1 font-headline-sm text-headline-sm">Arjun Mehta</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative group">
+<span class="material-symbols-outlined text-on-primary-container p-sm cursor-pointer hover:bg-primary-container/20 rounded-full transition-colors">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</div>
+<span class="material-symbols-outlined text-on-primary-container p-sm cursor-pointer hover:bg-primary-container/20 rounded-full transition-colors">settings</span>
+<span class="material-symbols-outlined text-on-primary-container p-sm cursor-pointer hover:bg-primary-container/20 rounded-full transition-colors">help</span>
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full border border-on-primary-container ml-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmKLO_Qa-EHScmSorIiOjrunYSW-u09iVSeMuSVuZ1-Ybbql4VH7IMI0OgRADHaSKr5cJxq9s3eqrU-3CXPS2qf_cnTmJ_bFbk49-KDkGewK9pdO5vnQlfsmteXOd8NqifnONOLuwO47BPG2GaO-7TtKLiKQFn14-1nUvfrDiTUaL1Vxd5TwmxanWvqB8APcy6-l-SLT7ZUsgeS0_6d_BSDOCj9x--fJLoY17i0zOaEkj6uny7xEmrw4dE09WFucTgf2zcbGjKXJgp"/>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 overflow-y-auto p-xl space-y-xl custom-scrollbar">
+<!-- Verification Center Header -->
+<section class="grid grid-cols-1 lg:grid-cols-4 gap-lg">
+<div class="lg:col-span-4 flex items-end justify-between">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface">Verification Center</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage and monitor KYC compliance status for Arjun Mehta.</p>
+</div>
+<button class="bg-[#C2410C] text-on-primary px-lg py-sm rounded-lg font-headline-sm text-headline-sm flex items-center gap-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">print</span> Export Report
+                    </button>
+</div>
+<!-- KYC Score Card -->
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl flex items-center justify-between col-span-1">
+<div class="space-y-xs">
+<span class="font-label-md text-label-md text-secondary block">KYC SCORE</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg font-bold text-primary">98</span>
+<span class="font-label-md text-label-md text-secondary">/100</span>
+</div>
+</div>
+<div class="w-16 h-16 rounded-full border-4 border-primary/10 border-t-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<!-- Quick Stats -->
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl flex flex-col justify-center col-span-1">
+<span class="font-label-md text-label-md text-secondary mb-xs">STATUS</span>
+<div class="flex items-center gap-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+<span class="font-headline-sm text-headline-sm font-bold text-green-700">Fully Verified</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl flex flex-col justify-center col-span-1">
+<span class="font-label-md text-label-md text-secondary mb-xs">VERIFIED DATE</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary">15 Jan 2023</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl flex flex-col justify-center col-span-1">
+<span class="font-label-md text-label-md text-secondary mb-xs">REVIEWER</span>
+<div class="flex items-center gap-sm">
+<img alt="Reviewer Avatar" class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdUOtPIKH-Tcz9FczpU6_B-cEubgqU_FoWNdbXRKR8weWscrZoEdUoGFAtJ9qHdu0eynBjEqUHzYgRUwrzw-Xd-quv_lzmVEbgnJGjWbuyiMe3bXVaWWMLBaXwNQLY9SYy-HSscqcFL7uHTGszGKHTIS2nzU0ZJrLvsGDQVRg49-evcMuIdiKJHLUQ3Ged4zyMOMYDRsmSAqygIsRQR2J_5CBhL72dw2jJ4fDRB_WKQRPvKuLxBIoskxEWfZ2e5gBRDggykG3znA0K"/>
+<span class="font-headline-sm text-headline-sm font-bold text-primary">Admin Sarah</span>
+</div>
+</div>
+</section>
+<!-- Document Grid -->
+<section class="space-y-md">
+<h2 class="font-headline-lg text-headline-lg text-primary">Identity &amp; Legal Documents</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+<!-- Document Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden card-hover transition-all group">
+<div class="relative h-32 bg-surface-container-low flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover opacity-60 blur-[1px] group-hover:blur-none transition-all" data-alt="A professional close-up of a government issued ID card resting on a clean glass surface. The image is styled with high-end corporate minimalism, using a color palette of deep navy and bright whites with soft, diffused office lighting. The environment is clean and professional, emphasizing security and administrative trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDN6rvSlF-jztjntfL62IQFsprsrxUw5jo3fw55Ubi8fLbpjMEYtY1rI20O-DRFi-METKicZ7nhPDofUAH7ruAfIG0p5R-fKH8pWVgez0e5DsVxRBStIaDnN2dEcSlx-QLFEs11M_XIaxb2M07Nju83HpgnceCZstFStosH79DNRkw-lhuhZ48H1pQxAZ7LfOP8h7MsDTFqvtO_5C51AnSbsKnVWvYbCSXagl1fo3JI1h44oAIq5xozFzTDTJ8aD-hxcMOZAOns3pTr"/>
+<div class="absolute inset-0 bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-4xl">fingerprint</span>
+</div>
+</div>
+<div class="p-md space-y-sm">
+<div class="flex justify-between items-start">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">Aadhaar Card</span>
+<span class="bg-green-100 text-green-700 px-sm py-1 rounded text-[10px] font-bold uppercase tracking-wider">Verified</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-secondary">Uploaded 12 Jan</span>
+<button class="text-primary font-bold font-label-md text-label-md hover:underline">View</button>
+</div>
+</div>
+</div>
+<!-- Document Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden card-hover transition-all group">
+<div class="relative h-32 bg-surface-container-low flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover opacity-60 blur-[1px] group-hover:blur-none transition-all" data-alt="A crisp, high-resolution photograph of a financial identity card placed in an expensive leather wallet on a dark marble table. The scene is lit with cool, professional studio light, emphasizing textures and clean edges. The color scheme is sophisticated navy blue and warm highlights, suggesting high-stakes real estate operations." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3mN1rSOTbIERROW0G-mv-vygQe2N-pWkwzhH4qorXhjJhe4JfLNthzQKwH8sk4n-x8RkngBNZdFAKe68w-xruI2ETUZZqcUSH26-xyJB3I-nmE4YUVEags0j_-i1vQCXpzhqbF8Yan4OWEO_z_J43rnq7pJIhdqcs8NS0NXi7x4VeJJXOuqhzVjtDMLRRPOmLBg1847uYNE7USpsEQXqT-587u1apA9eW51gK9mIh5dxIG41UB4n-zW1EmESw3YpxfcR6JEgdeuvW"/>
+<div class="absolute inset-0 bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-4xl">account_balance_wallet</span>
+</div>
+</div>
+<div class="p-md space-y-sm">
+<div class="flex justify-between items-start">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">PAN Card</span>
+<span class="bg-green-100 text-green-700 px-sm py-1 rounded text-[10px] font-bold uppercase tracking-wider">Verified</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-secondary">Uploaded 12 Jan</span>
+<button class="text-primary font-bold font-label-md text-label-md hover:underline">View</button>
+</div>
+</div>
+</div>
+<!-- Document Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden card-hover transition-all group">
+<div class="relative h-32 bg-surface-container-low flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover opacity-60 blur-[1px] group-hover:blur-none transition-all" data-alt="A modern passport document opened to its identification page, displayed against a minimalist workspace background. The lighting is soft and natural, emphasizing the document's official security features. The overall aesthetic is clean, professional corporate style with a focus on travel, identity, and international security protocols." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeFyWc8pHvShnkfsrrgiXkWncfOHopJdm_0VTDcLKmm361g-L0x7TnVEaISUh9faCa6NOeOQAlOakyLt-UxLUjc_lFpvT_gEFLtWUp27kFgiO4jSMdRTsbvvm9hP69O_QHkOluyGIWWERWbsP5-DMrTPwydqjCZQOyJAUFwhutkam9SEq-pX1JjFhFLY2lwmWXt1ceaYZRAWAO0M-VxFlEcAEtWcfs4vrFtLlHyIHvVhbEVhiEcIFR-445GOdkNTGZifCdXXwG-Qat"/>
+<div class="absolute inset-0 bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-4xl">public</span>
+</div>
+</div>
+<div class="p-md space-y-sm">
+<div class="flex justify-between items-start">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">Passport</span>
+<span class="bg-green-100 text-green-700 px-sm py-1 rounded text-[10px] font-bold uppercase tracking-wider">Verified</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-secondary">Uploaded 13 Jan</span>
+<button class="text-primary font-bold font-label-md text-label-md hover:underline">View</button>
+</div>
+</div>
+</div>
+<!-- Document Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden card-hover transition-all group">
+<div class="relative h-32 bg-surface-container-low flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover opacity-60 blur-[1px] group-hover:blur-none transition-all" data-alt="A high-quality legal contract document with a professional fountain pen resting on the signature line. The scene is presented in a bright, modern light-mode aesthetic with high contrast and sharp focus. The environment suggests an executive office with premium materials like wood and brushed steel, emphasizing legal precision and trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYpb-fesm242dpOipOeVqbwu76coC6BVLTWoLxbhXtMkHnDtJGhb2G50gNp9ddF943HXdKSI5TOfUT0W1U2OTNrPxQ2POovC3HEcsECXZbviELf23Jdf5Ab9bZpVif1e0hKE5pe-77kG34_GS07YrWk35hJz1tf9GcsQgJgTqaMKnLkQskjlGNcunGv53JBVO8nZ6g1ndagdxKLKtE3U9zliQYrRnqL6nAGN1QfMA80L20sm2lRfyN8dE0iMlrdK-271yjsmkv3nky"/>
+<div class="absolute inset-0 bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-4xl">contract</span>
+</div>
+</div>
+<div class="p-md space-y-sm">
+<div class="flex justify-between items-start">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">Agreement</span>
+<span class="bg-blue-100 text-blue-700 px-sm py-1 rounded text-[10px] font-bold uppercase tracking-wider">Signed</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-secondary">Signed 14 Jan</span>
+<button class="text-primary font-bold font-label-md text-label-md hover:underline">View</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Verification History Log -->
+<section class="space-y-md pb-xxl">
+<h2 class="font-headline-lg text-headline-lg text-primary">Verification History</h2>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="p-md font-label-md text-label-md text-secondary uppercase tracking-wider">Event</th>
+<th class="p-md font-label-md text-label-md text-secondary uppercase tracking-wider">Date &amp; Time</th>
+<th class="p-md font-label-md text-label-md text-secondary uppercase tracking-wider">Performed By</th>
+<th class="p-md font-label-md text-label-md text-secondary uppercase tracking-wider">Status</th>
+<th class="p-md font-label-md text-label-md text-secondary uppercase tracking-wider">Notes</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr>
+<td class="p-md font-body-md text-body-md text-primary">Final Compliance Review</td>
+<td class="p-md font-body-md text-body-md text-secondary">15 Jan 2023, 11:42 AM</td>
+<td class="p-md font-body-md text-body-md text-primary">Sarah Williams (Admin)</td>
+<td class="p-md"><span class="bg-green-100 text-green-700 px-sm py-xs rounded text-xs font-bold uppercase">Approved</span></td>
+<td class="p-md font-body-md text-body-md text-secondary">All documents verified against originals.</td>
+</tr>
+<tr>
+<td class="p-md font-body-md text-body-md text-primary">Rental Agreement Signed</td>
+<td class="p-md font-body-md text-body-md text-secondary">14 Jan 2023, 04:15 PM</td>
+<td class="p-md font-body-md text-body-md text-primary">System (Digital Signature)</td>
+<td class="p-md"><span class="bg-blue-100 text-blue-700 px-sm py-xs rounded text-xs font-bold uppercase">Completed</span></td>
+<td class="p-md font-body-md text-body-md text-secondary">IP Address: 192.168.1.42 logged.</td>
+</tr>
+<tr>
+<td class="p-md font-body-md text-body-md text-primary">Document Re-upload: PAN</td>
+<td class="p-md font-body-md text-body-md text-secondary">13 Jan 2023, 09:10 AM</td>
+<td class="p-md font-body-md text-body-md text-primary">Arjun Mehta (Resident)</td>
+<td class="p-md"><span class="bg-green-100 text-green-700 px-sm py-xs rounded text-xs font-bold uppercase">Uploaded</span></td>
+<td class="p-md font-body-md text-body-md text-secondary">Clearer scan provided for PAN.</td>
+</tr>
+<tr>
+<td class="p-md font-body-md text-body-md text-primary">Initial KYC Submission</td>
+<td class="p-md font-body-md text-body-md text-secondary">12 Jan 2023, 02:00 PM</td>
+<td class="p-md font-body-md text-body-md text-primary">Arjun Mehta (Resident)</td>
+<td class="p-md"><span class="bg-tertiary-fixed text-on-tertiary-fixed-variant px-sm py-xs rounded text-xs font-bold uppercase">Initiated</span></td>
+<td class="p-md font-body-md text-body-md text-secondary">Registration sequence started.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+<!-- AI Resident Copilot Footer -->
+<footer class="absolute bottom-6 right-6 z-50">
+<div class="hidden absolute bottom-20 right-0 w-80 bg-surface-container-lowest border border-outline-variant shadow-2xl rounded-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300" id="ai-chat">
+<div class="bg-primary p-md flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-primary">smart_toy</span>
+<span class="text-on-primary font-bold">Resident Copilot</span>
+</div>
+<button class="text-on-primary-container hover:text-on-primary transition-colors" onclick="toggleAIChat()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-md h-64 overflow-y-auto space-y-md font-body-sm text-body-sm">
+<div class="bg-surface-container-low p-sm rounded-lg text-on-surface">
+                        Hello! I am scanning Arjun Mehta's profile. All KYC documents are currently in order. Is there anything specific you need to verify?
+                    </div>
+</div>
+<div class="p-md border-t border-outline-variant">
+<div class="relative">
+<input class="w-full border-outline-variant rounded-lg p-sm pr-10 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="Ask Copilot..." type="text"/>
+<span class="material-symbols-outlined absolute right-2 top-2 text-primary cursor-pointer">send</span>
+</div>
+</div>
+</div>
+<button class="bg-[#C2410C] hover:bg-orange-800 text-white flex items-center gap-sm px-lg py-sm rounded-full shadow-lg font-bold transition-all hover:scale-105 active:scale-95" onclick="toggleAIChat()">
+<span class="material-symbols-outlined">bolt</span>
+                AI Resident Copilot
+            </button>
+</footer>
+</main>
+<script>
+        function toggleAIChat() {
+            const chat = document.getElementById('ai-chat');
+            chat.classList.toggle('hidden');
+        }
+    </script>
+</body></html>
