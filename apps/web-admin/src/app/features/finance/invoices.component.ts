@@ -195,7 +195,8 @@ export class InvoicesComponent {
   protected form = this.blankForm();
 
   readonly totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.limit)));
-  readonly canManage = computed(() => ['SUPER_ADMIN', 'OWNER'].includes(this.session.role()));
+  /** Invoice create/issue/void is FINANCIAL_OPERATIONS (A3). */
+  readonly canManage = computed(() => this.session.hasCapability('FINANCIAL_OPERATIONS'));
   readonly filtered = computed(() => {
     const q = this.search.trim().toLowerCase();
     return q ? this.rows().filter((i) => i.invoice_number.toLowerCase().includes(q)) : this.rows();

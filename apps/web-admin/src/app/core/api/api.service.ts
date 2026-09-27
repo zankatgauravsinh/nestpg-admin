@@ -6,6 +6,16 @@ import { ApiResponse } from './api.types';
 
 type Params = Record<string, string | number | boolean | undefined | null>;
 
+/**
+ * Per-call options. `withCredentials` is needed only by the auth endpoints:
+ * login must be allowed to STORE the httpOnly refresh cookie, and refresh/logout
+ * must send it. Data requests deliberately do not carry it, so the refresh
+ * cookie is not attached to every call.
+ */
+export interface ApiCallOptions {
+  withCredentials?: boolean;
+}
+
 /** Thin typed wrapper over HttpClient that unwraps the API envelope. */
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -23,8 +33,10 @@ export class ApiService {
     return this.http.get<ApiResponse<T>>(this.base + path, { params: this.toParams(params) });
   }
 
-  post<T>(path: string, body?: unknown): Observable<T> {
-    return this.http.post<ApiResponse<T>>(this.base + path, body).pipe(map((r) => this.unwrap(r)));
+  post<T>(path: string, body?: unknown, opts?: ApiCallOptions): Observable<T> {
+    return this.http
+      .post<ApiResponse<T>>(this.base + path, body, { withCredentials: opts?.withCredentials ?? false })
+      .pipe(map((r) => this.unwrap(r)));
   }
 
   put<T>(path: string, body?: unknown): Observable<T> {

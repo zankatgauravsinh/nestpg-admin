@@ -173,7 +173,9 @@ export class NotificationCenterComponent {
   protected tf = this.blankTpl();
   previewVars = '{"name":"Asha"}';
 
-  readonly isAdmin = computed(() => this.session.role() === 'SUPER_ADMIN');
+  /** Templates are SYSTEM_ADMINISTRATION — not FINANCE_ADMIN, which the old
+   *  persona check wrongly included (A3-7). */
+  readonly isAdmin = computed(() => this.session.hasCapability('SYSTEM_ADMINISTRATION'));
 
   constructor() { this.loadFeed(); this.svc.preferences().subscribe((p) => this.prefs.set(p)); if (this.isAdmin()) this.svc.templates().subscribe((t) => this.templates.set(t)); }
 

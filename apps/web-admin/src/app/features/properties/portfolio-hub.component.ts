@@ -415,7 +415,12 @@ export class PortfolioHubComponent {
   readonly rejectFor = signal<string | null>(null);
   readonly confirmDelete = signal<string | null>(null);
   rejectReason = '';
-  isOps(): boolean { return this.session.role() === 'SUPER_ADMIN'; }
+  /**
+   * Whether this admin may DECIDE a review — the capability the backend checks
+   * on `verify` / `reject` (A3). FINANCE_ADMIN may view the queue but holds no
+   * decision capability, so it sees no Approve/Reject here either.
+   */
+  isOps(): boolean { return this.session.hasCapability('PROPERTY_REVIEW_DECISION'); }
 
   private run(obs: import('rxjs').Observable<unknown>, okMsg: string, failMsg: string): void {
     this.acting.set(true);

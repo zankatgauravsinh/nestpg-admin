@@ -1,49 +1,57 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { CurrentUser, Role } from '../models/role.model';
-
-const MOCK_USERS: Record<Role, CurrentUser> = {
-  SUPER_ADMIN: {
-    id: 'u-sa',
-    name: 'Aarav Mehta',
-    email: 'aarav@nestpg.io',
-    role: 'SUPER_ADMIN',
-    initials: 'AM',
-    organization: 'NestPG Platform',
-  },
-  OWNER: {
-    id: 'u-ow',
-    name: 'Priya Sharma',
-    email: 'priya@sunrise.co',
-    role: 'OWNER',
-    initials: 'PS',
-    organization: 'Sunrise Living Group',
-  },
-  MANAGER: {
-    id: 'u-mg',
-    name: 'Rohan Verma',
-    email: 'rohan@sunrise.co',
-    role: 'MANAGER',
-    initials: 'RV',
-    organization: 'Sunrise Residency',
-  },
-};
+import { Capability } from '../models/capability.model';
 
 /**
- * Session store. In this foundation it holds the active mock user and exposes
- * a signal-based role used for role gating across nav, routes and widgets.
- * Swapping the role lets you preview the entire platform per persona.
+ * The authenticated admin, and the role gating derives from it.
+ *
+ * It used to hold a MOCK persona: it initialised to a fabricated SUPER_ADMIN and
+ * `clear()` set a MANAGER, so `isAuthenticated` was permanently true and every
+ * role check passed for anyone. Authorization was never actually at risk — the
+ * backend is the real gate — but the UI showed controls the signed-in admin may
+ * not be entitled to, and "logged out" still had a persona.
+ *
+ * It is now **null until the real session says otherwise**: `setUser` is fed by
+ * `/admin/auth/login` and by `GET /users/me` on restore, and `clear()` returns
+ * it to null. A capability check before a session exists answers false, which
+ * is the honest answer (A3).
  */
 @Injectable({ providedIn: 'root' })
 export class SessionStore {
-  private readonly _user = signal<CurrentUser>(MOCK_USERS.SUPER_ADMIN);
+  private readonly _user = signal<CurrentUser | null>(null);
 
   readonly user = this._user.asReadonly();
-  readonly role = computed<Role>(() => this._user().role);
-  readonly isAuthenticated = computed(() => !!this._user());
+  /** The signed-in admin's role, or null when there is no session. */
+  readonly role = computed<Role | null>(() => this._user()?.role ?? null);
+  readonly isAuthenticated = computed(() => this._user() !== null);
+  /** The backend's own role string, or null when signed out. */
+  readonly backendRole = computed<string | null>(() => this._user()?.backendRole ?? null);
 
-  /** Switch the active persona (foundation/demo helper). */
-  setRole(role: Role): void {
-    this._user.set(MOCK_USERS[role]);
+  /**
+   * The capabilities this session holds, as served by the backend (A3).
+   *
+   * The client does not own a role→capability table: `GET /users/me` returns
+   * the canonical list, so the UI and the API can never disagree about what a
+   * role means. No session, or a role the backend grants nothing, ⇒ `[]`.
+   */
+  readonly capabilities = computed<readonly Capability[]>(() => this._user()?.capabilities ?? []);
+
+  /**
+   * Capability check — the single authorization question the UI asks.
+   *
+   * This replaced the persona checks scattered through components
+   * (`role() === 'SUPER_ADMIN'`, `can(['SUPER_ADMIN','OWNER'])`), which were
+   * lossy: three backend admin roles share one persona, so a FINANCE_ADMIN was
+   * shown Approve, notification-template and gate controls that the server
+   * answers 403 to. Presentation only — the backend remains the boundary.
+   */
+  hasCapability(capability: Capability): boolean {
+    return this.capabilities().includes(capability);
+  }
+
+  /** True when the session holds every capability listed. */
+  hasAll(capabilities: readonly Capability[]): boolean {
+    return capabilities.every((c) => this.hasCapability(c));
   }
 
   /** Set the authenticated user returned by the backend. */
@@ -52,11 +60,7 @@ export class SessionStore {
   }
 
   clear(): void {
-    this._user.set(MOCK_USERS.MANAGER);
+    this._user.set(null);
   }
 
-  can(roles?: Role[]): boolean {
-    if (!roles || roles.length === 0) return true;
-    return roles.includes(this.role());
-  }
 }

@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { PropertiesService } from '../../core/data/properties.service';
 import { UsersService, ApiUser, userDisplayName } from '../../core/data/users.service';
 import { UploadService } from '../../core/data/upload.service';
+import { SessionStore } from '../../core/auth/session.store';
 import { apiErrorMessage } from '../../core/http/api-error';
 import { IconComponent } from '../../shared/components/icon.component';
 
@@ -258,6 +259,7 @@ export class CreatePropertyWizardComponent {
   private readonly svc = inject(PropertiesService);
   private readonly usersSvc = inject(UsersService);
   private readonly router = inject(Router);
+  private readonly session = inject(SessionStore);
   private readonly san = inject(DomSanitizer);
 
   private readonly uploads = inject(UploadService);
@@ -294,6 +296,12 @@ export class CreatePropertyWizardComponent {
   readonly managers = computed(() => this.users().filter((u) => u.role === 'PROP_MANAGER' || u.role === 'CARETAKER'));
   readonly owners = computed(() => this.users().filter((u) => u.role === 'PG_OWNER'));
 
+  /** Phone/name of the owner a property was attributed to, for the confirmation. */
+  ownerLabel(id: string): string {
+    const u = this.users().find((x) => x.id === id);
+    return u ? this.name(u) : 'the selected owner';
+  }
+
   protected readonly steps = [
     { n: 1, label: 'Basics' }, { n: 2, label: 'Location' }, { n: 3, label: 'Configuration' },
     { n: 4, label: 'Operations' }, { n: 5, label: 'Financials' }, { n: 6, label: 'Review' },
@@ -305,6 +313,10 @@ export class CreatePropertyWizardComponent {
   protected readonly amenities = ['WiFi', 'Parking', 'Laundry', 'Food', 'Housekeeping', 'Gym', 'Security'];
 
   constructor() {
+    // Arriving from an owner's portfolio ("create property for this owner")
+    // preselects that owner, so the attribution is visible before submission.
+    const preset = inject(ActivatedRoute).snapshot.queryParamMap.get('ownerId');
+    if (preset) this.d.ownerId = preset;
     // Auto-save (debounced via effect on a tick + step).
     effect(() => { this.tick(); this.step(); this.persist(); });
   }
@@ -400,17 +412,31 @@ export class CreatePropertyWizardComponent {
     this.flashToast('Draft saved locally.');
   }
 
+  /**
+   * A4/D3 — the Owner selector used to be decorative: `payload()` never sent
+   * it, so a property "created for an owner" was silently created under the
+   * admin's own account. Choosing an owner now posts to the admin route, which
+   * validates the id server-side (must be a live PG_OWNER) and sets
+   * `ownerId` there; leaving it on "Me" keeps the original owner-self-scoped
+   * call. The client still proves nothing — the backend re-checks.
+   */
   create(): void {
     if (!this.validate(1) || !this.validate(2)) { this.step.set(this.d.name ? 2 : 1); return; }
     this.saving.set(true); this.error.set(null);
-    this.svc.create(this.payload() as never).subscribe({
+    const ownerId = this.d.ownerId?.trim();
+    const request = ownerId
+      ? this.svc.createForOwner(ownerId, this.payload() as never)
+      : this.svc.create(this.payload() as never);
+    request.subscribe({
       next: async (created) => {
         // Upload collected photos now that the property id exists (first = cover).
         try { await this.uploadPhotos(created.id); }
         catch { /* non-fatal: property is created; photos can be re-added later */ }
         this.saving.set(false);
         try { localStorage.removeItem(STORAGE); } catch { /* ignore */ }
-        this.flashToast('Property created.');
+        this.flashToast(created.ownerId && created.ownerId !== this.session.user()?.id
+          ? `Property created for ${this.ownerLabel(created.ownerId)}.`
+          : 'Property created.');
         this.router.navigate(['/properties']);
       },
       error: (e) => { this.saving.set(false); this.error.set(apiErrorMessage(e, 'Could not create property.')); },

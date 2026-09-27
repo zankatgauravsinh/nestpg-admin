@@ -1799,7 +1799,9 @@ export class InventoryWorkspaceComponent {
   private rSnap = '';
 
   /** Deleting is restricted to owner / super-admin on the backend; mirror it in the UI. */
-  canDelete(): boolean { return this.session.role() !== 'MANAGER'; }
+  /** Inventory writes are PROPERTY_OPERATIONS; the backend narrows DELETE
+   *  further to owner/SUPER_ADMIN, which A3 leaves untouched. */
+  canDelete(): boolean { return this.session.hasCapability('PROPERTY_OPERATIONS'); }
 
   floorEntity(floorNo: number): BoardFloor | null {
     return this.board().floors.find((f) => f.buildingId === this.building() && f.floorNumber === floorNo) ?? null;

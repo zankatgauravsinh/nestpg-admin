@@ -179,7 +179,8 @@ export class PaymentsFeedComponent {
 
   readonly totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.limit)));
   readonly pageTotal = computed(() => this.rows().reduce((s, p) => s + paise(p.amount_paisa), 0));
-  readonly canRefund = computed(() => this.session.role() === 'SUPER_ADMIN');
+  /** Refunds are FINANCIAL_OPERATIONS — SUPER, OPS and FINANCE hold it (A3). */
+  readonly canRefund = computed(() => this.session.hasCapability('FINANCIAL_OPERATIONS'));
 
   paisa = paise;
   count(status: string): number { return this.rows().filter((p) => p.status === status).length; }

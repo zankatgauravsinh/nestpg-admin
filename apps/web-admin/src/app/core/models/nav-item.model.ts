@@ -1,4 +1,4 @@
-import { Role } from './role.model';
+import { Capability } from './capability.model';
 
 export interface NavItem {
   /** stable id */
@@ -8,8 +8,12 @@ export interface NavItem {
   icon?: string;
   route?: string;
   badge?: string | number;
-  /** roles allowed to see this item; empty/undefined = all roles */
-  roles?: Role[];
+  /**
+   * Capabilities required to see this item (A3). Empty/undefined = visible to
+   * any authenticated session. Replaces the old persona `roles` list, which
+   * could not tell three admin roles apart.
+   */
+  capabilities?: Capability[];
   /** section header (renders as an uppercase group label) */
   isSection?: boolean;
   children?: NavItem[];

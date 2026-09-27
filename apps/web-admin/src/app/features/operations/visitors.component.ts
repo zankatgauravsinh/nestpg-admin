@@ -14,7 +14,6 @@ import { ModalComponent } from '../../shared/components/modal.component';
 import { IconComponent } from '../../shared/components/icon.component';
 
 type Tab = { id: string; label: string; status?: string };
-const GATE_ROLES = ['SUPER_ADMIN'];
 
 @Component({
   selector: 'os-visitors',
@@ -180,7 +179,8 @@ export class VisitorsComponent {
   protected form = this.blankForm();
 
   readonly totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.limit)));
-  readonly canGate = computed(() => GATE_ROLES.includes(this.session.role()));
+  /** Gate actions are COMMUNITY_OPERATIONS (A3). */
+  readonly canGate = computed(() => this.session.hasCapability('COMMUNITY_OPERATIONS'));
 
   label(s?: string): string { return s ? s.charAt(0) + s.slice(1).toLowerCase().replace(/_/g, ' ') : '—'; }
 

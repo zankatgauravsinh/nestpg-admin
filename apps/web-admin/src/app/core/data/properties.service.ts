@@ -1,7 +1,42 @@
 import { Injectable, inject } from '@angular/core';
 import { EMPTY, Observable, catchError, expand, forkJoin, map, of, reduce } from 'rxjs';
 import { ApiService } from '../api/api.service';
+import { ApiResponse } from '../api/api.types';
 import { Property, PropertyType } from './models';
+
+/** One row of the Admin review queue — `GET /admin/properties` (A2). */
+export interface ReviewQueueRow {
+  id: string;
+  name: string;
+  propertyType: string;
+  status: string;
+  city: string;
+  areaLocality: string;
+  addressLine1: string;
+  state: string;
+  pincode: string;
+  createdAt: string;
+  updatedAt: string;
+  verifiedAt: string | null;
+  rejectionReason: string | null;
+  owner: { id: string; phone: string | null; status: string | null };
+  stats: RawBedStats;
+  minPricePaisa: number;
+  maxPricePaisa: number;
+  /** Cover from the `media` table — the source the server-side readiness rule counts. */
+  coverImageUrl: string | null;
+  photoCount: number;
+  readiness: { hasBeds: boolean; hasPhotos: boolean; ready: boolean };
+}
+
+export interface ReviewQueueQuery {
+  status?: string;
+  city?: string;
+  ownerId?: string;
+  page?: number;
+  limit?: number;
+  sort?: 'oldest' | 'newest';
+}
 
 /** Raw property as returned by the NestPG backend. */
 export interface RawBedStats {
@@ -35,6 +70,18 @@ export interface RawProperty {
   maxPricePaisa?: number;
   ownerId?: string;
   coverImageUrl?: string | null;
+  houseRules?: string[];
+  verifiedAt?: string | null;
+  rejectionReason?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  amenities?: { id: string; key?: string; label?: string }[];
+  /**
+   * Photos from the `media` table — the source the server-side submission rule
+   * counts. The legacy `coverImageUrl` / `mediaUrls` columns above satisfy no
+   * rule and must not be presented as proof a listing has photos.
+   */
+  media?: { coverImageUrl: string | null; coverImageKey: string | null; gallery: { id: string; key: string; url: string | null }[] };
   /** Live bed statistics from the backend (source of truth). */
   stats?: RawBedStats;
 }
@@ -164,6 +211,44 @@ export class PropertiesService {
   /** Reject a property with a reason. */
   reject(id: string, reason: string): Observable<unknown> {
     return this.api.put(`/properties/${id}/reject`, { reason });
+  }
+
+  /**
+   * Admin property review queue (A2).
+   *
+   * Deliberately NOT wrapped in `catchError(() => of([]))` like `portfolio()`:
+   * a reviewer must be able to tell "nothing is waiting" from "the queue could
+   * not be loaded". The error reaches the component, which renders a retry.
+   */
+  reviewQueue(q: ReviewQueueQuery = {}): Observable<ApiResponse<ReviewQueueRow[]>> {
+    return this.api.getPaged<ReviewQueueRow[]>('/admin/properties', {
+      status: q.status ?? 'PENDING_REVIEW',
+      city: q.city,
+      ownerId: q.ownerId,
+      page: q.page ?? 1,
+      limit: q.limit ?? 20,
+      sort: q.sort ?? 'oldest',
+    });
+  }
+
+  /**
+   * One owner's portfolio (A4) — the same `/admin/properties` contract the
+   * review queue uses, filtered by owner and status. No second listing API.
+   */
+  ownerPortfolio(ownerId: string, status?: string, page = 1, limit = 20): Observable<ApiResponse<ReviewQueueRow[]>> {
+    return this.api.getPaged<ReviewQueueRow[]>('/admin/properties', {
+      ownerId, status, page, limit, sort: 'newest',
+    });
+  }
+
+  /**
+   * Create a property FOR an owner (A4). Distinct from `create()`, which posts
+   * to the owner-self-scoped route where the backend takes the owner from the
+   * caller's token — the reason an admin's "create for owner" previously
+   * produced a property owned by the admin.
+   */
+  createForOwner(ownerId: string, dto: CreatePropertyPayload): Observable<RawProperty> {
+    return this.api.post<RawProperty>('/admin/properties', { ...dto, ownerId });
   }
 
   /** Soft-delete / archive a property. */

@@ -93,6 +93,6 @@ export class SidebarComponent {
   readonly collapsed = model<boolean>(false);
 
   readonly items = computed(() =>
-    NAV_CONFIG.filter((i) => this.session.can(i.roles)),
+    NAV_CONFIG.filter((i) => this.session.hasAll(i.capabilities ?? [])),
   );
 }
