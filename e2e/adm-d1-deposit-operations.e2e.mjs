@@ -11,19 +11,25 @@
 // Conventions: standalone Node 22 script like backend/e2e (psql single-line SQL, IST dates,
 // Connection: close); fixtures are cleaned in dependency order and the DB baseline is verified.
 //
-//   node nestpg-admin/e2e/adm-d1-deposit-operations.e2e.mjs        (API on :3000)
+// Target: the DISPOSABLE E2E stack only. Importing the backend's e2e/stack/target.mjs runs
+// its fail-closed guard (stack DB proven by marker + cluster id, API proven by the stack
+// sentinel login) and exits before any request if the stack is not up. There is no
+// fallback to the developer database or API.
+//
+//   node nestpg-admin/e2e/adm-d1-deposit-operations.e2e.mjs        (stack up + stack.mjs api)
+import { E2E } from '../../nestpg-backend/backend/e2e/stack/target.mjs';
 import { execSync } from 'node:child_process';
 import { writeFileSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { randomUUID } from 'node:crypto';
 
-const API = process.env.API_URL ?? 'http://localhost:3000/api/v1';
-const DSN = process.env.DATABASE_URL ?? 'postgres://nestpg:nestpg@localhost:5432/nestpg';
+const API = E2E.apiBase;
+const DSN = E2E.dsn;
 const OUT = process.env.ADMD1_OUT ?? new URL('./adm-d1-deposit-operations-results.md', import.meta.url).pathname;
-const BACKEND = process.env.NESTPG_BACKEND ?? new URL('../../nestpg-backend/backend/', import.meta.url).pathname;
-// Read-only use of the backend checkout: its JWT secret (to mint test tokens, as backend/e2e does) and its jsonwebtoken.
+const BACKEND = new URL('../../nestpg-backend/backend/', import.meta.url).pathname;
+// The backend checkout's jsonwebtoken, and the STACK's JWT secret (never the developer backend/.env).
 const jwt = createRequire(BACKEND + 'package.json')('jsonwebtoken');
-const JWT_SECRET = (readFileSync(BACKEND + '.env', 'utf8').match(/^JWT_SECRET=(.*)$/m) || [])[1]?.trim().replace(/^"|"$/g, '');
+const JWT_SECRET = (readFileSync(E2E.envFile, 'utf8').match(/^JWT_SECRET=(.*)$/m) || [])[1]?.trim().replace(/^"|"$/g, '');
 const VERSION = 'offline-financial-v1';
 const RVERSION = 'dispute-resolution-v1';
 
@@ -78,7 +84,7 @@ function cleanup() {
 
 async function main() {
   cur = '0-setup';
-  if (!JWT_SECRET) { console.error('FATAL: JWT_SECRET not found in the backend .env'); process.exit(1); }
+  if (!JWT_SECRET) { console.error('FATAL: JWT_SECRET not found in the stack env file'); process.exit(1); }
   const count = (t, where = '') => sql(`SELECT count(*) FROM ${t} ${where}`);
   const snapshot = () => ({
     bookings: count('bookings'), pay: count('payments'), refunds: count('refunds'), ptx: count('payment_transactions'), dep: count('booking_deposits'),
