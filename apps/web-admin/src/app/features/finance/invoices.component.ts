@@ -255,7 +255,9 @@ export class InvoicesComponent {
 
   // create
   private blankForm() { return { customerUserId: '', dueDate: new Date().toISOString().slice(0, 10), propertyId: '', lines: [{ description: '', kind: 'RENT', qty: 1, rupees: null as number | null }] }; }
-  openCreate(): void { this.form = this.blankForm(); this.createErr.set(null); this.showCreate.set(true); }
+  /** One key per create intent: a resubmit of this form (lost response) returns the same invoice. */
+  private createKey = '';
+  openCreate(): void { this.form = this.blankForm(); this.createErr.set(null); this.createKey = crypto.randomUUID(); this.showCreate.set(true); }
   addLine(): void { this.form.lines.push({ description: '', kind: 'RENT', qty: 1, rupees: null }); }
   removeLine(i: number): void { this.form.lines.splice(i, 1); }
   submitCreate(): void {
@@ -263,7 +265,7 @@ export class InvoicesComponent {
     const lines: InvoiceLineInput[] = f.lines.filter((l) => l.description && l.rupees).map((l) => ({ kind: l.kind, description: l.description, quantity: Number(l.qty) || 1, unitPaisa: Math.round(Number(l.rupees) * 100) }));
     if (!f.customerUserId || !f.dueDate || !lines.length) { this.createErr.set('Customer, due date and at least one line are required.'); return; }
     this.saving.set(true); this.createErr.set(null);
-    this.svc.create({ customerUserId: f.customerUserId, dueDate: f.dueDate, propertyId: f.propertyId || undefined, lines }).subscribe({
+    this.svc.create({ customerUserId: f.customerUserId, dueDate: f.dueDate, propertyId: f.propertyId || undefined, lines, idempotencyKey: this.createKey || crypto.randomUUID() }).subscribe({
       next: () => { this.saving.set(false); this.showCreate.set(false); this.flash('Draft invoice created.'); this.reload(); },
       error: (e) => { this.saving.set(false); this.createErr.set(apiErrorMessage(e, 'Could not create invoice.')); },
     });

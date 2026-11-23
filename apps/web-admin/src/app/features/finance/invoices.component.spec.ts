@@ -95,6 +95,25 @@ describe('InvoicesComponent', () => {
     for (const r of http.match((x) => x.url === LIST)) r.flush({ success: true, data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } });
   });
 
+  it('New invoice sends one idempotency key per form, reused if the same form is resubmitted', () => {
+    const f = setup();
+    const c = f.componentInstance as unknown as { openCreate(): void; submitCreate(): void; form: { customerUserId: string; dueDate: string; lines: Array<{ description: string; rupees: number | null }> } };
+    c.openCreate();
+    c.form.customerUserId = 'tnt-1'; c.form.dueDate = '2026-12-05'; c.form.lines[0].description = 'Rent'; c.form.lines[0].rupees = 6000;
+    c.submitCreate();
+    const first = http.expectOne((r) => r.url === LIST && r.method === 'POST');
+    const key = first.request.body.idempotencyKey as string;
+    expect(key).toMatch(/^[0-9a-f-]{36}$/);
+    first.flush({ success: false, errors: [{ code: 'Gateway Timeout', message: 'timeout' }] }, { status: 504, statusText: 'Gateway Timeout' });
+    c.submitCreate(); // the user tries again after the lost response
+    const second = http.expectOne((r) => r.url === LIST && r.method === 'POST');
+    expect(second.request.body.idempotencyKey).toBe(key);
+    second.flush({ success: true, data: { ...invoice({ status: 'DRAFT' }), lines: [], payments: [] } });
+    for (const r of http.match((x) => x.url === LIST)) r.flush({ success: true, data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } });
+    c.openCreate();
+    expect((c as unknown as { createKey: string }).createKey).not.toBe(key); // a new form is a new intent
+  });
+
   it('search filters by invoice number as it changes', () => {
     const f = setup();
     f.componentInstance.search.set('0002');

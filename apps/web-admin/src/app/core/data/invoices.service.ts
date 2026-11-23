@@ -50,7 +50,7 @@ export class InvoicesService {
   get(id: string): Observable<InvoiceDetail | null> {
     return this.api.get<InvoiceDetail>(`/invoices/${id}`).pipe(catchError(() => of(null)));
   }
-  create(body: { bookingId?: string; customerUserId: string; propertyId?: string; dueDate: string; notes?: string; lines: InvoiceLineInput[] }): Observable<InvoiceDetail> {
+  create(body: { bookingId?: string; customerUserId: string; propertyId?: string; dueDate: string; notes?: string; lines: InvoiceLineInput[]; idempotencyKey?: string }): Observable<InvoiceDetail> {
     return this.api.post<InvoiceDetail>('/invoices', body);
   }
   issue(id: string): Observable<InvoiceDetail> { return this.api.post<InvoiceDetail>(`/invoices/${id}/issue`, {}); }
