@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SessionStore } from '../../core/auth/session.store';
 import { AuthService } from '../../core/auth/auth.service';
 import { ThemeService } from '../../core/theme/theme.service';
-import { ROLE_LABELS, Role } from '../../core/models/role.model';
+import { ROLE_LABELS } from '../../core/models/role.model';
+import { ADMIN_ROLE_LABELS } from '../../core/models/capability.model';
 import { IconComponent } from '../../shared/components/icon.component';
 import { EntityAvatarComponent } from '../../shared/components/entity-avatar.component';
 import { SearchInputComponent } from '../../shared/components/search-input.component';
@@ -33,10 +34,10 @@ import { SearchInputComponent } from '../../shared/components/search-input.compo
       <!-- The signed-in admin's role, from the real session. The persona
            switcher that used to live here fabricated an identity, which is
            incompatible with a real authenticated session (A1). -->
-      @if (session.role(); as role) {
-        <span class="hidden sm:flex items-center gap-2 h-9 px-3 rounded-lg border border-border text-sm font-medium text-content">
+      @if (roleLabel(); as label) {
+        <span class="hidden sm:flex items-center gap-2 h-9 px-3 rounded-lg border border-border text-sm font-medium text-content" data-testid="topbar-role">
           <os-icon name="shield_person" [size]="18" />
-          <span>{{ roleLabel(role) }}</span>
+          <span>{{ label }}</span>
         </span>
       }
 
@@ -83,9 +84,16 @@ export class TopbarComponent {
   private readonly auth = inject(AuthService);
   readonly menuToggle = output<void>();
 
-  roleLabel(r: Role): string {
-    return ROLE_LABELS[r];
-  }
+  /**
+   * D6 — the role the server holds for this session, not the navigation persona.
+   * The persona is lossy (OPS_ADMIN and FINANCE_ADMIN both map to SUPER_ADMIN for
+   * gating), so labelling by it told a Finance Admin they were a Super Admin.
+   */
+  readonly roleLabel = computed<string | null>(() => {
+    const persona = this.session.role();
+    if (!persona) return null;
+    return ADMIN_ROLE_LABELS[this.session.backendRole() ?? ''] ?? ROLE_LABELS[persona];
+  });
 
   /** Real sign-out: revoke the session server-side, then leave the app. */
   signOut(): void {
