@@ -6,28 +6,33 @@ import { environment } from '../../../environments/environment';
 
 export type InvoiceStatus = 'DRAFT' | 'ISSUED' | 'PARTIAL' | 'PAID' | 'OVERDUE' | 'VOID';
 
+/** The API's invoice projection (BK81 / BK82, `toInvoiceView`): camelCase, numeric money, calendar dates. */
 export interface ApiInvoice {
   id: string;
-  invoice_number: string;
-  booking_id: string | null;
-  customer_user_id: string;
-  property_id: string | null;
+  invoiceNumber: string;
+  bookingId: string | null;
+  corporateBookingId: string | null;
+  customerUserId: string;
+  propertyId: string | null;
   status: InvoiceStatus;
-  issue_date: string | null;
-  due_date: string;
-  subtotal_paisa: number | string;
-  tax_paisa: number | string;
-  total_paisa: number | string;
-  paid_paisa: number | string;
-  balance_paisa: number | string;
+  billingUnit: string | null;
+  issueDate: string | null;
+  dueDate: string;
+  periodStart: string | null;
+  periodEnd: string | null;
+  subtotalPaisa: number;
+  taxPaisa: number;
+  totalPaisa: number;
+  paidPaisa: number;
+  balancePaisa: number;
   notes: string | null;
-  created_at: string;
-  [k: string]: unknown;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface InvoiceDetail extends ApiInvoice {
-  lines: { id: string; kind: string; description: string; quantity: number; unit_paisa: number | string; amount_paisa: number | string; tax_rate_bps: number }[];
-  payments: { id: string; payment_id: string; amount_paisa: number | string; created_at: string }[];
+  lines: { id: string; kind: string; description: string; quantity: number; unitPaisa: number; amountPaisa: number; taxRateBps: number }[];
+  payments: { id: string; paymentId: string; amountPaisa: number; createdAt: string }[];
 }
 
 export interface InvoiceLineInput { kind: string; description: string; quantity?: number; unitPaisa: number; taxRateBps?: number }

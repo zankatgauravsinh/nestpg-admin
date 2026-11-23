@@ -690,7 +690,7 @@ const ROOM_TYPE_LABEL: Record<string, string> = {
                   <p class="text-[11px] font-semibold uppercase tracking-wider text-faint mt-4 mb-2">Invoices</p>
                   <div class="rounded-xl border border-border divide-y divide-border-subtle">
                     @for (i of residentInvoiceRows(); track i.id) {
-                      <div class="flex justify-between px-4 py-2"><span class="text-sm text-muted">{{ i.invoice_number }} · {{ i.status }}</span><span class="text-sm text-content">{{ num(i.balance_paisa) | inr }}</span></div>
+                      <div class="flex justify-between px-4 py-2"><span class="text-sm text-muted">{{ i.invoiceNumber }} · {{ i.status }}</span><span class="text-sm text-content">{{ num(i.balancePaisa) | inr }}</span></div>
                     }
                   </div>
                 }
@@ -1399,9 +1399,9 @@ export class InventoryWorkspaceComponent {
     });
   }
   private computeFinance(invoices: ApiInvoice[], payments: ApiPayment[], rentPaisa: number, deposit: number): void {
-    const outstanding = invoices.reduce((s, i) => s + paise(i.balance_paisa), 0);
-    const openInvoices = invoices.filter((i) => paise(i.balance_paisa) > 0)
-      .sort((a, b) => (a.due_date ?? '').localeCompare(b.due_date ?? ''));
+    const outstanding = invoices.reduce((s, i) => s + paise(i.balancePaisa), 0);
+    const openInvoices = invoices.filter((i) => paise(i.balancePaisa) > 0)
+      .sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? ''));
     const succeeded = payments.filter((p) => p.status === 'SUCCESS' || p.status === 'PARTIAL')
       .sort((a, b) => (b.paid_at ?? b.created_at ?? '').localeCompare(a.paid_at ?? a.created_at ?? ''));
     const last = succeeded[0] ?? null;
@@ -1414,7 +1414,7 @@ export class InventoryWorkspaceComponent {
       invoiceCount: invoices.length,
       paymentCount: payments.length,
       lastPayment: last ? { id: last.id, amountPaisa: paise(last.amount_paisa), date: last.paid_at ?? last.created_at ?? null, method: last.method } : null,
-      nextDueDate: openInvoices[0]?.due_date ?? null,
+      nextDueDate: openInvoices[0]?.dueDate ?? null,
       status,
       firstOpenInvoiceId: openInvoices[0]?.id ?? null,
     });
@@ -1550,7 +1550,7 @@ export class InventoryWorkspaceComponent {
     const bk = this.bookingForBed(bed.id);
     const out = this.outstandingForBooking(bk);
     const checkoutIn = this.daysUntil((bk?.['checkOutDate'] as string) ?? null);
-    const overdueInvoice = this.overdueInvoices().some((i) => bk && i.booking_id === bk.id);
+    const overdueInvoice = this.overdueInvoices().some((i) => bk && i.bookingId === bk.id);
     if (overdueInvoice || (out > 0 && checkoutIn !== null && checkoutIn < 0)) return { level: 'red', label: 'Overdue' };
     if (out > 0) return { level: 'yellow', label: 'Payment due' };
     if (checkoutIn !== null && checkoutIn >= 0 && checkoutIn <= 3) return { level: 'yellow', label: 'Checkout soon' };

@@ -59,10 +59,10 @@ type Tab = { id: string; label: string; status?: string };
             <tbody>
               @for (i of filtered(); track i.id) {
                 <tr class="border-t border-border-subtle hover:bg-canvas/60 transition">
-                  <td class="px-5 py-3 font-medium text-content">{{ i.invoice_number }}</td>
-                  <td class="px-5 py-3 text-muted">{{ i.due_date | date:'dd MMM yyyy' }}</td>
-                  <td class="px-5 py-3 text-right font-semibold text-content">{{ paisa(i.total_paisa) | inr }}</td>
-                  <td class="px-5 py-3 text-right" [class.text-danger]="paisa(i.balance_paisa) > 0">{{ paisa(i.balance_paisa) | inr }}</td>
+                  <td class="px-5 py-3 font-medium text-content">{{ i.invoiceNumber }}</td>
+                  <td class="px-5 py-3 text-muted">{{ i.dueDate | date:'dd MMM yyyy' }}</td>
+                  <td class="px-5 py-3 text-right font-semibold text-content">{{ paisa(i.totalPaisa) | inr }}</td>
+                  <td class="px-5 py-3 text-right" [class.text-danger]="paisa(i.balancePaisa) > 0">{{ paisa(i.balancePaisa) | inr }}</td>
                   <td class="px-5 py-3"><os-status-pill [status]="i.status" /></td>
                   <td class="px-5 py-3 text-right"><button (click)="open(i)" class="h-8 px-3 rounded-lg border border-border text-[13px] font-medium text-content hover:bg-canvas">View</button></td>
                 </tr>
@@ -82,7 +82,7 @@ type Tab = { id: string; label: string; status?: string };
     </div>
 
     <!-- Detail drawer -->
-    <os-drawer [open]="!!detail()" [title]="detail()?.invoice_number ?? 'Invoice'" subtitle="Invoice detail" width="520px" (closed)="detail.set(null)">
+    <os-drawer [open]="!!detail()" [title]="detail()?.invoiceNumber ?? 'Invoice'" subtitle="Invoice detail" width="520px" (closed)="detail.set(null)">
       @if (detail(); as d) {
         <div class="space-y-5">
           <div class="flex items-center justify-between"><span class="text-sm text-muted">Status</span><os-status-pill [status]="d.status" /></div>
@@ -93,7 +93,7 @@ type Tab = { id: string; label: string; status?: string };
                 <thead><tr class="text-left text-faint border-b border-border-subtle"><th class="px-3 py-2">Item</th><th class="px-3 py-2 text-center">Qty</th><th class="px-3 py-2 text-right">Amount</th></tr></thead>
                 <tbody>
                   @for (l of d.lines; track l.id) {
-                    <tr class="border-b border-border-subtle"><td class="px-3 py-2 text-content">{{ l.description }}</td><td class="px-3 py-2 text-center text-muted">{{ l.quantity }}</td><td class="px-3 py-2 text-right text-content">{{ paisa(l.amount_paisa) | inr }}</td></tr>
+                    <tr class="border-b border-border-subtle"><td class="px-3 py-2 text-content">{{ l.description }}</td><td class="px-3 py-2 text-center text-muted">{{ l.quantity }}</td><td class="px-3 py-2 text-right text-content">{{ paisa(l.amountPaisa) | inr }}</td></tr>
                   }
                 </tbody>
               </table>
@@ -101,17 +101,17 @@ type Tab = { id: string; label: string; status?: string };
           </div>
 
           <div class="rounded-xl border border-border divide-y divide-border-subtle">
-            <div class="flex justify-between px-4 py-2"><span class="text-sm text-muted">Subtotal</span><span class="text-sm text-content">{{ paisa(d.subtotal_paisa) | inr }}</span></div>
-            <div class="flex justify-between px-4 py-2"><span class="text-sm text-muted">Tax</span><span class="text-sm text-content">{{ paisa(d.tax_paisa) | inr }}</span></div>
-            <div class="flex justify-between px-4 py-2"><span class="text-sm font-medium text-content">Total</span><span class="text-sm font-semibold text-content">{{ paisa(d.total_paisa) | inr }}</span></div>
-            <div class="flex justify-between px-4 py-2"><span class="text-sm text-muted">Paid</span><span class="text-sm text-success">{{ paisa(d.paid_paisa) | inr }}</span></div>
-            <div class="flex justify-between px-4 py-2"><span class="text-sm font-medium text-content">Balance due</span><span class="text-sm font-semibold" [class.text-danger]="paisa(d.balance_paisa) > 0">{{ paisa(d.balance_paisa) | inr }}</span></div>
+            <div class="flex justify-between px-4 py-2"><span class="text-sm text-muted">Subtotal</span><span class="text-sm text-content">{{ paisa(d.subtotalPaisa) | inr }}</span></div>
+            <div class="flex justify-between px-4 py-2"><span class="text-sm text-muted">Tax</span><span class="text-sm text-content">{{ paisa(d.taxPaisa) | inr }}</span></div>
+            <div class="flex justify-between px-4 py-2"><span class="text-sm font-medium text-content">Total</span><span class="text-sm font-semibold text-content">{{ paisa(d.totalPaisa) | inr }}</span></div>
+            <div class="flex justify-between px-4 py-2"><span class="text-sm text-muted">Paid</span><span class="text-sm text-success">{{ paisa(d.paidPaisa) | inr }}</span></div>
+            <div class="flex justify-between px-4 py-2"><span class="text-sm font-medium text-content">Balance due</span><span class="text-sm font-semibold" [class.text-danger]="paisa(d.balancePaisa) > 0">{{ paisa(d.balancePaisa) | inr }}</span></div>
           </div>
 
           @if (d.payments?.length) {
             <div><p class="text-[12px] uppercase tracking-wider text-faint mb-2">Payments applied</p>
               <div class="rounded-xl border border-border divide-y divide-border-subtle">
-                @for (p of d.payments; track p.id) { <div class="flex justify-between px-4 py-2"><span class="text-sm text-muted">{{ p.created_at | date:'dd MMM yyyy' }}</span><span class="text-sm text-content">{{ paisa(p.amount_paisa) | inr }}</span></div> }
+                @for (p of d.payments; track p.id) { <div class="flex justify-between px-4 py-2"><span class="text-sm text-muted">{{ p.createdAt | date:'dd MMM yyyy' }}</span><span class="text-sm text-content">{{ paisa(p.amountPaisa) | inr }}</span></div> }
               </div>
             </div>
           }
@@ -124,8 +124,11 @@ type Tab = { id: string; label: string; status?: string };
         <button (click)="downloadPdf()" [disabled]="pdfLoading()" class="h-10 px-3 rounded-lg border border-border text-sm font-medium text-content hover:bg-canvas flex items-center gap-1.5">
           @if (pdfLoading()) { <span class="w-4 h-4 rounded-full border-2 border-border border-t-accent animate-spin"></span> } <os-icon name="picture_as_pdf" [size]="16" /> PDF
         </button>
-        @if (detail() && detail()!.status !== 'PAID' && detail()!.status !== 'VOID' && canManage()) {
+        @if (detail() && detail()!.status !== 'PAID' && detail()!.status !== 'VOID' && paisa(detail()!.paidPaisa) === 0 && canManage()) {
           <button (click)="voidInvoice()" [disabled]="acting()" class="h-10 px-3 rounded-lg border border-danger text-danger text-sm font-medium disabled:opacity-60">Void</button>
+        }
+        @if (detail() && detail()!.status !== 'PAID' && detail()!.status !== 'VOID' && paisa(detail()!.paidPaisa) > 0 && canManage()) {
+          <p class="w-full text-[12px] text-muted" data-testid="void-blocked">Payments have been applied to this invoice, so it can't be voided.</p>
         }
         <button (click)="detail.set(null)" class="h-10 px-3 rounded-lg border border-border text-sm font-medium text-content hover:bg-canvas">Close</button>
       </div>
@@ -187,7 +190,7 @@ export class InvoicesComponent {
   readonly acting = signal(false);
   readonly pdfLoading = signal(false);
   readonly toast = signal<string | null>(null);
-  search = '';
+  readonly search = signal('');
 
   readonly showCreate = signal(false);
   readonly saving = signal(false);
@@ -198,8 +201,8 @@ export class InvoicesComponent {
   /** Invoice create/issue/void is FINANCIAL_OPERATIONS (A3). */
   readonly canManage = computed(() => this.session.hasCapability('FINANCIAL_OPERATIONS'));
   readonly filtered = computed(() => {
-    const q = this.search.trim().toLowerCase();
-    return q ? this.rows().filter((i) => i.invoice_number.toLowerCase().includes(q)) : this.rows();
+    const q = this.search().trim().toLowerCase();
+    return q ? this.rows().filter((i) => i.invoiceNumber.toLowerCase().includes(q)) : this.rows();
   });
 
   paisa = paisa;
