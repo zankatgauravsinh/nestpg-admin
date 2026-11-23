@@ -21,7 +21,12 @@ export type Capability =
   | 'ROLE_ADMINISTRATION'
   | 'SYSTEM_ADMINISTRATION'
   | 'OPERATIONAL_READ'
-  | 'COMMUNITY_OPERATIONS';
+  | 'COMMUNITY_OPERATIONS'
+  // ADM-D.1 — the two deposit-dispute capabilities the backend already serves
+  // (M-C.4.0): OPERATIONS = open / note / withdraw an admin case; RESOLUTION =
+  // record a finding + effect and execute it. Reading needs only OPERATIONAL_READ.
+  | 'DEPOSIT_DISPUTE_OPERATIONS'
+  | 'DEPOSIT_DISPUTE_RESOLUTION';
 
 /** The three Admin console roles, for display and for the staff role picker. */
 export const ADMIN_ROLE_LABELS: Record<string, string> = {

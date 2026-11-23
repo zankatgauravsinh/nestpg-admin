@@ -55,6 +55,10 @@ export const routes: Routes = [
       { path: 'finance/payments', loadComponent: () => import('./features/finance/payments-feed.component').then((m) => m.PaymentsFeedComponent) },
       { path: 'finance/invoices', loadComponent: () => import('./features/finance/invoices.component').then((m) => m.InvoicesComponent) },
       { path: 'finance/collections', loadComponent: () => import('./features/finance/collections.component').then((m) => m.CollectionsComponent) },
+      // ADM-D.1 — deposit dispute operations (read: OPERATIONAL_READ, as the backend routes)
+      { path: 'finance/deposit-disputes', loadComponent: () => import('./features/finance/deposit-disputes/deposit-disputes-queue.component').then((m) => m.DepositDisputesQueueComponent), canActivate: [capabilityGuard], data: { capabilities: ['OPERATIONAL_READ'] } },
+      { path: 'finance/deposit-disputes/:id', loadComponent: () => import('./features/finance/deposit-disputes/deposit-dispute-detail.component').then((m) => m.DepositDisputeDetailComponent), canActivate: [capabilityGuard], data: { capabilities: ['OPERATIONAL_READ'] } },
+      { path: 'finance/deposits/:bookingId', loadComponent: () => import('./features/finance/deposit-disputes/booking-deposit-history.component').then((m) => m.BookingDepositHistoryComponent), canActivate: [capabilityGuard], data: { capabilities: ['OPERATIONAL_READ'] } },
 
       // Operations
       { path: 'operations', loadComponent: () => import('./features/operations/operations-center.component').then((m) => m.OperationsCenterComponent) },
