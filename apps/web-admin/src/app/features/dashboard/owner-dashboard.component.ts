@@ -36,9 +36,9 @@ import { InrPipe } from '../../shared/pipes/inr.pipe';
     <!-- KPI row -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <os-metric label="Monthly Revenue" [value]="rev() | inr" icon="payments" [trend]="growth()" />
-      <os-metric label="Portfolio Occupancy" [value]="occRate() + '%'" icon="bed" [trend]="3.1" />
-      <os-metric label="Collected" [value]="collected() | inr" icon="account_balance_wallet" [trend]="5.2" />
-      <os-metric label="Outstanding" [value]="outstanding() | inr" icon="warning" [trend]="-2.4" trendLabel="overdue" />
+      <os-metric label="Portfolio Occupancy" [value]="occRate() + '%'" icon="bed" />
+      <os-metric label="Collected" [value]="collected() | inr" icon="account_balance_wallet" />
+      <os-metric label="Outstanding" [value]="outstanding() | inr" icon="warning" />
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">

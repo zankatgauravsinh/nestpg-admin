@@ -54,9 +54,9 @@ interface RawBuilding { id: string; name?: string; floors?: number }
       </div>
 
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <os-metric label="Occupancy" [value]="pct(p) + '%'" icon="pie_chart" [trend]="2.1" />
+        <os-metric label="Occupancy" [value]="pct(p) + '%'" icon="pie_chart" />
         <os-metric label="Occupied Beds" [value]="p.occupiedBeds + '/' + p.totalBeds" icon="bed" />
-        <os-metric label="Monthly Revenue" [value]="p.monthlyRevenuePaise | inr" icon="payments" [trend]="4.5" />
+        <os-metric label="Monthly Revenue" [value]="p.monthlyRevenuePaise | inr" icon="payments" />
         <os-metric label="Manager" [value]="p.manager" icon="badge" />
       </div>
 

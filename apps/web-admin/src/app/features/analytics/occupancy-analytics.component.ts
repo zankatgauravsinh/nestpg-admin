@@ -17,7 +17,7 @@ import { DonutComponent } from '../../shared/components/donut.component';
       subtitle="Occupancy rates, vacancy risk and trends across the portfolio." />
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <os-metric label="Portfolio Occupancy" [value]="rate() + '%'" icon="pie_chart" [trend]="2.3" />
+      <os-metric label="Portfolio Occupancy" [value]="rate() + '%'" icon="pie_chart" />
       <os-metric label="Total Beds" [value]="totalBeds()" icon="bed" />
       <os-metric label="Occupied" [value]="occupied()" icon="groups" />
       <os-metric label="Vacant" [value]="totalBeds() - occupied()" icon="meeting_room" />

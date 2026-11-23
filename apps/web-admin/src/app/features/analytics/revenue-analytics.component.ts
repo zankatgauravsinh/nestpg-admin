@@ -26,9 +26,9 @@ import { InrPipe } from '../../shared/pipes/inr.pipe';
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <os-metric label="Monthly Revenue" [value]="total() | inr" icon="payments" [trend]="growth()" />
-      <os-metric label="Collected" [value]="collected() | inr" icon="account_balance_wallet" [trend]="5.2" />
-      <os-metric label="Outstanding" [value]="outstanding() | inr" icon="warning" [trend]="-2.1" trendLabel="overdue" />
-      <os-metric label="Collection Rate" [value]="rate() + '%'" icon="trending_up" [trend]="1.4" />
+      <os-metric label="Collected" [value]="collected() | inr" icon="account_balance_wallet" />
+      <os-metric label="Outstanding" [value]="outstanding() | inr" icon="warning" />
+      <os-metric label="Collection Rate" [value]="rate() + '%'" icon="trending_up" />
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
