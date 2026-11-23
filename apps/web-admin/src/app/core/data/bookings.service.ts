@@ -73,7 +73,16 @@ export function paymentFromBooking(b: ApiBooking, today = new Date()): DerivedPa
     daysOverdue: status === 'OVERDUE' || (status === 'PARTIAL' && days > 0) ? days : 0,
   };
 }
-export interface ApiReservation extends ApiBooking { reservedUntil?: string }
+/** `GET /reservations` row: the hold plus the names it is read by (D4). */
+export interface ApiReservation extends ApiBooking {
+  tenantPhone?: string | null;
+  bedNumber?: string;
+  reservedFrom?: string;
+  reservedUntil?: string;
+  /** End of the 15-minute hold. */
+  expiresAt?: string;
+  convertedToBookingId?: string | null;
+}
 export interface ApiWaitlistEntry {
   id: string;
   name?: string;

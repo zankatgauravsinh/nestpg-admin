@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BookingsService, ApiReservation } from '../../core/data/bookings.service';
+import { holdExpiryLabel, holdState, holdStatus, reservationGuest, reservationPlace } from '../../core/data/reservation-display';
 import { PropertiesService } from '../../core/data/properties.service';
 import { InventoryService, ApiBed } from '../../core/data/inventory.service';
 import { Property } from '../../core/data/models';
@@ -25,7 +26,7 @@ import { InrPipe } from '../../shared/pipes/inr.pipe';
   ],
   template: `
     <os-page-header eyebrow="Bookings" title="Reservations"
-      subtitle="Confirmed upcoming reservations awaiting arrival.">
+      subtitle="Beds on hold. A hold lasts 15 minutes: the resident pays to confirm, or Ops confirms from New booking.">
       <div actions>
         <button (click)="openCreate()" class="h-9 px-3.5 rounded-lg bg-accent text-white text-sm font-semibold hover:bg-accent-hover transition flex items-center gap-1.5">
           <os-icon name="add" [size]="18" /> New reservation
@@ -37,19 +38,21 @@ import { InrPipe } from '../../shared/pipes/inr.pipe';
       @if (reservations().length) {
         <table class="w-full text-sm">
           <thead><tr class="text-left text-[11px] uppercase tracking-wider text-faint bg-canvas">
-            <th class="px-5 py-2.5 font-medium">Guest</th>
+            <th class="px-5 py-2.5 font-medium">Resident</th>
             <th class="px-5 py-2.5 font-medium">Bed</th>
-            <th class="px-5 py-2.5 font-medium">Reserved until</th>
+            <th class="px-5 py-2.5 font-medium">Hold</th>
+            <th class="px-5 py-2.5 font-medium">Stay</th>
             <th class="px-5 py-2.5 font-medium">Status</th>
             <th class="px-5 py-2.5 font-medium text-right">Action</th>
           </tr></thead>
           <tbody>
             @for (r of reservations(); track r.id) {
               <tr class="border-t border-border-subtle hover:bg-canvas/60 transition">
-                <td class="px-5 py-3"><div class="flex items-center gap-3"><os-avatar [name]="name(r)" [size]="34" /><span class="font-medium text-content">{{ name(r) }}</span></div></td>
-                <td class="px-5 py-3 text-muted">{{ r.bedLabel ?? r.bedNumber ?? '—' }}</td>
-                <td class="px-5 py-3 text-muted">{{ r.reservedUntil ?? '—' }}</td>
-                <td class="px-5 py-3"><os-status-pill [status]="r.status ?? 'RESERVED'" /></td>
+                <td class="px-5 py-3"><div class="flex items-center gap-3"><os-avatar [name]="name(r)" [size]="34" /><div><p class="font-medium text-content">{{ name(r) }}</p>@if (r.tenantName && r.tenantPhone) { <p class="text-[12px] text-faint">{{ r.tenantPhone }}</p> }</div></div></td>
+                <td class="px-5 py-3 text-muted">{{ place(r) }}</td>
+                <td class="px-5 py-3" [class.text-danger]="isLapsed(r)" [class.text-muted]="!isLapsed(r)">{{ expiry(r) }}</td>
+                <td class="px-5 py-3 text-muted">{{ r.reservedFrom }} → {{ r.reservedUntil }}</td>
+                <td class="px-5 py-3"><os-status-pill [status]="status(r)" /></td>
                 <td class="px-5 py-3 text-right"><button (click)="view.set(r)" class="h-8 px-3 rounded-lg border border-border text-[13px] font-medium text-content hover:bg-canvas">View</button></td>
               </tr>
             }
@@ -100,10 +103,12 @@ import { InrPipe } from '../../shared/pipes/inr.pipe';
     <os-drawer [open]="!!view()" [title]="view() ? name(view()!) : ''" subtitle="Reservation detail" (closed)="view.set(null)">
       @if (view(); as r) {
         <div class="space-y-3">
-          <div class="flex items-center justify-between"><span class="text-sm text-muted">Status</span><os-status-pill [status]="r.status ?? 'RESERVED'" /></div>
+          <div class="flex items-center justify-between"><span class="text-sm text-muted">Status</span><os-status-pill [status]="status(r)" /></div>
           <div class="rounded-xl border border-border divide-y divide-border-subtle">
-            <div class="flex justify-between px-4 py-2.5"><span class="text-sm text-muted">Bed</span><span class="text-sm font-medium text-content">{{ r.bedLabel ?? r.bedNumber ?? '—' }}</span></div>
-            <div class="flex justify-between px-4 py-2.5"><span class="text-sm text-muted">Reserved until</span><span class="text-sm font-medium text-content">{{ r.reservedUntil ?? '—' }}</span></div>
+            <div class="flex justify-between px-4 py-2.5"><span class="text-sm text-muted">Phone</span><span class="text-sm font-medium text-content">{{ r.tenantPhone }}</span></div>
+            <div class="flex justify-between px-4 py-2.5"><span class="text-sm text-muted">Bed</span><span class="text-sm font-medium text-content">{{ place(r) }}</span></div>
+            @if (expiry(r)) { <div class="flex justify-between px-4 py-2.5"><span class="text-sm text-muted">Hold</span><span class="text-sm font-medium" [class.text-danger]="isLapsed(r)">{{ expiry(r) }}</span></div> }
+            <div class="flex justify-between px-4 py-2.5"><span class="text-sm text-muted">Stay</span><span class="text-sm font-medium text-content">{{ r.reservedFrom }} → {{ r.reservedUntil }}</span></div>
           </div>
           @if ((r.status ?? 'ACTIVE').toUpperCase() === 'ACTIVE') {
             <button (click)="cancel(r)" [disabled]="acting()" class="w-full h-10 rounded-lg border border-danger text-danger text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-danger-subtle disabled:opacity-60">
@@ -167,7 +172,11 @@ export class ReservationsComponent {
     });
   }
 
-  name(r: ApiReservation): string { return r.tenantName || r.residentName || r.guestName || r.userName || r.bookingNumber || 'Reservation'; }
+  name(r: ApiReservation): string { return reservationGuest(r); }
+  place(r: ApiReservation): string { return reservationPlace(r); }
+  expiry(r: ApiReservation): string { return holdExpiryLabel(r); }
+  status(r: ApiReservation): string { return holdStatus(r); }
+  isLapsed(r: ApiReservation): boolean { return holdState(r).lapsed; }
 
   readonly acting = signal(false);
   cancel(r: ApiReservation): void {

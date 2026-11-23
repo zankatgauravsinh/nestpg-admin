@@ -1,8 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { SessionStore } from '../../core/auth/session.store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { BookingsService, ApiBooking, ApiReservation } from '../../core/data/bookings.service';
+import { holdState, reservationOptionLabel } from '../../core/data/reservation-display';
 import { apiErrorMessage } from '../../core/http/api-error';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { MetricCardComponent } from '../../shared/components/metric-card.component';
@@ -25,6 +28,7 @@ type Mode = 'all' | 'check-in' | 'check-out';
   imports: [
     PageHeaderComponent, MetricCardComponent, SearchInputComponent,
     FormsModule, EntityAvatarComponent, StatusPillComponent, EmptyStateComponent, DrawerShellComponent, ModalComponent, IconComponent, InrPipe,
+    RouterLink,
   ],
   template: `
     <os-page-header [eyebrow]="eyebrow()" [title]="title()" [subtitle]="subtitle()">
@@ -104,6 +108,11 @@ type Mode = 'all' | 'check-in' | 'check-out';
             <div class="flex justify-between px-4 py-2.5"><span class="text-sm text-muted">Rent</span><span class="text-sm font-medium text-content">{{ b.rentPaisa | inr }}/mo</span></div>
             <div class="flex justify-between px-4 py-2.5"><span class="text-sm text-muted">Paid</span><span class="text-sm font-medium text-success">{{ b.totalPaidPaisa | inr }}</span></div>
           </div>
+          @if (canReadDeposits() && b.id) {
+            <!-- ADM-D.1 — read-only link to the booking's deposit history (settlements, refunds, disputes). -->
+            <a [routerLink]="['/finance/deposits', b.id]" data-testid="drawer-deposit-history"
+               class="inline-flex items-center gap-1 text-[13px] font-medium text-accent underline-offset-2 hover:underline">Deposit history</a>
+          }
         </div>
       }
       <div footer class="w-full">
@@ -158,8 +167,8 @@ type Mode = 'all' | 'check-in' | 'check-out';
         <div>
           <label class="block text-[12px] font-medium text-muted mb-1.5">Active reservation *</label>
           <select name="res" [(ngModel)]="reservationId" class="fld" [disabled]="!reservations().length">
-            <option value="" disabled>{{ reservations().length ? 'Select reservation' : 'No active reservations' }}</option>
-            @for (r of reservations(); track r.id) { <option [value]="r.id">{{ r.bedLabel ?? r.bedNumber ?? r.id.slice(0,8) }} · until {{ r.reservedUntil ?? '—' }}</option> }
+            <option value="" disabled>{{ reservations().length ? 'Select reservation' : 'No live holds' }}</option>
+            @for (r of reservations(); track r.id) { <option [value]="r.id">{{ holdOption(r) }}</option> }
           </select>
           <p class="text-[11px] text-faint mt-1.5">Reserve a bed first (Reservations → New reservation).</p>
         </div>
@@ -186,6 +195,9 @@ type Mode = 'all' | 'check-in' | 'check-out';
 })
 export class BookingsListComponent {
   readonly view = signal<ApiBooking | null>(null);
+  private readonly session = inject(SessionStore);
+  /** ADM-D.1 — the deposit-history route needs OPERATIONAL_READ (same as the backend read). */
+  readonly canReadDeposits = computed(() => this.session.hasCapability('OPERATIONAL_READ'));
   private readonly svc = inject(BookingsService);
   readonly mode = input<Mode>('all');
   readonly eyebrow = input('Bookings');
@@ -209,8 +221,11 @@ export class BookingsListComponent {
   newBooking(): void {
     this.reservationId = ''; this.rent = null; this.createErr.set(null);
     this.showCreate.set(true);
-    this.svc.reservations().subscribe((rs) => this.reservations.set(rs.filter((r) => (r.status ?? 'ACTIVE').toUpperCase() === 'ACTIVE')));
+    // D4: only holds that can still be confirmed (ACTIVE and inside their 15 minutes).
+    this.svc.reservations().subscribe((rs) => this.reservations.set(rs.filter((r) => holdState(r).live)));
   }
+
+  holdOption(r: ApiReservation): string { return reservationOptionLabel(r); }
 
   submitBooking(): void {
     if (!this.reservationId || !this.rent) { this.createErr.set('Pick a reservation and enter the monthly rent.'); return; }
