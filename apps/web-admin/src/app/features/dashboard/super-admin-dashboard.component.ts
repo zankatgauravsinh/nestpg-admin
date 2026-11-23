@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { ApiService } from '../../core/api/api.service';
+import { SessionStore } from '../../core/auth/session.store';
 import { PropertiesService } from '../../core/data/properties.service';
 import { DashboardService } from '../../core/data/dashboard.service';
 import { Property } from '../../core/data/models';
@@ -77,12 +78,15 @@ export class SuperAdminDashboardComponent {
   private readonly api = inject(ApiService);
   private readonly propsSvc = inject(PropertiesService);
   private readonly dash = inject(DashboardService);
+  private readonly session = inject(SessionStore);
+  /** GET /admin/ops/metrics is SUPER_ADMIN / OPS_ADMIN only on the server; never ask for it otherwise. */
+  private readonly canReadOps = ['SUPER_ADMIN', 'OPS_ADMIN'].includes(this.session.backendRole() ?? '');
 
   readonly properties = toSignal(this.propsSvc.list(), { initialValue: [] as Property[] });
   private readonly occ = toSignal(this.dash.occupancy(), { initialValue: null });
   private readonly rev = toSignal(this.dash.revenue(), { initialValue: null });
   private readonly metrics = toSignal(
-    this.api.get<OpsMetrics>('/admin/ops/metrics').pipe(catchError(() => of(null))),
+    this.canReadOps ? this.api.get<OpsMetrics>('/admin/ops/metrics').pipe(catchError(() => of(null))) : of(null),
     { initialValue: null },
   );
 

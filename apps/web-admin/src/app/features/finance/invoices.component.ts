@@ -125,7 +125,18 @@ type Tab = { id: string; label: string; status?: string };
           @if (pdfLoading()) { <span class="w-4 h-4 rounded-full border-2 border-border border-t-accent animate-spin"></span> } <os-icon name="picture_as_pdf" [size]="16" /> PDF
         </button>
         @if (detail() && detail()!.status !== 'PAID' && detail()!.status !== 'VOID' && paisa(detail()!.paidPaisa) === 0 && canManage()) {
-          <button (click)="voidInvoice()" [disabled]="acting()" class="h-10 px-3 rounded-lg border border-danger text-danger text-sm font-medium disabled:opacity-60">Void</button>
+          @if (!confirmVoid()) {
+            <button (click)="confirmVoid.set(true)" [disabled]="acting()" class="h-10 px-3 rounded-lg border border-danger text-danger text-sm font-medium disabled:opacity-60">Void</button>
+          } @else {
+            <div class="w-full rounded-lg border border-danger/40 bg-danger-subtle p-3 space-y-2" role="alertdialog" aria-labelledby="void-confirm-title" data-testid="void-confirm">
+              <p id="void-confirm-title" class="text-sm font-semibold text-content">Void {{ detail()!.invoiceNumber }}?</p>
+              <p class="text-[12px] text-muted">The resident will see it as cancelled and it can no longer be paid. This can't be undone.</p>
+              <div class="flex gap-2">
+                <button (click)="voidInvoice()" [disabled]="acting()" class="h-9 px-3 rounded-lg bg-danger text-white text-sm font-semibold disabled:opacity-60">Void invoice</button>
+                <button (click)="confirmVoid.set(false)" [disabled]="acting()" class="h-9 px-3 rounded-lg border border-border text-sm font-medium text-content hover:bg-canvas">Keep invoice</button>
+              </div>
+            </div>
+          }
         }
         @if (detail() && detail()!.status !== 'PAID' && detail()!.status !== 'VOID' && paisa(detail()!.paidPaisa) > 0 && canManage()) {
           <p class="w-full text-[12px] text-muted" data-testid="void-blocked">Payments have been applied to this invoice, so it can't be voided.</p>
@@ -188,6 +199,8 @@ export class InvoicesComponent {
   readonly loading = signal(false);
   readonly detail = signal<InvoiceDetail | null>(null);
   readonly acting = signal(false);
+  /** Void asks first: it is irreversible and the resident sees the invoice cancelled. */
+  readonly confirmVoid = signal(false);
   readonly pdfLoading = signal(false);
   readonly toast = signal<string | null>(null);
   readonly search = signal('');
@@ -219,7 +232,7 @@ export class InvoicesComponent {
     });
   }
 
-  open(i: ApiInvoice): void { this.svc.get(i.id).subscribe((d) => this.detail.set(d)); }
+  open(i: ApiInvoice): void { this.confirmVoid.set(false); this.svc.get(i.id).subscribe((d) => this.detail.set(d)); }
 
   issue(): void {
     const d = this.detail(); if (!d) return;
@@ -229,7 +242,7 @@ export class InvoicesComponent {
   voidInvoice(): void {
     const d = this.detail(); if (!d) return;
     this.acting.set(true);
-    this.svc.void(d.id).subscribe({ next: (u) => { this.acting.set(false); this.detail.set(u); this.flash('Invoice voided.'); this.reload(); }, error: (e) => { this.acting.set(false); this.flash(apiErrorMessage(e, 'Could not void.')); } });
+    this.svc.void(d.id).subscribe({ next: (u) => { this.acting.set(false); this.confirmVoid.set(false); this.detail.set(u); this.flash('Invoice voided.'); this.reload(); }, error: (e) => { this.acting.set(false); this.flash(apiErrorMessage(e, 'Could not void.')); } });
   }
   downloadPdf(): void {
     const d = this.detail(); if (!d) return;

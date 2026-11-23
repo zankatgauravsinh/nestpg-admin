@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { apiErrorMessage } from '../../core/http/api-error';
 import { IconComponent } from '../../shared/components/icon.component';
@@ -9,7 +9,7 @@ import { IconComponent } from '../../shared/components/icon.component';
   selector: 'os-login',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, RouterLink, IconComponent],
+  imports: [FormsModule, IconComponent],
   template: `
     <div class="mb-8">
       <h2 class="text-2xl font-semibold text-content mb-1.5">Welcome back</h2>
@@ -36,21 +36,19 @@ import { IconComponent } from '../../shared/components/icon.component';
                class="w-full h-11 px-3.5 rounded-lg border border-border bg-panel text-sm text-content outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15" />
       </div>
 
-      @if (mode() === 'password') {
-        <div>
-          <div class="flex justify-between items-center mb-1.5">
-            <label class="text-[12px] font-medium text-muted" for="pwd">Password</label>
-            <a routerLink="/auth/forgot-password" class="text-[12px] font-medium text-accent hover:underline">Forgot password?</a>
-          </div>
-          <div class="relative">
-            <input [type]="show() ? 'text' : 'password'" id="pwd" name="pwd" [(ngModel)]="password" placeholder="••••••••"
-                   class="w-full h-11 px-3.5 pr-11 rounded-lg border border-border bg-panel text-sm text-content outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15" />
-            <button type="button" (click)="show.set(!show())" class="absolute right-3 top-1/2 -translate-y-1/2 text-faint hover:text-content">
-              <os-icon [name]="show() ? 'visibility_off' : 'visibility'" [size]="18" />
-            </button>
-          </div>
+      <div>
+        <div class="flex justify-between items-center mb-1.5">
+          <label class="text-[12px] font-medium text-muted" for="pwd">Password</label>
+          <span class="text-[12px] text-faint" data-testid="forgot-password-help">Forgot it? Ask your NestPG administrator.</span>
         </div>
-      }
+        <div class="relative">
+          <input [type]="show() ? 'text' : 'password'" id="pwd" name="pwd" [(ngModel)]="password" placeholder="••••••••"
+                 class="w-full h-11 px-3.5 pr-11 rounded-lg border border-border bg-panel text-sm text-content outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15" />
+          <button type="button" (click)="show.set(!show())" class="absolute right-3 top-1/2 -translate-y-1/2 text-faint hover:text-content">
+            <os-icon [name]="show() ? 'visibility_off' : 'visibility'" [size]="18" />
+          </button>
+        </div>
+      </div>
 
       @if (error()) {
         <div class="flex items-center gap-2 text-[13px] text-danger bg-danger-subtle rounded-lg px-3 py-2">
@@ -61,18 +59,13 @@ import { IconComponent } from '../../shared/components/icon.component';
       <button type="submit" [disabled]="loading()"
               class="w-full h-11 rounded-lg bg-accent text-white text-[15px] font-semibold hover:bg-accent-hover transition disabled:opacity-60 flex items-center justify-center gap-2">
         @if (loading()) { <span class="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin"></span> }
-        {{ mode() === 'password' ? 'Sign in' : 'Send OTP' }}
-      </button>
-
-      <button type="button" (click)="toggleMode()" class="w-full text-[13px] text-muted hover:text-content transition">
-        {{ mode() === 'password' ? 'Sign in with OTP instead' : 'Use password instead' }}
+        Sign in
       </button>
     </form>
 
     <div class="mt-10 pt-6 border-t border-border text-center">
-      <p class="text-[13px] text-muted">
-        Don't have an account?
-        <a routerLink="/auth/register" class="text-accent font-semibold hover:underline">Create organization</a>
+      <p class="text-[13px] text-muted" data-testid="staff-accounts-help">
+        Staff accounts are created by a NestPG administrator.
       </p>
     </div>
   `,
@@ -88,12 +81,6 @@ export class LoginComponent {
   protected readonly show = signal(false);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly mode = signal<'password' | 'otp'>('password');
-
-  toggleMode(): void {
-    this.mode.update((m) => (m === 'password' ? 'otp' : 'password'));
-    this.error.set(null);
-  }
 
   submit(): void {
     if (!this.phone.trim()) {
@@ -102,14 +89,6 @@ export class LoginComponent {
     }
     this.loading.set(true);
     this.error.set(null);
-
-    if (this.mode() === 'otp') {
-      this.auth.sendOtp(this.phone, 'LOGIN').subscribe({
-        next: () => this.router.navigate(['/auth/reset-password'], { queryParams: { phone: this.phone, purpose: 'LOGIN', returnUrl: this.returnUrl } }),
-        error: (e) => this.fail(e),
-      });
-      return;
-    }
 
     this.auth.login({ phone: this.phone, password: this.password }).subscribe({
       next: () => this.router.navigateByUrl(this.returnUrl),

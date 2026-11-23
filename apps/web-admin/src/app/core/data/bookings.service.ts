@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import { ApiService } from '../api/api.service';
 
 export interface ApiBooking {
@@ -121,6 +121,13 @@ export class BookingsService {
   createReservation(dto: { bedId: string; reservedFrom: string }): Observable<unknown> { return this.api.post('/reservations', dto); }
   cancelReservation(id: string): Observable<unknown> { return this.api.post(`/reservations/${id}/cancel`, {}); }
   createBooking(dto: { reservationId: string; rentPaisa: number; paymentMode?: string }): Observable<unknown> { return this.api.post('/bookings', dto); }
+  /** The server's price for converting this hold (`GET /reservations/:id/quote`): the rent a conversion must use. */
+  reservationQuote(id: string): Observable<{ rentPaisa: number; securityDepositPaisa: number } | null> {
+    return this.api.get<{ rentPaisa: number | string; securityDepositPaisa: number | string }>(`/reservations/${id}/quote`).pipe(
+      map((q) => ({ rentPaisa: Number(q.rentPaisa), securityDepositPaisa: Number(q.securityDepositPaisa) })),
+      catchError(() => of(null)),
+    );
+  }
 }
 
 export interface JoinWaitlistPayload {

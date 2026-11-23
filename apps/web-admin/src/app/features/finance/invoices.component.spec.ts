@@ -75,6 +75,26 @@ describe('InvoicesComponent', () => {
     expect(t).not.toContain('Payments have been applied');
   });
 
+  it('Void asks first: nothing is sent until "Void invoice" is confirmed; "Keep invoice" backs out', () => {
+    const f = setup([invoice({ paidPaisa: 0, balancePaisa: 800000 })]);
+    openDrawer(f, invoice({ paidPaisa: 0, balancePaisa: 800000 }));
+    const button = (label: string) => [...f.nativeElement.querySelectorAll('button')].find((b) => (b as HTMLElement).textContent?.trim() === label) as HTMLButtonElement | undefined;
+    voidActions(f)[0].click(); f.detectChanges();
+    http.expectNone((r) => r.url.endsWith('/void'));
+    const confirm = f.nativeElement.querySelector('[data-testid="void-confirm"]') as HTMLElement;
+    expect(text(confirm)).toContain('Void INV-202611-0001?');
+    expect(text(confirm)).toContain("can't be undone");
+    button('Keep invoice')!.click(); f.detectChanges();
+    expect(f.nativeElement.querySelector('[data-testid="void-confirm"]')).toBeNull();
+    http.expectNone((r) => r.url.endsWith('/void'));
+    voidActions(f)[0].click(); f.detectChanges();
+    button('Void invoice')!.click();
+    const req = http.expectOne((r) => r.url === `${LIST}/inv-1/void`);
+    expect(req.request.method).toBe('POST');
+    req.flush({ success: true, data: { ...invoice({ status: 'VOID' }), lines: [], payments: [] } });
+    for (const r of http.match((x) => x.url === LIST)) r.flush({ success: true, data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } });
+  });
+
   it('search filters by invoice number as it changes', () => {
     const f = setup();
     f.componentInstance.search.set('0002');

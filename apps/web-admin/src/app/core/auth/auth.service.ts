@@ -5,15 +5,8 @@ import { TokenStore } from '../api/token.store';
 import { SessionStore } from './session.store';
 import { CurrentUser, Role } from '../models/role.model';
 
-export type OtpPurpose = 'REGISTRATION' | 'LOGIN' | 'PASSWORD_RESET' | 'KYC';
-
 interface LoginPayload {
   phone: string;
-  password?: string;
-}
-interface RegisterPayload {
-  phone: string;
-  email?: string;
   password?: string;
 }
 interface AuthResult {
@@ -66,20 +59,6 @@ export class AuthService {
       tap((r) => this.applyAuth(r)),
       switchMap((r) => this.me().pipe(map(() => r), catchError(() => of(r)))),
     );
-  }
-
-  register(payload: RegisterPayload): Observable<AuthResult> {
-    return this.api.post<AuthResult>('/auth/register', payload).pipe(tap((r) => this.applyAuth(r)));
-  }
-
-  sendOtp(phone: string, purpose: OtpPurpose = 'LOGIN'): Observable<unknown> {
-    return this.api.post('/auth/send-otp', { phone, purpose });
-  }
-
-  verifyOtp(phone: string, otp: string, purpose: OtpPurpose = 'LOGIN'): Observable<AuthResult> {
-    return this.api
-      .post<AuthResult>('/auth/verify-otp', { phone, otp, purpose })
-      .pipe(tap((r) => this.applyAuth(r)));
   }
 
   me(): Observable<RawUser> {

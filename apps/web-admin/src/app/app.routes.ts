@@ -12,9 +12,12 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'login', pathMatch: 'full' },
       { path: 'login', loadComponent: () => import('./features/auth/login.component').then((m) => m.LoginComponent) },
-      { path: 'register', loadComponent: () => import('./features/auth/register.component').then((m) => m.RegisterComponent) },
-      { path: 'forgot-password', loadComponent: () => import('./features/auth/forgot-password.component').then((m) => m.ForgotPasswordComponent) },
-      { path: 'reset-password', loadComponent: () => import('./features/auth/reset-password.component').then((m) => m.ResetPasswordComponent) },
+      // Staff accounts are password-only and provisioned by admins: the backend
+      // has no registration, OTP or self-service reset for the Admin console.
+      // Old links land on the login screen instead of a page that cannot work.
+      { path: 'register', redirectTo: 'login', pathMatch: 'full' },
+      { path: 'forgot-password', redirectTo: 'login', pathMatch: 'full' },
+      { path: 'reset-password', redirectTo: 'login', pathMatch: 'full' },
     ],
   },
   {

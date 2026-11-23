@@ -7,6 +7,7 @@ import { DatePipe } from '@angular/common';
 import { PropertiesService } from '../../core/data/properties.service';
 import { InventoryService, Board, BoardRoom, BoardFloor, BoardBuilding, ApiBed } from '../../core/data/inventory.service';
 import { BookingsService, ApiBooking, ApiReservation, paymentFromBooking } from '../../core/data/bookings.service';
+import { clock, holdExpiryLabel, holdState, holdStatus } from '../../core/data/reservation-display';
 import { UsersService, ApiUser, KycDocument, KycRecord, userDisplayName } from '../../core/data/users.service';
 import { CollectionsApiService } from '../../core/data/collections.service';
 import { InvoicesService, ApiInvoice } from '../../core/data/invoices.service';
@@ -41,7 +42,7 @@ interface Occupant {
   kycStatus: string;
   outstandingPaisa: number;
 }
-interface ReservedInfo { tenantName: string; reservedUntil: string | null; status: string }
+interface ReservedInfo { tenantName: string; reservedUntil: string | null; status: string; holdLabel: string }
 interface RoomStats {
   capacity: number; occupied: number; reserved: number; available: number;
   maintenance: number; blocked: number; pct: number; revenuePaisa: number;
@@ -545,7 +546,8 @@ const ROOM_TYPE_LABEL: Record<string, string> = {
               @if (reservation(); as r) {
                 <div class="space-y-0.5 text-[12px]">
                   <div class="flex justify-between"><span class="text-faint">Reserved by</span><span class="text-content font-medium">{{ r.tenantName }}</span></div>
-                  <div class="flex justify-between"><span class="text-faint">Expires</span><span class="text-content">{{ r.reservedUntil ? (r.reservedUntil | date:'dd MMM yy') : '—' }}</span></div>
+                  <div class="flex justify-between"><span class="text-faint">Hold</span><span class="text-content" data-testid="bed-hold-expiry">{{ r.holdLabel || '—' }}</span></div>
+                  <div class="flex justify-between"><span class="text-faint">Stay until</span><span class="text-content">{{ r.reservedUntil ? (r.reservedUntil | date:'dd MMM yy') : '—' }}</span></div>
                   <div class="flex justify-between"><span class="text-faint">Status</span><span class="text-content">{{ r.status }}</span></div>
                 </div>
               } @else { <p class="text-[12px] text-muted">No reservation detail available.</p> }
@@ -1324,7 +1326,7 @@ export class InventoryWorkspaceComponent {
       });
     } else if (st === 'RESERVED') {
       const r = this.reservationsList().find((x) => x.bedId === b.id && (x.status ?? 'ACTIVE').toUpperCase() === 'ACTIVE');
-      if (r) this.reservation.set({ tenantName: r.tenantName || 'Reserved', reservedUntil: (r['reservedUntil'] as string) ?? (r['reserved_until'] as string) ?? null, status: r.status ?? 'ACTIVE' });
+      if (r) this.reservation.set({ tenantName: r.tenantName || 'Reserved', reservedUntil: (r['reservedUntil'] as string) ?? (r['reserved_until'] as string) ?? null, status: holdStatus(r), holdLabel: holdExpiryLabel(r) });
     }
   }
 
@@ -1633,13 +1635,16 @@ export class InventoryWorkspaceComponent {
     // Payment overdue (property-scoped overdue invoices — real filtered query).
     const overdue = this.overdueInvoices();
     if (overdue.length) out.push({ id: 'a-overdue', kind: 'PAYMENT', icon: 'error', label: 'Payment overdue', detail: `${overdue.length} overdue invoice${overdue.length > 1 ? 's' : ''}`, cls: 'text-danger bg-danger-subtle', link: '/finance/collections' });
-    // Reservation expiring within 24h.
-    const expiring = this.reservationsList().filter((r) => {
-      if (r.propertyId && r.propertyId !== this.propertyId) return false;
-      const d = this.daysUntil(r.reservedUntil ?? null);
-      return (r.status ?? 'ACTIVE').toUpperCase() === 'ACTIVE' && d !== null && d >= 0 && d <= 1;
-    });
-    if (expiring.length) out.push({ id: 'a-resv', kind: 'RESERVATION', icon: 'schedule', label: 'Reservation expiring', detail: `${expiring.length} within 24h`, cls: 'text-warning bg-warning-subtle', link: '/bookings/reservations' });
+    // Beds on a live 15-minute hold (pay to confirm), soonest lapse first. This used
+    // to read the STAY end (reservedUntil) as the hold's expiry, so its "within 24h"
+    // window was meaningless for a hold that lasts 15 minutes.
+    const live = this.reservationsList()
+      .filter((r) => (!r.propertyId || r.propertyId === this.propertyId) && holdState(r).live)
+      .sort((a, b) => String(a.expiresAt).localeCompare(String(b.expiresAt)));
+    if (live.length) {
+      const first = holdState(live[0]).expiresAt!;
+      out.push({ id: 'a-resv', kind: 'RESERVATION', icon: 'schedule', label: live.length > 1 ? 'Beds on hold' : 'Bed on hold', detail: `${live.length} awaiting payment · first lapses at ${clock(first)}`, cls: 'text-warning bg-warning-subtle', link: '/bookings/reservations' });
+    }
     // Move-out tomorrow.
     const moveout = this.bookings().filter((b) => b.status === 'CHECKED_IN' && this.daysUntil((b['checkOutDate'] as string) ?? null) === 1);
     if (moveout.length) out.push({ id: 'a-moveout', kind: 'MOVEOUT', icon: 'logout', label: 'Move-out tomorrow', detail: `${moveout.length} resident${moveout.length > 1 ? 's' : ''}`, cls: 'text-warning bg-warning-subtle', link: '/bookings/check-out' });

@@ -166,7 +166,7 @@ type Mode = 'all' | 'check-in' | 'check-out';
       <form id="bkForm" class="space-y-4" (ngSubmit)="submitBooking()">
         <div>
           <label class="block text-[12px] font-medium text-muted mb-1.5">Active reservation *</label>
-          <select name="res" [(ngModel)]="reservationId" class="fld" [disabled]="!reservations().length">
+          <select name="res" [(ngModel)]="reservationId" (ngModelChange)="pickHold($event)" class="fld" [disabled]="!reservations().length">
             <option value="" disabled>{{ reservations().length ? 'Select reservation' : 'No live holds' }}</option>
             @for (r of reservations(); track r.id) { <option [value]="r.id">{{ holdOption(r) }}</option> }
           </select>
@@ -175,6 +175,9 @@ type Mode = 'all' | 'check-in' | 'check-out';
         <div>
           <label class="block text-[12px] font-medium text-muted mb-1.5">Monthly rent (₹) *</label>
           <input name="rent" type="number" [(ngModel)]="rent" placeholder="12000" class="fld" />
+          @if (quotedRent() !== null) {
+            <p class="text-[11px] text-faint mt-1.5" data-testid="quoted-rent">Quoted rent for this hold: {{ quotedRent()! | inr: 'full' }}. The booking must use this amount.</p>
+          }
         </div>
         @if (createErr()) { <p class="text-[13px] text-danger flex items-center gap-1.5"><os-icon name="error" [size]="15" /> {{ createErr() }}</p> }
       </form>
@@ -218,8 +221,22 @@ export class BookingsListComponent {
   protected reservationId = '';
   protected rent: number | null = null;
 
+  /** The server's quote for the selected hold, in paise (null until known). */
+  readonly quotedRent = signal<number | null>(null);
+
+  /** Picking a hold fills in the server's quoted rent, so Ops never has to guess it. */
+  pickHold(id: string): void {
+    this.quotedRent.set(null);
+    if (!id) return;
+    this.svc.reservationQuote(id).subscribe((q) => {
+      if (!q || this.reservationId !== id) return;
+      this.quotedRent.set(q.rentPaisa);
+      this.rent = q.rentPaisa / 100;
+    });
+  }
+
   newBooking(): void {
-    this.reservationId = ''; this.rent = null; this.createErr.set(null);
+    this.reservationId = ''; this.rent = null; this.createErr.set(null); this.quotedRent.set(null);
     this.showCreate.set(true);
     // D4: only holds that can still be confirmed (ACTIVE and inside their 15 minutes).
     this.svc.reservations().subscribe((rs) => this.reservations.set(rs.filter((r) => holdState(r).live)));
@@ -232,7 +249,15 @@ export class BookingsListComponent {
     this.saving.set(true); this.createErr.set(null);
     this.svc.createBooking({ reservationId: this.reservationId, rentPaisa: this.rent * 100 }).subscribe({
       next: () => { this.saving.set(false); this.showCreate.set(false); this.msg.set('Booking created from reservation.'); this.reload$.next(); },
-      error: (e) => { this.saving.set(false); this.createErr.set(apiErrorMessage(e, 'Could not create booking.')); },
+      error: (e) => {
+        this.saving.set(false);
+        const msg = apiErrorMessage(e, 'Could not create booking.');
+        const q = this.quotedRent();
+        // Say what the rent must be, not just that it is wrong.
+        this.createErr.set(/rent mismatch/i.test(msg) && q !== null
+          ? `Rent mismatch: this hold's quoted rent is ₹${(q / 100).toLocaleString('en-IN')}. Use the quoted amount.`
+          : msg);
+      },
     });
   }
 
