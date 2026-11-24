@@ -30,6 +30,23 @@ export interface ReviewQueueRow {
   readiness: { hasBeds: boolean; hasPhotos: boolean; hasDailyPrices: boolean; ready: boolean };
 }
 
+/** One row of `GET /admin/beds/without-daily-price` — a live bed with no daily rate. */
+export interface BedWithoutDailyRate {
+  propertyId: string;
+  propertyName: string;
+  propertyStatus: string;
+  city: string;
+  ownerId: string;
+  /** The owner's phone — the same minimal identity the review queue shows. */
+  ownerPhone: string | null;
+  roomNumber: string;
+  bedId: string;
+  bedNumber: string;
+  bedStatus: string;
+  /** Monthly rent, paise. */
+  pricePaisa: number;
+}
+
 export interface ReviewQueueQuery {
   status?: string;
   city?: string;
@@ -214,6 +231,16 @@ export class PropertiesService {
   /** Reject a property with a reason. */
   reject(id: string, reason: string): Observable<unknown> {
     return this.api.put(`/properties/${id}/reject`, { reason });
+  }
+
+  /**
+   * Beds with no daily rate (Super / Ops). A stay on one of these that ends
+   * part-way through a month can't be billed for those last days, and its
+   * property can't go to review. Like `reviewQueue`, a failure reaches the
+   * component — "could not load" must never read as "nothing missing".
+   */
+  bedsWithoutDailyRate(): Observable<{ total: number; beds: BedWithoutDailyRate[] }> {
+    return this.api.get<{ total: number; beds: BedWithoutDailyRate[] }>('/admin/beds/without-daily-price');
   }
 
   /**

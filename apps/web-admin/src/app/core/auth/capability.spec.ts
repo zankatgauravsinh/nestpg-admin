@@ -118,6 +118,12 @@ describe('capability authorization', () => {
       for (const caps of [SUPER, OPS, FINANCE]) expect(visibleFor(caps)).toContain('property-review');
     });
 
+    it('Missing daily rates follows the endpoint (PROPERTY_OPERATIONS): Super and Ops, not Finance', () => {
+      expect(visibleFor(SUPER)).toContain('daily-rates');
+      expect(visibleFor(OPS)).toContain('daily-rates');
+      expect(visibleFor(FINANCE)).not.toContain('daily-rates');
+    });
+
     it('FINANCE_ADMIN sees finance, not KYC / reviews / visitors / roles', () => {
       const nav = visibleFor(FINANCE);
       expect(nav).toEqual(expect.arrayContaining(['invoices', 'payments', 'collections']));
