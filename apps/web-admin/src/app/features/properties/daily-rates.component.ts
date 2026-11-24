@@ -48,7 +48,8 @@ export interface DailyRateGroup {
           <h1 class="text-2xl font-bold text-content">Missing daily rates</h1>
           <p class="text-sm text-muted mt-1 max-w-3xl">
             When a stay ends part-way through a month, for example after notice, the last days are charged at the bed’s
-            daily rate. These beds have none, so those days can’t be billed and their property can’t go to review.
+            daily rate. These beds have none, so they can’t take new bookings, those days can’t be billed on stays
+            already running, and their property can’t go to review.
             Owners set the rate once, in the Owner app under Inventory.
           </p>
         </div>
