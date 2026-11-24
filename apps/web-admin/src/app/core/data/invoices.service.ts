@@ -38,6 +38,34 @@ export interface InvoiceDetail extends ApiInvoice {
 export interface InvoiceLineInput { kind: string; description: string; quantity?: number; unitPaisa: number; taxRateBps?: number }
 export interface InvoiceQuery { customerUserId?: string; propertyId?: string; status?: string; page?: number; limit?: number }
 
+/** One rent period the monthly generator would raise (or raised). Dates are YYYY-MM-DD; periodEnd is exclusive. */
+export interface RentPeriod {
+  bookingId: string;
+  bookingNumber: string;
+  residentName?: string | null;
+  propertyName?: string | null;
+  periodStart: string;
+  periodEnd: string;
+  /** True when the stay ends inside the period (billed by the day). */
+  partial: boolean;
+  days: number | null;
+  /** null when it can't be priced automatically — see `problem`. */
+  amountPaisa: number | null;
+  problem?: 'PRICE_NOT_CONFIGURED_FOR_UNIT';
+}
+
+/** `POST /admin/rent-invoices/run` — the same engine the 01:30 IST daily job runs. */
+export interface RentRunResult {
+  asOf: string;
+  leadDays: number;
+  dryRun: boolean;
+  planned: RentPeriod[];
+  created: Array<RentPeriod & { invoiceId: string; invoiceNumber: string }>;
+  skipped: Array<{ bookingId: string; periodStart: string; reason: string }>;
+  /** Checked-in monthly bookings with no first rent invoice for the generator to continue from. */
+  withoutBillingAnchor: Array<{ bookingId: string; bookingNumber: string; residentName?: string | null; propertyName?: string | null; checkInDate?: string | null }>;
+}
+
 @Injectable({ providedIn: 'root' })
 export class InvoicesService {
   private readonly api = inject(ApiService);
@@ -50,6 +78,15 @@ export class InvoicesService {
   get(id: string): Observable<InvoiceDetail | null> {
     return this.api.get<InvoiceDetail>(`/invoices/${id}`).pipe(catchError(() => of(null)));
   }
+  /**
+   * Monthly rent generator (FINANCIAL_OPERATIONS). `dryRun` previews what is
+   * due and writes nothing; otherwise it raises those invoices now and notifies
+   * the residents. Errors reach the caller — a failed preview is not "nothing due".
+   */
+  runRentInvoices(dryRun: boolean): Observable<RentRunResult> {
+    return this.api.post<RentRunResult>(`/admin/rent-invoices/run${dryRun ? '?dryRun=true' : ''}`, {});
+  }
+
   create(body: { bookingId?: string; customerUserId: string; propertyId?: string; dueDate: string; notes?: string; lines: InvoiceLineInput[]; idempotencyKey?: string }): Observable<InvoiceDetail> {
     return this.api.post<InvoiceDetail>('/invoices', body);
   }

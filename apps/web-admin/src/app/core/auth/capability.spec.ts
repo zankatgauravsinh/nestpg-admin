@@ -124,6 +124,11 @@ describe('capability authorization', () => {
       expect(visibleFor(FINANCE)).not.toContain('daily-rates');
     });
 
+    it('Monthly rent follows the endpoint (FINANCIAL_OPERATIONS): all three admin roles', () => {
+      for (const caps of [SUPER, OPS, FINANCE]) expect(visibleFor(caps)).toContain('rent-invoices');
+      expect(visibleFor(['OPERATIONAL_READ'])).not.toContain('rent-invoices');
+    });
+
     it('FINANCE_ADMIN sees finance, not KYC / reviews / visitors / roles', () => {
       const nav = visibleFor(FINANCE);
       expect(nav).toEqual(expect.arrayContaining(['invoices', 'payments', 'collections']));

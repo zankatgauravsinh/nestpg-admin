@@ -35,6 +35,7 @@ export const NAV_CONFIG: NavItem[] = [
   { id: 'finance-overview', label: 'Finance Overview', icon: 'monitoring', route: '/finance' },
   { id: 'payments', label: 'Payments', icon: 'payments', route: '/finance/payments' },
   { id: 'invoices', label: 'Invoices', icon: 'receipt_long', route: '/finance/invoices' },
+  { id: 'rent-invoices', label: 'Monthly rent', icon: 'event_repeat', route: '/finance/rent-invoices', capabilities: ['FINANCIAL_OPERATIONS'] },
   { id: 'collections', label: 'Collections', icon: 'request_quote', route: '/finance/collections', badge: 8 },
   { id: 'deposit-disputes', label: 'Deposit disputes', icon: 'gavel', route: '/finance/deposit-disputes', capabilities: ['OPERATIONAL_READ'] },
 
