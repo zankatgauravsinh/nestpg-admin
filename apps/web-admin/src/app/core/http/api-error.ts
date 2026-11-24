@@ -23,6 +23,7 @@ function humanize(code: string): string {
     REJECTION_REASON_REQUIRED: 'A rejection reason is required.',
     TARGET_BED_NOT_AVAILABLE: 'That bed is no longer available.',
     BED_NUMBER_EXISTS_IN_ROOM: 'A bed with that number already exists in the room.',
+    BED_WITHOUT_DAILY_PRICE: 'Every bed needs a daily rate before this listing can be approved. Ask the owner to set the missing daily rates.',
   };
   return map[code] ?? code.replace(/_/g, ' ').toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
 }

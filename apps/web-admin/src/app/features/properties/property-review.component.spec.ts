@@ -28,7 +28,7 @@ const row = (over: Record<string, unknown> = {}) => ({
   stats: { totalBeds: 17, occupiedBeds: 0, reservedBeds: 0, availableBeds: 17, maintenanceBeds: 0, occupancyRate: 0 },
   minPricePaisa: 900000, maxPricePaisa: 1200000,
   coverImageUrl: 'https://cdn/x.jpg', photoCount: 2,
-  readiness: { hasBeds: true, hasPhotos: true, ready: true },
+  readiness: { hasBeds: true, hasPhotos: true, hasDailyPrices: true, ready: true },
   ...over,
 });
 
@@ -87,11 +87,24 @@ describe('PropertyReviewComponent', () => {
   it('says a listing without photos is not ready', () => {
     const f = setup();
     http.expectOne((r) => r.url === QUEUE).flush({
-      data: [row({ photoCount: 0, readiness: { hasBeds: true, hasPhotos: false, ready: false } })],
+      data: [row({ photoCount: 0, readiness: { hasBeds: true, hasPhotos: false, hasDailyPrices: true, ready: false } })],
       meta: { page: 1, limit: 20, total: 1 },
     });
     f.detectChanges();
     expect(el(f, 'readiness-p-1')?.textContent).toContain('No photos');
+  });
+
+  it('says a listing with a bed missing its daily rate is not ready, and how many are missing', () => {
+    const f = setup();
+    http.expectOne((r) => r.url === QUEUE).flush({
+      data: [row({
+        stats: { totalBeds: 3, occupiedBeds: 0, reservedBeds: 0, availableBeds: 3, maintenanceBeds: 0, occupancyRate: 0, bedsWithoutDailyPrice: 2 },
+        readiness: { hasBeds: true, hasPhotos: true, hasDailyPrices: false, ready: false },
+      })],
+      meta: { page: 1, limit: 20, total: 1 },
+    });
+    f.detectChanges();
+    expect(el(f, 'readiness-p-1')?.textContent).toContain('No daily rates');
   });
 
   it('renders an EMPTY state when nothing is awaiting review', () => {
@@ -189,6 +202,19 @@ describe('PropertyReviewComponent', () => {
     f.detectChanges();
     expect(el(f, 'action-error')?.textContent).toContain('Property has no photos');
     expect(el(f, 'detail-p-1')).toBeTruthy();   // still open, nothing pretended to happen
+  });
+
+  it('a refusal for missing daily rates is explained, not shown as a code', () => {
+    const f = openDetail(setup());
+    expect(el(f, 'req-daily-p-1')?.textContent).toContain('A daily rate on every bed');
+    el(f, 'approve')!.click(); f.detectChanges();
+    el(f, 'approve-confirm')!.click(); f.detectChanges();
+    http.expectOne(url('/properties/p-1/verify'))
+      .flush({ errors: [{ code: 'BAD_REQUEST', message: 'BED_WITHOUT_DAILY_PRICE' }] },
+             { status: 400, statusText: 'Bad Request' });
+    f.detectChanges();
+    expect(el(f, 'action-error')?.textContent).toContain('Every bed needs a daily rate');
+    expect(el(f, 'action-error')?.textContent).not.toContain('BED_WITHOUT_DAILY_PRICE');
   });
 
   it('requires a reason before a rejection can be confirmed', () => {

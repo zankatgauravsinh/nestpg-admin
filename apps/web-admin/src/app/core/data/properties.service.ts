@@ -26,7 +26,8 @@ export interface ReviewQueueRow {
   /** Cover from the `media` table — the source the server-side readiness rule counts. */
   coverImageUrl: string | null;
   photoCount: number;
-  readiness: { hasBeds: boolean; hasPhotos: boolean; ready: boolean };
+  /** `hasDailyPrices`: every live bed has a daily rate (server rule BED_WITHOUT_DAILY_PRICE). */
+  readiness: { hasBeds: boolean; hasPhotos: boolean; hasDailyPrices: boolean; ready: boolean };
 }
 
 export interface ReviewQueueQuery {
@@ -46,6 +47,8 @@ export interface RawBedStats {
   availableBeds: number;
   maintenanceBeds: number;
   occupancyRate: number;
+  /** Live beds with no daily rate (admin / owner reads only). */
+  bedsWithoutDailyPrice?: number;
 }
 
 export interface RawProperty {

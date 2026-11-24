@@ -28,7 +28,7 @@ const propertyRow = (over: Record<string, unknown> = {}) => ({
   owner: { id: 'o-1', phone: '9811000001', status: 'ACTIVE' },
   stats: { totalBeds: 4, occupiedBeds: 0, reservedBeds: 0, availableBeds: 4, maintenanceBeds: 0, occupancyRate: 0 },
   minPricePaisa: 800000, maxPricePaisa: 900000, coverImageUrl: null, photoCount: 1,
-  readiness: { hasBeds: true, hasPhotos: true, ready: true }, ...over,
+  readiness: { hasBeds: true, hasPhotos: true, hasDailyPrices: true, ready: true }, ...over,
 });
 
 /** A4 — Property Owner administration UI. */

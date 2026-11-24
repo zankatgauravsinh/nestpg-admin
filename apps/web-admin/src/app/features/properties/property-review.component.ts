@@ -138,6 +138,10 @@ const PAGE_SIZE = 20;
                             <os-icon [name]="p.readiness.hasPhotos ? 'check_circle' : 'cancel'" [size]="16" />
                             At least 1 property photo — {{ p.photoCount }} uploaded
                           </p>
+                          <p class="text-[13px] flex items-center gap-2" [attr.data-testid]="'req-daily-' + p.id">
+                            <os-icon [name]="p.readiness.hasDailyPrices ? 'check_circle' : 'cancel'" [size]="16" />
+                            A daily rate on every bed — {{ p.stats.bedsWithoutDailyPrice ? p.stats.bedsWithoutDailyPrice + ' missing' : 'all set' }}
+                          </p>
                           <p class="text-[11px] text-faint mt-2">
                             Owner KYC is not required. The server re-checks these at approval.
                           </p>
@@ -323,6 +327,7 @@ export class PropertyReviewComponent {
   notReady(p: ReviewQueueRow): string {
     if (!p.readiness.hasBeds) return 'No beds';
     if (!p.readiness.hasPhotos) return 'No photos';
+    if (!p.readiness.hasDailyPrices) return 'No daily rates';
     return 'Not ready';
   }
 
