@@ -129,6 +129,11 @@ describe('capability authorization', () => {
       expect(visibleFor(['OPERATIONAL_READ'])).not.toContain('rent-invoices');
     });
 
+    it('Payments to review follows the endpoints (FINANCIAL_OPERATIONS): all three admin roles', () => {
+      for (const caps of [SUPER, OPS, FINANCE]) expect(visibleFor(caps)).toContain('payments-review');
+      expect(visibleFor(['OPERATIONAL_READ'])).not.toContain('payments-review');
+    });
+
     it('FINANCE_ADMIN sees finance, not KYC / reviews / visitors / roles', () => {
       const nav = visibleFor(FINANCE);
       expect(nav).toEqual(expect.arrayContaining(['invoices', 'payments', 'collections']));

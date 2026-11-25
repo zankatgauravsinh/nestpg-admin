@@ -34,6 +34,7 @@ export const NAV_CONFIG: NavItem[] = [
   { id: 'sec-finance', label: 'Finance', isSection: true },
   { id: 'finance-overview', label: 'Finance Overview', icon: 'monitoring', route: '/finance' },
   { id: 'payments', label: 'Payments', icon: 'payments', route: '/finance/payments' },
+  { id: 'payments-review', label: 'Payments to review', icon: 'rule', route: '/finance/payments-review', capabilities: ['FINANCIAL_OPERATIONS'] },
   { id: 'invoices', label: 'Invoices', icon: 'receipt_long', route: '/finance/invoices' },
   { id: 'rent-invoices', label: 'Monthly rent', icon: 'event_repeat', route: '/finance/rent-invoices', capabilities: ['FINANCIAL_OPERATIONS'] },
   { id: 'collections', label: 'Collections', icon: 'request_quote', route: '/finance/collections', badge: 8 },

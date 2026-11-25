@@ -57,6 +57,7 @@ export const routes: Routes = [
       // Finance
       { path: 'finance', loadComponent: () => import('./features/finance/finance-dashboard.component').then((m) => m.FinanceDashboardComponent) },
       { path: 'finance/payments', loadComponent: () => import('./features/finance/payments-feed.component').then((m) => m.PaymentsFeedComponent) },
+      { path: 'finance/payments-review', loadComponent: () => import('./features/finance/payments-review.component').then((m) => m.PaymentsReviewComponent), canActivate: [capabilityGuard], data: { capabilities: ['FINANCIAL_OPERATIONS'] } },
       { path: 'finance/rent-invoices', loadComponent: () => import('./features/finance/rent-invoices.component').then((m) => m.RentInvoicesComponent), canActivate: [capabilityGuard], data: { capabilities: ['FINANCIAL_OPERATIONS'] } },
       { path: 'finance/invoices', loadComponent: () => import('./features/finance/invoices.component').then((m) => m.InvoicesComponent) },
       { path: 'finance/collections', loadComponent: () => import('./features/finance/collections.component').then((m) => m.CollectionsComponent) },
