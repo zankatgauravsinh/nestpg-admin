@@ -12,6 +12,8 @@ import { InsightChipComponent } from '../../shared/components/insight-chip.compo
 import { SearchInputComponent } from '../../shared/components/search-input.component';
 import { EntityAvatarComponent } from '../../shared/components/entity-avatar.component';
 import { IconComponent } from '../../shared/components/icon.component';
+import { LocationPickerComponent } from '../../shared/components/location-picker.component';
+import { LatLng, pinOf } from '../../core/maps/google-maps.service';
 import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 import { ModalComponent } from '../../shared/components/modal.component';
 import { DrawerShellComponent } from '../../shared/components/drawer-shell.component';
@@ -35,8 +37,7 @@ function health(rate: number): Health {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule, RouterLink, PageHeaderComponent, InsightChipComponent, SearchInputComponent,
-    EntityAvatarComponent, IconComponent, EmptyStateComponent, ModalComponent, DrawerShellComponent, InrPipe,
-  ],
+    EntityAvatarComponent, IconComponent, EmptyStateComponent, ModalComponent, DrawerShellComponent, InrPipe, LocationPickerComponent],
   template: `
     <os-page-header eyebrow="Properties" title="Property Portfolio"
       subtitle="Manage all properties, occupancy, revenue, and operational health.">
@@ -257,6 +258,10 @@ function health(rate: number): Health {
           <div><label class="block text-[12px] font-medium text-muted mb-1.5">City *</label><input name="city" [(ngModel)]="form.city" required class="fld" /></div>
           <div><label class="block text-[12px] font-medium text-muted mb-1.5">State *</label><input name="state" [(ngModel)]="form.state" required class="fld" /></div>
         </div>
+        <div>
+          <label class="block text-[12px] font-medium text-muted mb-1.5">Exact location</label>
+          <os-location-picker [value]="pinFor(form)" [address]="addressOf(form)" (pinChange)="setPin(form, $event)" />
+        </div>
         @if (error()) { <p class="text-[13px] text-danger flex items-center gap-1.5"><os-icon name="error" [size]="15" /> {{ error() }}</p> }
       </form>
       <div footer>
@@ -280,6 +285,10 @@ function health(rate: number): Health {
           <div><label class="block text-[12px] font-medium text-muted mb-1.5">Locality *</label><input name="eloc" [(ngModel)]="editForm.areaLocality" required class="fld" /></div>
           <div><label class="block text-[12px] font-medium text-muted mb-1.5">City *</label><input name="ecity" [(ngModel)]="editForm.city" required class="fld" /></div>
           <div><label class="block text-[12px] font-medium text-muted mb-1.5">State *</label><input name="estate" [(ngModel)]="editForm.state" required class="fld" /></div>
+        </div>
+        <div>
+          <label class="block text-[12px] font-medium text-muted mb-1.5">Exact location</label>
+          <os-location-picker [value]="pinFor(editForm)" [address]="addressOf(editForm)" (pinChange)="setPin(editForm, $event)" />
         </div>
         <div><label class="block text-[12px] font-medium text-muted mb-1.5">Description</label><textarea name="edesc" [(ngModel)]="editForm.description" rows="2" class="fld" style="height:auto;padding:8px 12px"></textarea></div>
         @if (editErr()) { <p class="text-[13px] text-danger flex items-center gap-1.5"><os-icon name="error" [size]="15" /> {{ editErr() }}</p> }
@@ -459,6 +468,7 @@ export class PortfolioHubComponent {
         state: r?.state ?? '',
         pincode: r?.pincode ?? '',
         description: r?.description ?? '',
+        ...(pinOf(r) ? { latitude: pinOf(r)!.lat, longitude: pinOf(r)!.lng } : {}),
       };
       this.selected.set(null);
       this.showEdit.set(true);
@@ -475,6 +485,10 @@ export class PortfolioHubComponent {
       error: (e) => { this.saving.set(false); this.editErr.set(apiErrorMessage(e, 'Could not update property.')); },
     });
   }
+
+  pinFor(f: CreatePropertyPayload): LatLng | null { return pinOf(f); }
+  addressOf(f: CreatePropertyPayload): string { return [f.addressLine1, f.areaLocality, f.city, f.state, f.pincode].filter(Boolean).join(', '); }
+  setPin(f: CreatePropertyPayload, p: LatLng): void { f.latitude = p.lat; f.longitude = p.lng; }
 
   private blankForm(): CreatePropertyPayload { return { name: '', propertyType: 'COLIVING', addressLine1: '', areaLocality: '', city: '', state: '', pincode: '' }; }
   openCreate(): void { this.form = this.blankForm(); this.error.set(null); this.showCreate.set(true); }

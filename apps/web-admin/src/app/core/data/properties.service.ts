@@ -40,6 +40,9 @@ export interface PropertyWithoutLocation {
   propertyStatus: string;
   areaLocality: string;
   city: string;
+  addressLine1?: string;
+  state?: string;
+  pincode?: string;
   ownerPhone: string | null;
   /** Confirmed or checked-in bookings: residents who can't find it on a map today. */
   currentBookings: number;
@@ -86,6 +89,9 @@ export interface RawBedStats {
 export interface RawProperty {
   id: string;
   name: string;
+  /** The map pin (decimals arrive as strings), null until pinned. */
+  latitude?: number | string | null;
+  longitude?: number | string | null;
   propertyType?: string;
   status?: string;
   city?: string;
@@ -316,4 +322,7 @@ export interface CreatePropertyPayload {
   state: string;
   pincode: string;
   description?: string;
+  /** The map pin; both or neither (LOCATION_INCOMPLETE), inside India (LOCATION_OUTSIDE_INDIA). */
+  latitude?: number;
+  longitude?: number;
 }

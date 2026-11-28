@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { PropertiesService } from '../../core/data/properties.service';
 import { UsersService, ApiUser, userDisplayName } from '../../core/data/users.service';
@@ -10,6 +9,8 @@ import { UploadService } from '../../core/data/upload.service';
 import { SessionStore } from '../../core/auth/session.store';
 import { apiErrorMessage } from '../../core/http/api-error';
 import { IconComponent } from '../../shared/components/icon.component';
+import { LocationPickerComponent } from '../../shared/components/location-picker.component';
+import { LatLng } from '../../core/maps/google-maps.service';
 
 interface WizardData {
   // Step 1
@@ -45,7 +46,7 @@ function blank(): WizardData {
   selector: 'os-create-property-wizard',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, RouterLink, IconComponent],
+  imports: [FormsModule, RouterLink, IconComponent, LocationPickerComponent],
   template: `
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
@@ -128,13 +129,11 @@ function blank(): WizardData {
                 <div><label class="lbl">Pincode *</label><input [(ngModel)]="d.pincode" placeholder="560038" class="fld" /></div>
               </div>
               <div><label class="lbl">Full address *</label><input [(ngModel)]="d.addressLine1" placeholder="14, 100 Feet Road" class="fld" /></div>
-              <div class="grid sm:grid-cols-2 gap-4">
-                <div><label class="lbl">Latitude</label><input [(ngModel)]="d.latitude" (ngModelChange)="touch()" placeholder="12.9716" class="fld" /></div>
-                <div><label class="lbl">Longitude</label><input [(ngModel)]="d.longitude" (ngModelChange)="touch()" placeholder="77.5946" class="fld" /></div>
+              <div>
+                <label class="lbl">Exact location</label>
+                <p class="text-xs text-faint mb-2">Pin the entrance. Residents see it on the listing and can search near it; it’s needed before the owner can submit for review.</p>
+                <os-location-picker [value]="pin()" [address]="addressText()" (pinChange)="setPin($event)" />
               </div>
-              @if (mapUrl()) {
-                <div class="rounded-xl overflow-hidden border border-border"><iframe [src]="mapUrl()" class="w-full h-56" style="border:0" loading="lazy"></iframe></div>
-              } @else { <p class="text-xs text-faint flex items-center gap-1"><os-icon name="map" [size]="14" /> Enter latitude &amp; longitude to preview the map.</p> }
             </div>
           }
           @case (3) {
@@ -260,7 +259,6 @@ export class CreatePropertyWizardComponent {
   private readonly usersSvc = inject(UsersService);
   private readonly router = inject(Router);
   private readonly session = inject(SessionStore);
-  private readonly san = inject(DomSanitizer);
 
   private readonly uploads = inject(UploadService);
 
@@ -359,12 +357,15 @@ export class CreatePropertyWizardComponent {
     return this.d.rentMin || this.d.rentMax ? `${f(this.d.rentMin)}${this.d.rentMin && this.d.rentMax ? ' – ' : ''}${f(this.d.rentMax)}` : '—';
   }
 
-  readonly mapUrl = computed<SafeResourceUrl | null>(() => {
+  /** The pin, from the wizard's text fields (kept as strings for the draft). */
+  readonly pin = computed<LatLng | null>(() => {
     this.tick();
-    const { latitude: la, longitude: lo } = this.d;
-    if (!la || !lo) return null;
-    return this.san.bypassSecurityTrustResourceUrl(`https://maps.google.com/maps?q=${encodeURIComponent(la)},${encodeURIComponent(lo)}&z=15&output=embed`);
+    const la = Number(this.d.latitude), lo = Number(this.d.longitude);
+    return this.d.latitude && this.d.longitude && Number.isFinite(la) && Number.isFinite(lo) ? { lat: la, lng: lo } : null;
   });
+  /** Re-read on every check: the address fields are plain ngModel bindings. */
+  addressText(): string { return [this.d.addressLine1, this.d.area, this.d.city, this.d.state, this.d.pincode].filter(Boolean).join(', '); }
+  setPin(p: LatLng): void { this.d.latitude = String(p.lat); this.d.longitude = String(p.lng); this.touch(); }
 
   readonly completion = computed(() => {
     this.tick(); this.step();

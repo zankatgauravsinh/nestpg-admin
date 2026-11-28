@@ -42,3 +42,6 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Per-environment runtime config (Google Maps browser key) — never committed.
+/public/runtime-config.json

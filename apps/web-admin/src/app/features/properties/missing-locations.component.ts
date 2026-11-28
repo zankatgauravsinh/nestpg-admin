@@ -3,6 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { PropertiesService, PropertyWithoutLocation } from '../../core/data/properties.service';
 import { apiErrorMessage } from '../../core/http/api-error';
 import { IconComponent } from '../../shared/components/icon.component';
+import { ModalComponent } from '../../shared/components/modal.component';
+import { LocationPickerComponent } from '../../shared/components/location-picker.component';
+import { LatLng } from '../../core/maps/google-maps.service';
 
 const STATUS_LABEL: Record<string, string> = { ACTIVE: 'Live', PENDING_REVIEW: 'In review', PAUSED: 'Paused' };
 
@@ -19,7 +22,7 @@ const STATUS_LABEL: Record<string, string> = { ACTIVE: 'Live', PENDING_REVIEW: '
   selector: 'os-missing-locations',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, IconComponent],
+  imports: [FormsModule, IconComponent, ModalComponent, LocationPickerComponent],
   template: `
     <div class="p-4 sm:p-6 max-w-[1400px] mx-auto">
       <header class="mb-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
@@ -28,7 +31,7 @@ const STATUS_LABEL: Record<string, string> = { ACTIVE: 'Live', PENDING_REVIEW: '
           <h1 class="text-2xl font-bold text-content">Missing locations</h1>
           <p class="text-sm text-muted mt-1 max-w-3xl">
             These listings have no pin on the map, so residents can’t see them on the map or with “Near me”, and they
-            can’t be submitted or approved. Owners pin the location in the Owner app: Edit property, then Address.
+            can’t be submitted or approved. Pin one here, or the owner pins it in the Owner app (Edit property, then Address).
           </p>
         </div>
         @if (!loading() && !error() && rows().length) {
@@ -59,6 +62,7 @@ const STATUS_LABEL: Record<string, string> = { ACTIVE: 'Live', PENDING_REVIEW: '
           <div class="rounded-xl border border-border bg-panel p-4" data-testid="tile-live"><p class="text-[11px] uppercase text-faint">Live listings</p><p class="text-2xl font-bold text-content">{{ live() }}</p></div>
           <div class="rounded-xl border border-warning/40 bg-warning-subtle p-4" data-testid="tile-bookings"><p class="text-[11px] uppercase text-faint">With current bookings</p><p class="text-2xl font-bold text-content">{{ withBookings() }}</p></div>
         </div>
+        @if (done(); as d) { <p class="mb-3 rounded-lg border border-success/40 bg-success-subtle px-3 py-2 text-[13px] text-content" data-testid="pin-done">{{ d }}</p> }
         <input [ngModel]="query()" (ngModelChange)="query.set($event)" data-testid="loc-search" type="search"
                placeholder="Search property, area, city or owner phone" aria-label="Search property, area, city or owner phone"
                class="mb-4 w-full md:w-80 h-9 px-3 rounded-lg border border-border bg-panel text-sm text-content" />
@@ -71,6 +75,7 @@ const STATUS_LABEL: Record<string, string> = { ACTIVE: 'Live', PENDING_REVIEW: '
                 <th class="px-4 py-2 font-medium">Property</th><th class="px-4 py-2 font-medium">Status</th>
                 <th class="px-4 py-2 font-medium">Area</th><th class="px-4 py-2 font-medium">Owner</th>
                 <th class="px-4 py-2 font-medium text-right">Current bookings</th>
+                <th class="px-4 py-2"></th>
               </tr></thead>
               <tbody>
                 @for (r of shown(); track r.propertyId) {
@@ -80,6 +85,7 @@ const STATUS_LABEL: Record<string, string> = { ACTIVE: 'Live', PENDING_REVIEW: '
                     <td class="px-4 py-2 text-muted">{{ where(r) }}</td>
                     <td class="px-4 py-2">@if (r.ownerPhone) { <a [href]="'tel:' + r.ownerPhone" class="text-accent font-medium">{{ r.ownerPhone }}</a> } @else { — }</td>
                     <td [class]="'px-4 py-2 text-right font-semibold ' + (r.currentBookings ? 'text-warning' : 'text-content')">{{ r.currentBookings }}</td>
+                    <td class="px-4 py-2 text-right"><button type="button" (click)="startPin(r)" [attr.data-testid]="'pin-' + r.propertyId" class="h-8 px-3 rounded-lg border border-border text-[13px] font-medium text-content">Pin</button></td>
                   </tr>
                 }
               </tbody>
@@ -89,6 +95,19 @@ const STATUS_LABEL: Record<string, string> = { ACTIVE: 'Live', PENDING_REVIEW: '
         }
       }
     </div>
+
+    <os-modal [open]="!!pinning()" [title]="'Pin ' + (pinning()?.propertyName ?? '')" subtitle="Find the address, or tap and drag the pin to the entrance" (closed)="cancelPin()">
+      @if (pinning(); as r) {
+        <p class="text-[13px] text-muted mb-3" data-testid="pin-address">{{ fullAddress(r) }}</p>
+        <os-location-picker [value]="draftPin()" [address]="fullAddress(r)" (pinChange)="draftPin.set($event)" />
+        @if (pinError(); as e) { <p class="text-[13px] text-danger mt-2" data-testid="pin-error">{{ e }}</p> }
+      }
+      <div footer>
+        <button (click)="cancelPin()" class="h-9 px-4 rounded-lg border border-border text-sm font-medium text-content">Cancel</button>
+        <button (click)="savePin()" [disabled]="!draftPin() || savingPin()" data-testid="pin-save"
+          class="h-9 px-4 rounded-lg bg-accent text-white text-sm font-semibold disabled:opacity-60">{{ savingPin() ? 'Saving…' : 'Save pin' }}</button>
+      </div>
+    </os-modal>
   `,
 })
 export class MissingLocationsComponent {
@@ -105,7 +124,32 @@ export class MissingLocationsComponent {
     return this.rows().filter((r) => [r.propertyName, r.areaLocality, r.city, r.ownerPhone ?? ''].some((f) => f.toLowerCase().includes(q)));
   });
 
+  readonly pinning = signal<PropertyWithoutLocation | null>(null);
+  readonly draftPin = signal<LatLng | null>(null);
+  readonly savingPin = signal(false);
+  readonly pinError = signal<string | null>(null);
+  readonly done = signal<string | null>(null);
+
   constructor() { this.reload(); }
+
+  fullAddress(r: PropertyWithoutLocation): string { return [r.addressLine1, r.areaLocality, r.city, r.state, r.pincode].filter(Boolean).join(', '); }
+  startPin(r: PropertyWithoutLocation): void { this.pinError.set(null); this.draftPin.set(null); this.done.set(null); this.pinning.set(r); }
+  cancelPin(): void { if (!this.savingPin()) this.pinning.set(null); }
+
+  /** Only the pin is sent: nothing else about the owner's listing changes. */
+  savePin(): void {
+    const r = this.pinning(); const p = this.draftPin();
+    if (!r || !p || this.savingPin()) return;
+    this.savingPin.set(true); this.pinError.set(null);
+    this.svc.update(r.propertyId, { latitude: p.lat, longitude: p.lng }).subscribe({
+      next: () => {
+        this.savingPin.set(false); this.pinning.set(null);
+        this.rows.update((rows) => rows.filter((x) => x.propertyId !== r.propertyId));
+        this.done.set(`${r.propertyName} is pinned. It now shows on the residents’ map.`);
+      },
+      error: (e) => { this.savingPin.set(false); this.pinError.set(apiErrorMessage(e, 'The pin could not be saved.')); },
+    });
+  }
 
   reload(): void {
     this.loading.set(true); this.error.set(null);

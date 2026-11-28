@@ -33,9 +33,9 @@ describe('MissingLocationsComponent', () => {
     expect(txt(el(f, 'tile-live'))).toContain('1');
     expect(txt(el(f, 'tile-bookings'))).toContain('1');
     const cells = (id: string) => [...el(f, id)!.querySelectorAll('td')].map((td) => txt(td));
-    expect(cells('loc-p-1')).toEqual(['Maple Nivas', 'Live', 'Hinjewadi, Pune', '9811000001', '3']);
+    expect(cells('loc-p-1')).toEqual(['Maple Nivas', 'Live', 'Hinjewadi, Pune', '9811000001', '3', 'Pin']);
     expect(el(f, 'loc-p-1')!.querySelector('a')!.getAttribute('href')).toBe('tel:9811000001');
-    expect(cells('loc-p-2')).toEqual(['Cedar House', 'In review', 'Wakad, Pune', '—', '0']);
+    expect(cells('loc-p-2')).toEqual(['Cedar House', 'In review', 'Wakad, Pune', '—', '0', 'Pin']);
   });
 
   it('search narrows by area', async () => {
@@ -58,5 +58,34 @@ describe('MissingLocationsComponent', () => {
     http.expectOne(REPORT).flush({}, { status: 500, statusText: 'x' }); g.detectChanges();
     expect(el(g, 'loc-error')).toBeTruthy();
     expect(el(g, 'loc-empty')).toBeNull();
+  });
+
+  it('Ops pins a listing: only the pin is sent, the row leaves the list, and the result is said', async () => {
+    const f = setup();
+    http.expectOne(REPORT).flush({ success: true, data: { total: 2, properties: ROWS.map((r) => ({ ...r, addressLine1: '1 Phase 1 Road', state: 'Maharashtra', pincode: '411057' })) }, meta: null, errors: [] });
+    f.detectChanges();
+    el(f, 'pin-p-1')!.click(); f.detectChanges();
+    expect(txt(el(f, 'pin-address'))).toBe('1 Phase 1 Road, Hinjewadi, Pune, Maharashtra, 411057');
+    expect((el(f, 'pin-save') as HTMLButtonElement).disabled).toBe(true); // nothing pinned yet
+    f.componentInstance.draftPin.set({ lat: 18.5913, lng: 73.7389 }); f.detectChanges();
+    el(f, 'pin-save')!.click();
+    const req = http.expectOne(environment.apiBase + '/properties/p-1');
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual({ latitude: 18.5913, longitude: 73.7389 });
+    req.flush({ success: true, data: { id: 'p-1' }, meta: null, errors: [] }); f.detectChanges();
+    expect(el(f, 'loc-p-1')).toBeNull();
+    expect(txt(el(f, 'pin-done'))).toContain('Maple Nivas is pinned');
+  });
+
+  it('a refused pin keeps the dialog open and explains why', () => {
+    const f = setup();
+    http.expectOne(REPORT).flush({ success: true, data: { total: 2, properties: ROWS }, meta: null, errors: [] });
+    f.detectChanges();
+    el(f, 'pin-p-1')!.click(); f.componentInstance.draftPin.set({ lat: 51.5, lng: -0.12 }); f.detectChanges();
+    el(f, 'pin-save')!.click();
+    http.expectOne(environment.apiBase + '/properties/p-1').flush({ success: false, errors: [{ code: 'Bad Request', message: 'LOCATION_OUTSIDE_INDIA' }] }, { status: 400, statusText: 'Bad Request' });
+    f.detectChanges();
+    expect(txt(el(f, 'pin-error'))).toContain('isn’t in India');
+    expect(el(f, 'loc-p-1')).toBeTruthy();
   });
 });
