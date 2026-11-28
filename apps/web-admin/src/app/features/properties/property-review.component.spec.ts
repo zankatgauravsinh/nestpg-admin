@@ -27,8 +27,8 @@ const row = (over: Record<string, unknown> = {}) => ({
   owner: { id: 'o-1', phone: '9811000003', status: 'ACTIVE' },
   stats: { totalBeds: 17, occupiedBeds: 0, reservedBeds: 0, availableBeds: 17, maintenanceBeds: 0, occupancyRate: 0 },
   minPricePaisa: 900000, maxPricePaisa: 1200000,
-  coverImageUrl: 'https://cdn/x.jpg', photoCount: 2,
-  readiness: { hasBeds: true, hasPhotos: true, hasDailyPrices: true, ready: true },
+  coverImageUrl: 'https://cdn/x.jpg', photoCount: 2, latitude: 23.0396, longitude: 72.5108,
+  readiness: { hasBeds: true, hasPhotos: true, hasLocation: true, hasDailyPrices: true, ready: true },
   ...over,
 });
 
@@ -202,6 +202,18 @@ describe('PropertyReviewComponent', () => {
     f.detectChanges();
     expect(el(f, 'action-error')?.textContent).toContain('Property has no photos');
     expect(el(f, 'detail-p-1')).toBeTruthy();   // still open, nothing pretended to happen
+  });
+
+  it('the reviewer can check the owner’s pin in Google Maps', () => {
+    const f = openDetail(setup());
+    expect(el(f, 'req-location-p-1')?.textContent).toContain('Pinned on the map');
+    expect(el(f, 'map-link-p-1')?.getAttribute('href')).toBe('https://www.google.com/maps/search/?api=1&query=23.0396,72.5108');
+    el(f, 'approve')!.click(); f.detectChanges();
+    el(f, 'approve-confirm')!.click(); f.detectChanges();
+    http.expectOne(url('/properties/p-1/verify'))
+      .flush({ errors: [{ code: 'BAD_REQUEST', message: 'PROPERTY_HAS_NO_LOCATION' }] }, { status: 400, statusText: 'Bad Request' });
+    f.detectChanges();
+    expect(el(f, 'action-error')?.textContent).toContain('pin');
   });
 
   it('a refusal for missing daily rates is explained, not shown as a code', () => {

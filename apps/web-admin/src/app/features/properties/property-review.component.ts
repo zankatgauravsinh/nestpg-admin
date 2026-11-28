@@ -138,6 +138,13 @@ const PAGE_SIZE = 20;
                             <os-icon [name]="p.readiness.hasPhotos ? 'check_circle' : 'cancel'" [size]="16" />
                             At least 1 property photo — {{ p.photoCount }} uploaded
                           </p>
+                          <p class="text-[13px] flex items-center gap-2 flex-wrap" [attr.data-testid]="'req-location-' + p.id">
+                            <os-icon [name]="p.readiness.hasLocation ? 'check_circle' : 'cancel'" [size]="16" />
+                            Pinned on the map —
+                            @if (p.readiness.hasLocation && p.latitude != null && p.longitude != null) {
+                              <a [href]="mapsLink(p)" target="_blank" rel="noopener noreferrer" class="text-accent font-medium" [attr.data-testid]="'map-link-' + p.id">check the pin in Google Maps ↗</a>
+                            } @else { not pinned }
+                          </p>
                           <p class="text-[13px] flex items-center gap-2" [attr.data-testid]="'req-daily-' + p.id">
                             <os-icon [name]="p.readiness.hasDailyPrices ? 'check_circle' : 'cancel'" [size]="16" />
                             A daily rate on every bed — {{ p.stats.bedsWithoutDailyPrice ? p.stats.bedsWithoutDailyPrice + ' missing' : 'all set' }}
@@ -327,8 +334,14 @@ export class PropertyReviewComponent {
   notReady(p: ReviewQueueRow): string {
     if (!p.readiness.hasBeds) return 'No beds';
     if (!p.readiness.hasPhotos) return 'No photos';
+    if (p.readiness.hasLocation === false) return 'No map pin';
     if (!p.readiness.hasDailyPrices) return 'No daily rates';
     return 'Not ready';
+  }
+
+  /** Opens the owner's pin in Google Maps, so a reviewer can check it is the right building. */
+  mapsLink(p: ReviewQueueRow): string {
+    return `https://www.google.com/maps/search/?api=1&query=${p.latitude},${p.longitude}`;
   }
 
   amenityLabels(d: RawProperty): string {

@@ -16,6 +16,7 @@ export const NAV_CONFIG: NavItem[] = [
   { id: 'portfolio', label: 'Property Portfolio', icon: 'domain', route: '/properties' },
   { id: 'property-review', label: 'Property Review', icon: 'fact_check', route: '/properties/review', capabilities: ['PROPERTY_REVIEW_VIEW'] },
   { id: 'daily-rates', label: 'Missing daily rates', icon: 'price_change', route: '/properties/daily-rates', capabilities: ['PROPERTY_OPERATIONS'] },
+  { id: 'missing-locations', label: 'Missing locations', icon: 'location_off', route: '/properties/missing-locations', capabilities: ['PROPERTY_OPERATIONS'] },
   { id: 'property-workspace', label: 'Property Workspace', icon: 'apartment', route: '/properties/workspace' },
   { id: 'inventory', label: 'Inventory', icon: 'bed', route: '/inventory' },
 

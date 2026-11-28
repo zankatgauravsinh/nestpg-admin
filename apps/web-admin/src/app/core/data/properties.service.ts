@@ -26,8 +26,23 @@ export interface ReviewQueueRow {
   /** Cover from the `media` table — the source the server-side readiness rule counts. */
   coverImageUrl: string | null;
   photoCount: number;
-  /** `hasDailyPrices`: every live bed has a daily rate (server rule BED_WITHOUT_DAILY_PRICE). */
-  readiness: { hasBeds: boolean; hasPhotos: boolean; hasDailyPrices: boolean; ready: boolean };
+  /** The map pin, or null until the owner pins it. */
+  latitude?: number | null;
+  longitude?: number | null;
+  /** `hasDailyPrices`: every live bed has a daily rate (server rule BED_WITHOUT_DAILY_PRICE); `hasLocation`: pinned on the map (PROPERTY_HAS_NO_LOCATION). */
+  readiness: { hasBeds: boolean; hasPhotos: boolean; hasLocation?: boolean; hasDailyPrices: boolean; ready: boolean };
+}
+
+/** One row of `GET /admin/properties/without-location` — a listing with no map pin. */
+export interface PropertyWithoutLocation {
+  propertyId: string;
+  propertyName: string;
+  propertyStatus: string;
+  areaLocality: string;
+  city: string;
+  ownerPhone: string | null;
+  /** Confirmed or checked-in bookings: residents who can't find it on a map today. */
+  currentBookings: number;
 }
 
 /** One row of `GET /admin/beds/without-daily-price` — a live bed with no daily rate. */
@@ -241,6 +256,11 @@ export class PropertiesService {
    */
   bedsWithoutDailyRate(): Observable<{ total: number; beds: BedWithoutDailyRate[] }> {
     return this.api.get<{ total: number; beds: BedWithoutDailyRate[] }>('/admin/beds/without-daily-price');
+  }
+
+  /** Listings with no map pin (Super / Ops). A failure reaches the component, like the daily-rate report. */
+  propertiesWithoutLocation(): Observable<{ total: number; properties: PropertyWithoutLocation[] }> {
+    return this.api.get<{ total: number; properties: PropertyWithoutLocation[] }>('/admin/properties/without-location');
   }
 
   /**

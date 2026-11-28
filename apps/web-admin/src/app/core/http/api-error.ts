@@ -31,6 +31,7 @@ function humanize(code: string): string {
     CURRENCY_NOT_ACCEPTABLE: 'The money was captured in another currency. Refund it in Razorpay, then close the case.',
     GATEWAY_REFUND_NOT_COMPLETE: 'Razorpay doesn’t show this money as fully refunded yet, so the case can’t be closed.',
     REFUND_EXCEEDS_UNAPPLIED: 'That’s more than is still unapplied. Refresh the list: it may already have been refunded.',
+    PROPERTY_HAS_NO_LOCATION: 'This property isn’t pinned on the map yet. The owner pins it in the Owner app: Edit property, then Address.',
     BED_DAILY_RATE_NOT_SET: 'This bed has no daily rate yet, so it can’t take a new booking. Ask the owner to set it.',
     BED_WITHOUT_DAILY_PRICE: 'Every bed needs a daily rate before this listing can be approved. Ask the owner to set the missing daily rates.',
   };

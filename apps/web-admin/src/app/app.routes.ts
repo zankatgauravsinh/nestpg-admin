@@ -38,6 +38,7 @@ export const routes: Routes = [
       { path: 'properties/new', loadComponent: () => import('./features/properties/create-property-wizard.component').then((m) => m.CreatePropertyWizardComponent) },
       { path: 'properties/:id/inventory/new', loadComponent: () => import('./features/properties/add-inventory-workspace.component').then((m) => m.AddInventoryWorkspaceComponent) },
       { path: 'properties/daily-rates', loadComponent: () => import('./features/properties/daily-rates.component').then((m) => m.DailyRatesComponent), canActivate: [capabilityGuard], data: { capabilities: ['PROPERTY_OPERATIONS'] } },
+      { path: 'properties/missing-locations', loadComponent: () => import('./features/properties/missing-locations.component').then((m) => m.MissingLocationsComponent), canActivate: [capabilityGuard], data: { capabilities: ['PROPERTY_OPERATIONS'] } },
       { path: 'properties/review', canActivate: [reviewGuard], loadComponent: () => import('./features/properties/property-review.component').then((m) => m.PropertyReviewComponent) },
       { path: 'properties/workspace', loadComponent: () => import('./features/properties/property-workspace.component').then((m) => m.PropertyWorkspaceComponent) },
       { path: 'inventory', loadComponent: () => import('./features/inventory/inventory-workspace.component').then((m) => m.InventoryWorkspaceComponent), canDeactivate: [unsavedChangesGuard] },

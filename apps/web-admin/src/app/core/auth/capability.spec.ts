@@ -124,6 +124,12 @@ describe('capability authorization', () => {
       expect(visibleFor(FINANCE)).not.toContain('daily-rates');
     });
 
+    it('Missing locations follows the endpoint (PROPERTY_OPERATIONS): Super and Ops, not Finance', () => {
+      expect(visibleFor(SUPER)).toContain('missing-locations');
+      expect(visibleFor(OPS)).toContain('missing-locations');
+      expect(visibleFor(FINANCE)).not.toContain('missing-locations');
+    });
+
     it('Monthly rent follows the endpoint (FINANCIAL_OPERATIONS): all three admin roles', () => {
       for (const caps of [SUPER, OPS, FINANCE]) expect(visibleFor(caps)).toContain('rent-invoices');
       expect(visibleFor(['OPERATIONAL_READ'])).not.toContain('rent-invoices');
